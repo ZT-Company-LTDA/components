@@ -5,12 +5,12 @@ export default function DeleteUser() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
-    <div>
+    <>
       <Button onPress={onOpen}>Open Modal</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
-            <div>
+            <>
               <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
               <ModalBody>
                 <p> 
@@ -39,10 +39,10 @@ export default function DeleteUser() {
                   Action
                 </Button>
               </ModalFooter>
-            </div>
+            </>
           )}
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 }

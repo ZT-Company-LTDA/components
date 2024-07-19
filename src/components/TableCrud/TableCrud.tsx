@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -24,8 +24,8 @@ import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ViewUser from "./ModalCrud/ModalView";
+import React = require("react");
 import { useMediaQuery } from "../../hooks/useMediaQuery";
-import React from "react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -52,7 +52,7 @@ interface TableCrudProps {
   elementName: string;
 }
 
-export function TableCrud({
+export default function TableClients({
   columns,
   urlFetcher,
   token,
@@ -257,12 +257,11 @@ export function TableCrud({
               </div>
             );
           }
-          break;
         default:
           return cellValue;
       }
     },
-    [columns, isMobile, elementName]
+    []
   );
 
   const topContent = useMemo(() => {

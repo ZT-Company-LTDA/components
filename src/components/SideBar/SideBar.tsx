@@ -7,7 +7,7 @@ import { IconType } from "react-icons";
 import { Button, DropdownMenu, Link, Tooltip, DropdownTrigger, Dropdown, DropdownItem, Avatar, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react";
 import { CiSettings } from "react-icons/ci";
 import { FaUserFriends } from "react-icons/fa";
-import React from "react";
+import React = require("react");
 
 interface LinkItemProps {
   name: string;
@@ -16,7 +16,7 @@ interface LinkItemProps {
   function?:any
 }
 interface SidebarRenderProps {
-  children: Element;
+  children: JSX.Element;
   setView: Dispatch<SetStateAction<number>>;
 }
 interface MenuProps {
@@ -32,7 +32,7 @@ const linkItems: Array<LinkItemProps> = [
 
 const MenuItems = ({ setView}: MenuProps) => {
   return (
-    <div>
+    <>
       {linkItems.map((linkItem, index) => (
         <Tooltip placement="right" content={linkItem.name} key={linkItem.view} closeDelay={0}>
           <Button
@@ -46,7 +46,7 @@ const MenuItems = ({ setView}: MenuProps) => {
           </Button>
         </Tooltip>
       ))}
-    </div>
+    </>
   );
 };
 

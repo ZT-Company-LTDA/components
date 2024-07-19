@@ -1,20 +1,11 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "ESNext",
-    "lib": ["dom", "es2017"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "target": "es6",
+    "module": "commonjs",
+    "declaration": true,
+    "outDir": "./dist",
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx" // ou "react-jsx" para React 17+
+    "jsx": "react"
   },
   "include": ["src"]
 }

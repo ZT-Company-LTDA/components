@@ -1,12 +1,12 @@
+import { useState } from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
-import React from "react";
 import { IoEyeOutline } from "react-icons/io5";
 
 export default function ViewUser() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
-    <div>
+    <>
       <IoEyeOutline onClick={onOpen}/>
       <Modal 
         isOpen={isOpen} 
@@ -15,7 +15,7 @@ export default function ViewUser() {
       >
         <ModalContent>
           {(onClose) => (
-            <div>
+            <>
               <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
               <ModalBody>
                 <p> 
@@ -44,10 +44,10 @@ export default function ViewUser() {
                   Action
                 </Button>
               </ModalFooter>
-            </div>
+            </>
           )}
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 }
