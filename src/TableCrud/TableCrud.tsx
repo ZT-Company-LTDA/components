@@ -24,8 +24,8 @@ import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ViewUser from "./ModalCrud/ModalView";
-import React = require("react");
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import * as React from "react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",

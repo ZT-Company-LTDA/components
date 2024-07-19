@@ -7,7 +7,7 @@ import { IconType } from "react-icons";
 import { Button, DropdownMenu, Link, Tooltip, DropdownTrigger, Dropdown, DropdownItem, Avatar, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react";
 import { CiSettings } from "react-icons/ci";
 import { FaUserFriends } from "react-icons/fa";
-import React = require("react");
+import * as React from "react";
 
 interface LinkItemProps {
   name: string;
