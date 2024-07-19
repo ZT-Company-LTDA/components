@@ -19,6 +19,7 @@ export const MainArea = ({screens, idView}:MainAreaProps) => {
           screen.id === idView && screen.component
         ))
       }
+      <h1>OLAAAAAAAAAAAAAAAAAAAAAAAAAA</h1>
     </div>
   )
 }
