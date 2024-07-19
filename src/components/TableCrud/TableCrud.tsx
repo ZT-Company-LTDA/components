@@ -52,7 +52,7 @@ interface TableCrudProps {
   elementName: string;
 }
 
-export default function TableClients({
+export function TableCrud({
   columns,
   urlFetcher,
   token,
