@@ -16,7 +16,7 @@ interface LinkItemProps {
   function?:any
 }
 interface SidebarRenderProps {
-  children: JSX.Element;
+  children: Element;
   setView: Dispatch<SetStateAction<number>>;
 }
 interface MenuProps {
@@ -32,7 +32,7 @@ const linkItems: Array<LinkItemProps> = [
 
 const MenuItems = ({ setView}: MenuProps) => {
   return (
-    <>
+    <div>
       {linkItems.map((linkItem, index) => (
         <Tooltip placement="right" content={linkItem.name} key={linkItem.view} closeDelay={0}>
           <Button
@@ -46,7 +46,7 @@ const MenuItems = ({ setView}: MenuProps) => {
           </Button>
         </Tooltip>
       ))}
-    </>
+    </div>
   );
 };
 

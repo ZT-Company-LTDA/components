@@ -52,7 +52,7 @@ interface TableCrudProps {
   elementName: string;
 }
 
-export default function TableClients({
+export function TableCrud({
   columns,
   urlFetcher,
   token,
@@ -257,11 +257,12 @@ export default function TableClients({
               </div>
             );
           }
+          break;
         default:
           return cellValue;
       }
     },
-    []
+    [columns, isMobile, elementName]
   );
 
   const topContent = useMemo(() => {
