@@ -25,7 +25,7 @@ import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ViewUser from "./ModalCrud/ModalView";
 import React = require("react");
-import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
