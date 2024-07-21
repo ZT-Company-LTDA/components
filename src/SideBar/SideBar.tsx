@@ -18,19 +18,14 @@ interface LinkItemProps {
 interface SidebarRenderProps {
   children: JSX.Element;
   setView: Dispatch<SetStateAction<number>>;
+  linkItems: Array<LinkItemProps>;
 }
 interface MenuProps {
   setView: Dispatch<SetStateAction<number>>;
+  linkItems: Array<LinkItemProps>;
 }
 
-const linkItems: Array<LinkItemProps> = [
-  { name: 'Documentos', icon: IoDocumentAttach, view: 1},
-  { name: 'Clientes',   icon: FaUserFriends, view: 2},
-  { name: 'Criar CNPJ', icon: HiIdentification, view: 3},
-  { name: 'Configurações', icon: CiSettings ,   view: 4},
-];
-
-const MenuItems = ({ setView}: MenuProps) => {
+const MenuItems = ({ setView, linkItems}: MenuProps) => {
   return (
     <>
       {linkItems.map((linkItem, index) => (
@@ -50,7 +45,7 @@ const MenuItems = ({ setView}: MenuProps) => {
   );
 };
 
-export const SideBar = ({ children, setView}: SidebarRenderProps) => {
+export const SideBar = ({ children, setView, linkItems}: SidebarRenderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
 
@@ -68,7 +63,7 @@ export const SideBar = ({ children, setView}: SidebarRenderProps) => {
             </div>
           </div>
           <nav className="flex flex-1 flex-col items-center justify-center gap-4 bg-black">
-            <MenuItems setView={setView}/>
+            <MenuItems linkItems={linkItems} setView={setView}/>
           </nav>
         </aside>
       }
@@ -134,37 +129,6 @@ export const SideBar = ({ children, setView}: SidebarRenderProps) => {
           </NavbarMenu>
 
         </Navbar>
-
-        {/* <header className="sticky top-0 z-20 flex h-14 w-full items-center justify-between border-b bg-background px-4 md:h-14 md:px-6 ">
-          <div className="flex items-center gap-4">
-            <div className={`font-extrabold text-black flex items-end relative`}>
-              <Image
-                src="/cent-black.png"
-                width={150}
-                height={150}
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Dropdown>
-              <DropdownTrigger>
-                <Avatar
-                  showFallback 
-                  src="https://images.unsplash.com/broken"
-                  name={session?.user.name}
-                  size="md"
-                  alt="Avatar"
-                  className="overflow-hidden rounded-full cursor-pointer"
-                />
-              </DropdownTrigger>
-              <DropdownMenu>
-                <DropdownItem>Perfil</DropdownItem>
-                <DropdownItem showDivider>Pagamentos</DropdownItem>
-                <DropdownItem className="text-red-500" onClick={()=> signOut()}>Sair</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </header> */}
         <main className="flex-1 p-4 md:p-2 max-md:h-screen max-md:w-screen">
           {children}
         </main>

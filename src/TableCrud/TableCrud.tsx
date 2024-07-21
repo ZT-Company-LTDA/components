@@ -45,11 +45,17 @@ interface Columns {
   isMobile: boolean;
 }
 
+interface Size {
+  width: string;
+  height: string;
+}
+
 interface TableCrudProps {
   columns: Columns[];
   urlFetcher: string;
   token: string | undefined;
   elementName: string;
+  size: Size;
 }
 
 export function TableCrud({
@@ -57,10 +63,11 @@ export function TableCrud({
   urlFetcher,
   token,
   elementName,
+  size,
 }: TableCrudProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterValue, setFilterValue] = useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [mobileColumns, setMobileColumns] = useState(
@@ -283,11 +290,7 @@ export function TableCrud({
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="1">1</option>
-              <option value="3">3</option>
-              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="15">15</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </select>
@@ -309,7 +312,7 @@ export function TableCrud({
       className="my-2"
       topContent={topContent}
       classNames={{
-        wrapper: "max-h-[300px]",
+        wrapper: `max-h-[${size.height}vh] max-w-[${size.width}vw]`,
       }}
       topContentPlacement="outside"
       isHeaderSticky
