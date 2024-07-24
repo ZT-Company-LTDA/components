@@ -1,3 +1,4 @@
+'use client'
 import { SideBar } from "../SideBar/SideBar";
 import React from "react";
 import { MainArea } from "../MainArea/MainArea";
