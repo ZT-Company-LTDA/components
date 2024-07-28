@@ -68,7 +68,7 @@ export function TableCrud({
 }: TableCrudProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filterValue, setFilterValue] = useState("");
   const hasSearchFilter = Boolean(filterValue);
   const [mobileColumns, setMobileColumns] = useState(
