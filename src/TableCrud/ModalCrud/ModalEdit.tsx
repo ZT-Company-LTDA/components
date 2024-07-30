@@ -1,12 +1,13 @@
 import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import { FaUserEdit } from "react-icons/fa";
 
-export default function EditUser() {
+export default function ModalEdit() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
     <>
-      <Button onPress={onOpen}>Open Modal</Button>
+      <FaUserEdit onClick={onOpen}/>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

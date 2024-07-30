@@ -24,9 +24,11 @@ import { FaUserEdit } from "react-icons/fa";
 import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
-import ViewUser from "./ModalCrud/ModalView";
+import ModalView from "./ModalCrud/ModalView";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import * as React from "react";
+import ModalEdit from "./ModalCrud/ModalEdit";
+import ModalDelete from "./ModalCrud/ModalDelete";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -75,13 +77,15 @@ export function TableCrud({
     columns.filter((column) => column.isMobile)
   );
 
-  const fetcher = (url: string) =>
-    fetch(url, {
+  const fetcher = async (url: string) => {
+    console.log(data)
+    return await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     }).then((res) => res.json());
+  }
 
   const { data, isLoading } = useSWR<TableUsersProps>(
     token ? urlFetcher : null,
@@ -227,17 +231,17 @@ export function TableCrud({
                   aria-label="Action event example"
                   onAction={(key) => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<ViewUser />}>
+                  <DropdownItem key="new" startContent={<ModalView />}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<FaUserEdit /> }>
+                  <DropdownItem key="copy" startContent={<ModalEdit /> }>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
                     className="text-danger"
                     color="danger"
-                    startContent={<AiOutlineUserDelete />}
+                    startContent={<ModalDelete />}
                   >
                     Deletar {elementName}
                   </DropdownItem>
@@ -249,17 +253,17 @@ export function TableCrud({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <ViewUser />
+                    <ModalView />
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <FaUserEdit />
+                    <ModalEdit />
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
                   <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <AiOutlineUserDelete />
+                    <ModalDelete />
                   </span>
                 </Tooltip>
               </div>
@@ -291,7 +295,7 @@ export function TableCrud({
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="10">10</option>
+              <option value="1">1</option>
               <option value="50">50</option>
               <option value="100">100</option>
             </select>

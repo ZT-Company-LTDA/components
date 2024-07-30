@@ -1,12 +1,13 @@
 import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import { AiOutlineUserDelete } from "react-icons/ai";
 
-export default function DeleteUser() {
+export default function ModalDelete() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
     <>
-      <Button onPress={onOpen}>Open Modal</Button>
+      <AiOutlineUserDelete onClick={onOpen} />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

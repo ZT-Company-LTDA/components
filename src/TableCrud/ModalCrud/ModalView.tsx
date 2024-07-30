@@ -1,8 +1,9 @@
 import { useState } from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
 import { IoEyeOutline } from "react-icons/io5";
+import React from "react";
 
-export default function ViewUser() {
+export default function ModalView() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   return (
