@@ -12,7 +12,7 @@ export default function ModalEdit() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Modal Edit</ModalHeader>
               <ModalBody>
                 <p> 
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.

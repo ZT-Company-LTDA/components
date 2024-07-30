@@ -17,7 +17,7 @@ export default function ModalView() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">Modal View</ModalHeader>
               <ModalBody>
                 <p> 
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit.
