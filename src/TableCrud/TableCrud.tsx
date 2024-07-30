@@ -78,7 +78,6 @@ export function TableCrud({
   )
 
   const fetcher = async (url: string) => {
-    console.log(data)
     return await fetch(url, {
       headers: {
         Authorization: `Bearer ${token}`,
