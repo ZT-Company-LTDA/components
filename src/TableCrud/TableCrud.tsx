@@ -285,7 +285,8 @@ export function TableCrud({
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
-              <option value="1">1</option>
+              <option value="5">5</option>
+              <option value="10">1</option>
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="9999999">Todos</option>
