@@ -1,5 +1,5 @@
-"use client"
-import { useCallback, useEffect, useMemo, useState } from "react";
+'use client'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -18,45 +18,47 @@ import {
   Dropdown,
   DropdownTrigger,
   DropdownMenu,
-  DropdownItem,
-} from "@nextui-org/react";
-import { FaUserEdit } from "react-icons/fa";
-import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
-import useSWR from "swr";
-import { CiSearch } from "react-icons/ci";
-import ViewUser from "./ModalCrud/ModalView";
-import { useMediaQuery } from "../hooks/useMediaQuery";
-import * as React from "react";
+  DropdownItem
+} from '@nextui-org/react'
+import { FaUserEdit } from 'react-icons/fa'
+import { AiOutlineMore, AiOutlineUserDelete } from 'react-icons/ai'
+import useSWR from 'swr'
+import { CiSearch } from 'react-icons/ci'
+import ViewUser from './ModalCrud/ModalView'
+import { useMediaQuery } from '../hooks/useMediaQuery'
+import * as React from 'react'
+import axios from 'axios'
+import { useAsyncList } from '@react-stately/data'
 
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  Ativo: "success",
-  Inativo: "danger",
-};
+const statusColorMap: Record<string, ChipProps['color']> = {
+  Ativo: 'success',
+  Inativo: 'danger'
+}
 
 interface TableUsersProps {
-  count: number;
-  users: any[];
+  count: number
+  users: any[]
 }
 
 interface Columns {
-  name: string;
-  uid: string;
-  type: string;
-  voidValueMessage?: string;
-  isMobile: boolean;
+  name: string
+  uid: string
+  type: string
+  voidValueMessage?: string
+  isMobile: boolean
 }
 
 interface Size {
-  width: string;
-  height: string;
+  width: string
+  height: string
 }
 
 interface TableCrudProps {
-  columns: Columns[];
-  urlFetcher: string;
-  token: string | undefined;
-  elementName: string;
-  size: Size;
+  columns: Columns[]
+  urlFetcher: string
+  token: string | undefined
+  elementName: string
+  size: Size
 }
 
 export function TableCrud({
@@ -64,95 +66,85 @@ export function TableCrud({
   urlFetcher,
   token,
   elementName,
-  size,
+  size
 }: TableCrudProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [filterValue, setFilterValue] = useState("");
-  const hasSearchFilter = Boolean(filterValue);
+  const isMobile = useMediaQuery('(max-width: 768px)')
+  const [page, setPage] = useState(1)
+  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [filterValue, setFilterValue] = useState('')
+  const hasSearchFilter = Boolean(filterValue)
   const [mobileColumns, setMobileColumns] = useState(
-    columns.filter((column) => column.isMobile)
-  );
+    columns.filter(column => column.isMobile)
+  )
 
   const fetcher = (url: string) =>
-    fetch(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }).then((res) => res.json());
+    axios
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => res.data)
 
   const { data, isLoading } = useSWR<TableUsersProps>(
-    token ? urlFetcher : null,
+    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}` : null,
     fetcher,
     {
-      keepPreviousData: true,
+      keepPreviousData: true
     }
-  );
+  )
 
   const filteredItems = useMemo(() => {
-    let filteredUsers = [...(data?.users ?? [])];
+    let filteredUsers = [...(data?.users ?? [])]
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
         user.name.toLowerCase().includes(filterValue.toLowerCase())
-      );
+      )
     }
-    return filteredUsers;
-  }, [data?.users, filterValue]);
+    return filteredUsers
+  }, [data?.users, filterValue])
 
   const pages = useMemo(() => {
-    return data?.count ? Math.ceil(data.count / rowsPerPage) : 1;
-  }, [data?.count, rowsPerPage]);
+    return data?.count ? Math.ceil(data.count / rowsPerPage) : 1
+  }, [data?.count, rowsPerPage])
 
   const items = useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+    return filteredItems
+  }, [page, filteredItems, rowsPerPage])
 
-    return filteredItems.slice(start, end);
-  }, [page, filteredItems, rowsPerPage]);
-
-  const loadingState = isLoading ? "loading" : "idle";
-
-  const onNextPage = useCallback(() => {
-    if (page < pages) {
-      setPage(page + 1);
-    }
-  }, [page, pages]);
-
-  const onPreviousPage = useCallback(() => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  }, [page]);
+  const loadingState =
+    isLoading || data?.users.length === 0 ? 'loading' : 'idle'
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
-      setRowsPerPage(Number(e.target.value));
-      setPage(1);
+      setRowsPerPage(Number(e.target.value))
+      setPage(1)
     },
     []
-  );
+  )
 
   const onSearchChange = useCallback((value?: string) => {
     if (value) {
-      setFilterValue(value);
-      setPage(1);
+      setFilterValue(value)
+      setPage(1)
     } else {
-      setFilterValue("");
+      setFilterValue('')
     }
-  }, []);
+  }, [])
 
   const onClear = useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-  }, []);
+    setFilterValue('')
+    setPage(1)
+  }, [])
 
   const bottomContent = useMemo(() => {
     return (
       <div className="py-2 px-2 flex justify-between items-center w-full">
-        <span className="text-default-400 text-small">Total {items.length}</span>
+        <span className="text-default-400 text-small">
+          Total {items.length}
+        </span>
         <Pagination
           isCompact
           showControls
@@ -163,74 +155,76 @@ export function TableCrud({
           onChange={setPage}
         />
       </div>
-    );
-  }, [items.length, page, pages, hasSearchFilter]);
+    )
+  }, [items.length, page, pages, hasSearchFilter])
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
-      const column = columns.find((col) => col.uid === columnKey);
-      if (!column) return null;
+      const column = columns.find(col => col.uid === columnKey)
+      if (!column) return null
 
-      let count = 0;
+      let count = 0
 
       if (count == 0) {
         element.deletedAt == undefined
-          ? (element.status = "Ativo")
-          : (element.status = "Inativo");
-        count++;
+          ? (element.status = 'Ativo')
+          : (element.status = 'Inativo')
+        count++
       }
 
-      const cellValue = element[columnKey as keyof any];
+      const cellValue = element[columnKey as keyof any]
 
       switch (column.type) {
-        case "user":
+        case 'user':
           return (
             <User
               avatarProps={{
-                radius: "lg",
+                radius: 'lg',
                 name: element.name,
-                isBordered: true,
+                isBordered: true
               }}
               description={element.email}
               name={cellValue}
             >
               {cellValue}
             </User>
-          );
-        case "text":
+          )
+        case 'text':
           return (
             <div className="flex flex-col">
               <p className="text-bold text-sm capitalize text-default-400">
-                {cellValue || column.voidValueMessage || ""}
+                {cellValue || column.voidValueMessage || ''}
               </p>
             </div>
-          );
-        case "chips":
+          )
+        case 'chips':
           return (
             <Chip
               className="capitalize"
-              color={statusColorMap[cellValue ?? ""]}
+              color={statusColorMap[cellValue ?? '']}
               size="sm"
               variant="flat"
             >
               {cellValue}
             </Chip>
-          );
-        case "actions":
+          )
+        case 'actions':
           if (isMobile) {
             return (
               <Dropdown>
                 <DropdownTrigger>
-                  <Button variant="light" isIconOnly radius="full"><AiOutlineMore className="w-6 h-16"/></Button>
+                  <Button variant="light" isIconOnly radius="full">
+                    <AiOutlineMore className="w-6 h-16" />
+                  </Button>
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label="Action event example"
-                  onAction={(key) => alert(key)}
+                  onAction={key => alert(key)}
                 >
                   <DropdownItem key="new" startContent={<ViewUser />}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<FaUserEdit /> }>
+                  <DropdownItem key="copy" startContent={<FaUserEdit />}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
@@ -243,7 +237,7 @@ export function TableCrud({
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
-            );
+            )
           } else if (!isMobile) {
             return (
               <div className="relative flex items-center justify-center gap-4">
@@ -263,14 +257,14 @@ export function TableCrud({
                   </span>
                 </Tooltip>
               </div>
-            );
+            )
           }
         default:
-          return cellValue;
+          return cellValue
       }
     },
     []
-  );
+  )
 
   const topContent = useMemo(() => {
     return (
@@ -291,21 +285,22 @@ export function TableCrud({
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
             >
+              <option value="5">5</option>
               <option value="10">10</option>
-              <option value="50">50</option>
               <option value="100">100</option>
+              <option value="9999999">Todos</option>
             </select>
           </label>
         </div>
       </div>
-    );
+    )
   }, [
     filterValue,
     onSearchChange,
     onRowsPerPageChange,
     data?.users.length,
-    hasSearchFilter,
-  ]);
+    hasSearchFilter
+  ])
 
   return (
     <Table
@@ -313,7 +308,7 @@ export function TableCrud({
       className="my-2"
       topContent={topContent}
       classNames={{
-        wrapper: `max-h-[${size.height}vh] max-w-[${size.width}vw]`,
+        wrapper: `max-h-[${size.height}vh] max-w-[${size.width}vw]`
       }}
       topContentPlacement="outside"
       isHeaderSticky
@@ -321,24 +316,24 @@ export function TableCrud({
       bottomContentPlacement="outside"
     >
       <TableHeader columns={isMobile ? mobileColumns : columns}>
-        {(column) => (
+        {column => (
           <TableColumn
             key={column.uid}
-            align={column.uid === "actions" ? "center" : "start"}
+            align={column.uid === 'actions' ? 'center' : 'start'}
           >
             {column.name}
           </TableColumn>
         )}
       </TableHeader>
       <TableBody
-        emptyContent={"Não foi encontrado registros."}
+        emptyContent={'Não foi encontrado registros.'}
         items={items ?? []}
         loadingContent={<Spinner />}
         loadingState={loadingState}
       >
-        {(item) => (
+        {item => (
           <TableRow key={item.clients}>
-            {(columnKey) => (
+            {columnKey => (
               <TableCell>
                 {renderCell(item, columnKey, isMobile, item)}
               </TableCell>
@@ -347,5 +342,5 @@ export function TableCrud({
         )}
       </TableBody>
     </Table>
-  );
+  )
 }
