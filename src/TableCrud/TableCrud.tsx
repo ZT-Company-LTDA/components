@@ -96,6 +96,8 @@ export function TableCrud({
     }
   )
 
+  const sizes = `max-h-[${size.height}vh] max-w-[${size.width}vw]`
+
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])]
 
@@ -302,7 +304,7 @@ export function TableCrud({
       className="my-2"
       topContent={topContent}
       classNames={{
-        wrapper: `max-h-[${size.height}vh] max-w-[${size.width}vw]`
+        wrapper: sizes
       }}
       topContentPlacement="outside"
       isHeaderSticky
