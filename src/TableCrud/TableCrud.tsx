@@ -113,7 +113,7 @@ export function TableCrud({
   }, [data?.count, rowsPerPage])
 
   const loadingState =
-    isLoading || data?.users.length === 0 ? 'loading' : 'idle'
+    isLoading ? 'loading' : 'idle'
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
