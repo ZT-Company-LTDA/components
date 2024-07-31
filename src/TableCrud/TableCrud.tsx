@@ -1,5 +1,5 @@
 'use client'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -29,6 +29,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import * as React from "react";
 import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
+import { debounce } from 'lodash';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -87,10 +88,12 @@ export function TableCrud({
   }
 
   const { data, isLoading } = useSWR<TableUsersProps>(
-    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}` : null,
+    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}&search=${filterValue}` : null,
     fetcher,
     {
-      keepPreviousData: true
+      keepPreviousData: true,
+      revalidateOnReconnect:false,
+      revalidateOnFocus:false
     }
   )
 
@@ -108,10 +111,6 @@ export function TableCrud({
   const pages = useMemo(() => {
     return data?.count ? Math.ceil(data.count / rowsPerPage) : 1
   }, [data?.count, rowsPerPage])
-
-  const items = useMemo(() => {
-    return filteredItems
-  }, [page, filteredItems, rowsPerPage])
 
   const loadingState =
     isLoading || data?.users.length === 0 ? 'loading' : 'idle'
@@ -142,7 +141,7 @@ export function TableCrud({
     return (
       <div className="py-2 px-2 flex justify-between items-center w-full">
         <span className="text-default-400 text-small">
-          Total {items.length}
+          Total {filteredItems.length}
         </span>
         <Pagination
           isCompact
@@ -155,7 +154,7 @@ export function TableCrud({
         />
       </div>
     )
-  }, [items.length, page, pages, hasSearchFilter])
+  }, [filteredItems.length, page, pages, hasSearchFilter])
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
@@ -285,7 +284,7 @@ export function TableCrud({
               onChange={onRowsPerPageChange}
             >
               <option value="5">5</option>
-              <option value="10">1</option>
+              <option value="10">10</option>
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="9999999">Todos</option>
@@ -327,7 +326,7 @@ export function TableCrud({
       </TableHeader>
       <TableBody
         emptyContent={'Não foi encontrado registros.'}
-        items={items ?? []}
+        items={filteredItems ?? []}
         loadingContent={<Spinner />}
         loadingState={loadingState}
       >
