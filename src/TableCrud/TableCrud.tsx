@@ -20,8 +20,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { FaUserEdit } from "react-icons/fa";
-import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
+import { AiOutlineMore } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ModalView from "./ModalCrud/ModalView";
@@ -29,7 +28,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import * as React from "react";
 import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
-import { debounce } from 'lodash';
+import { useDebounce } from 'use-debounce';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -73,7 +72,7 @@ export function TableCrud({
   const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [filterValue, setFilterValue] = useState('')
-  const hasSearchFilter = Boolean(filterValue)
+  const [debouncedValue] = useDebounce(filterValue, 1000);
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter(column => column.isMobile)
   )
@@ -88,7 +87,7 @@ export function TableCrud({
   }
 
   const { data, isLoading } = useSWR<TableUsersProps>(
-    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}&search=${filterValue}` : null,
+    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}&search=${debouncedValue}` : null,
     fetcher,
     {
       keepPreviousData: true,
@@ -100,13 +99,13 @@ export function TableCrud({
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])]
 
-    if (hasSearchFilter) {
+    if (debouncedValue) {
       filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase())
+        user.name.toLowerCase().includes(debouncedValue.toLowerCase())
       )
     }
     return filteredUsers
-  }, [data?.users, filterValue])
+  }, [data?.users, debouncedValue])
 
   const pages = useMemo(() => {
     return data?.count ? Math.ceil(data.count / rowsPerPage) : 1
@@ -124,12 +123,8 @@ export function TableCrud({
   )
 
   const onSearchChange = useCallback((value?: string) => {
-    if (value) {
-      setFilterValue(value)
-      setPage(1)
-    } else {
-      setFilterValue('')
-    }
+    setFilterValue(value??'')
+    setPage(1)
   }, [])
 
   const onClear = useCallback(() => {
@@ -154,7 +149,7 @@ export function TableCrud({
         />
       </div>
     )
-  }, [filteredItems.length, page, pages, hasSearchFilter])
+  }, [filteredItems.length, page, pages, debouncedValue])
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
@@ -298,7 +293,7 @@ export function TableCrud({
     onSearchChange,
     onRowsPerPageChange,
     data?.users.length,
-    hasSearchFilter
+    debouncedValue
   ])
 
   return (
