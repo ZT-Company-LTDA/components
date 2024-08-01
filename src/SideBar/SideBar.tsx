@@ -7,7 +7,7 @@ import { Button, DropdownMenu, Link, Tooltip, DropdownTrigger, Dropdown, Dropdow
 import { ContextScreen } from '../contexts/ContextScreen';
 
 interface MenuProps {
-  linkItems: Array<{ view: number, name: string, icon: IconType }>;
+  linkItems: Array<{ id: number, name: string, icon: JSX.Element }>;
 }
 
 const MenuItems = ({ linkItems }: MenuProps) => {
@@ -20,15 +20,15 @@ const MenuItems = ({ linkItems }: MenuProps) => {
   return (
     <>
       {linkItems.map((linkItem, index) => (
-        <Tooltip placement="right" content={linkItem.name} key={linkItem.view} closeDelay={0}>
+        <Tooltip placement="right" content={linkItem.name} key={linkItem.id} closeDelay={0}>
           <Button
-            onClick={() => context.setidScreen(linkItem.view)}
+            onClick={() => context.setidScreen(linkItem.id)}
             type="button"
             variant="light"
             isIconOnly
             className="flex h-10 w-10 items-center justify-center text-white rounded-lg transition-colors data-[hover=true]:bg-[#3248F2]"
           >
-            <linkItem.icon className="h-5 w-5" />
+            {linkItem.icon}
           </Button>
         </Tooltip>
       ))}
@@ -38,10 +38,10 @@ const MenuItems = ({ linkItems }: MenuProps) => {
 
 interface SidebarRenderProps {
   children: React.ReactNode;
-  linkItems: Array<{ view: number, name: string, icon: IconType }>;
+  screens: Array<{ id: number, name: string, icon: JSX.Element }>;
 }
 
-export const SideBar = ({ children, linkItems }: SidebarRenderProps) => {
+export const SideBar = ({ children, screens }: SidebarRenderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const context = useContext(ContextScreen);
@@ -60,7 +60,7 @@ export const SideBar = ({ children, linkItems }: SidebarRenderProps) => {
           </div>
         </div>
         <nav className="flex flex-1 flex-col items-center justify-center gap-4 bg-black">
-          <MenuItems linkItems={linkItems} />
+          <MenuItems linkItems={screens} />
         </nav>
       </aside>
       <div className="flex flex-1 flex-col">
@@ -95,18 +95,18 @@ export const SideBar = ({ children, linkItems }: SidebarRenderProps) => {
             </NavbarItem>
           </NavbarContent>
           <NavbarMenu>
-            {linkItems.map((item, index) => (
-              <NavbarMenuItem key={`${item.view}-${index}`}>
+            {screens.map((item, index) => (
+              <NavbarMenuItem key={`${item.id}-${index}`}>
                 <Link
                   className="w-full gap-2"
                   color="foreground"
                   onClick={() => {
-                    context.setidScreen(item.view);
+                    context.setidScreen(item.id);
                     setIsMenuOpen(!isMenuOpen);
                   }}
                   size="lg"
                 >
-                  <item.icon />{item.name}
+                  {item.icon}{item.name}
                 </Link>
               </NavbarMenuItem>
             ))}
