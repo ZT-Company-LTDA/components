@@ -29,6 +29,7 @@ import * as React from "react";
 import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
 import { useDebounce } from 'use-debounce';
+import { useTableCrudContext } from '../contexts/ContextTableCrud';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -69,9 +70,10 @@ export function TableCrud({
   size
 }: TableCrudProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
-  const [page, setPage] = useState(1)
+  // const [page, setPage] = useState(1)
+  const {page, setPage} = useTableCrudContext();
+  const {filterValue, setFilterValue} = useTableCrudContext()
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [filterValue, setFilterValue] = useState('')
   const [debouncedValue] = useDebounce(filterValue, 1000);
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter(column => column.isMobile)
@@ -123,16 +125,6 @@ export function TableCrud({
     },
     []
   )
-
-  const onSearchChange = useCallback((value?: string) => {
-    setFilterValue(value??'')
-    setPage(1)
-  }, [])
-
-  const onClear = useCallback(() => {
-    setFilterValue('')
-    setPage(1)
-  }, [])
 
   const bottomContent = useMemo(() => {
     return (
@@ -263,19 +255,10 @@ export function TableCrud({
 
   const topContent = useMemo(() => {
     return (
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <Input
-            isClearable
-            className="w-full sm:max-w-[44%]"
-            placeholder="Procure pelo nome..."
-            startContent={<CiSearch />}
-            value={filterValue}
-            onClear={() => onClear()}
-            onValueChange={onSearchChange}
-          />
+      <div className="flex flex-col">
+        <div className="flex justify-end items-center">
           <label className="flex items-center text-default-400 text-small">
-            Qtd por páginas.
+            Qtd por páginas
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
@@ -284,7 +267,7 @@ export function TableCrud({
               <option value="10">10</option>
               <option value="50">50</option>
               <option value="100">100</option>
-              <option value="9999999">Todos</option>
+              {/* <option value="9999999">Todos</option> */}
             </select>
           </label>
         </div>
@@ -292,7 +275,6 @@ export function TableCrud({
     )
   }, [
     filterValue,
-    onSearchChange,
     onRowsPerPageChange,
     data?.users.length,
     debouncedValue
