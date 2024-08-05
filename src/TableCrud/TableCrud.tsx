@@ -74,8 +74,9 @@ export function TableCrud({
   // const [page, setPage] = useState(1)
   const {page, setPage} = useTableCrudContext();
   const {filterValue, setFilterValue} = useTableCrudContext()
-  const {arrayFilters, setArrayFilters} = useTableCrudContext()
+  const {arrayFilters} = useTableCrudContext()
   const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [isSearching, setIsSearching] = useState(false);
   
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter(column => column.isMobile)
@@ -103,9 +104,11 @@ export function TableCrud({
   )
 
   const searchTable = useCallback(() => {
-    // Mudar a URL para incluir arrayFilters e fazer a pesquisa
-    mutate()
-  }, [arrayFilters, mutate])
+    setIsSearching(true);
+    mutate().then(() => {
+      setIsSearching(false);
+    });
+  }, [arrayFilters, mutate]);
   
   const sizes = `max-h-[${size.height}vh] max-w-[${size.width}vw]`
 
@@ -123,8 +126,7 @@ export function TableCrud({
     return data?.count ? Math.ceil(data.count / rowsPerPage) : 1
   }, [data?.count, rowsPerPage])
 
-  const loadingState =
-    isLoading ? 'loading' : 'idle'
+  const loadingState = isLoading || isSearching ? 'loading' : 'idle';
 
   const onRowsPerPageChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
