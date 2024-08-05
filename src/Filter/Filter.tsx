@@ -1,13 +1,19 @@
 import { Input } from "@nextui-org/react";
 import { CiSearch } from "react-icons/ci";
 import * as React from "react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 
 export const Filter = ({ name, placeholder }: { name: string, placeholder:string }) => {
   const { page, setPage } = useTableCrudContext();
   const [filterValue, setFilterValue] = useState("");
-  const { arrayFilters, setArrayFilters } = useTableCrudContext();
+  const { arrayFilters, setArrayFilters, clear } = useTableCrudContext();
+
+  useEffect(() => {
+      setFilterValue("");
+      onClear();
+      console.log("CHAMOU")
+  },[clear])
 
   const onClear = useCallback(() => {
     setFilterValue("");

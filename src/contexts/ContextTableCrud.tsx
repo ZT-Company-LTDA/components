@@ -7,6 +7,8 @@ export interface Filter{
 }
 
 interface ContextTableCrudType {
+  clear: boolean;
+  setClear: Dispatch<React.SetStateAction<boolean>>;
   page: number; 
   setPage: Dispatch<React.SetStateAction<number>>;
   filterValue: string; 
@@ -16,6 +18,8 @@ interface ContextTableCrudType {
 }
 
 export const ContextTableCrud = createContext<ContextTableCrudType>({
+  clear: false,
+  setClear: () => false,
   page: 1,
   setPage: () => 1,
   filterValue: '',

@@ -20,7 +20,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { AiOutlineMore } from "react-icons/ai";
+import { AiOutlineClear, AiOutlineMore } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ModalView from "./ModalCrud/ModalView";
@@ -71,10 +71,7 @@ export function TableCrud({
   size
 }: TableCrudProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
-  // const [page, setPage] = useState(1)
-  const {page, setPage} = useTableCrudContext();
-  const {filterValue, setFilterValue} = useTableCrudContext()
-  const {arrayFilters} = useTableCrudContext()
+  const {filterValue, arrayFilters, page, setPage, clear, setClear} = useTableCrudContext()
   const [rowsPerPage, setRowsPerPage] = useState(5)
   const [isSearching, setIsSearching] = useState(false);
   
@@ -102,6 +99,14 @@ export function TableCrud({
       revalidateOnFocus:false
     }
   )
+
+  const clearFilters = () => {
+    if(clear){
+      setClear(false);
+    } else{
+      setClear(true);
+    }
+  };
 
   const searchTable = useCallback(() => {
     setIsSearching(true);
@@ -265,9 +270,12 @@ export function TableCrud({
 
   const topContent = useMemo(() => {
     return (
-      <div className="flex flex-col mt-4">
+      <div className="flex flex-col">
         <div className="flex justify-between items-center">
-          <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>Pesquisar</Button>
+          <div className='flex gap-6'>
+            <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>Pesquisar</Button>
+            <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-800 font-medium'>Limpar Filtros</Button>
+          </div>
           <label className="flex items-center text-default-400 text-small">
             Qtd por páginas
             <select
@@ -294,12 +302,12 @@ export function TableCrud({
   return (
     <Table
       aria-label="Tabela de clientes"
-      className="my-2"
+      className="mt-6"
       topContent={topContent}
       classNames={{
         wrapper: sizes
       }}
-      topContentPlacement="outside"
+      topContentPlacement="inside"
       isHeaderSticky
       bottomContent={bottomContent}
       bottomContentPlacement="outside"
