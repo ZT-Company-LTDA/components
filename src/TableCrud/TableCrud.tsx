@@ -274,7 +274,7 @@ export function TableCrud({
         <div className="flex justify-between items-center">
           <div className='flex gap-6'>
             <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>Pesquisar</Button>
-            <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-800 font-medium'>Limpar Filtros</Button>
+            <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>Limpar Filtros</Button>
           </div>
           <label className="flex items-center text-default-400 text-small">
             Qtd por páginas
