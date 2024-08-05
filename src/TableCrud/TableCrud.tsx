@@ -30,6 +30,7 @@ import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
 import { useDebounce } from 'use-debounce';
 import { useTableCrudContext } from '../contexts/ContextTableCrud';
+import { FaSearch } from 'react-icons/fa';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -73,14 +74,17 @@ export function TableCrud({
   // const [page, setPage] = useState(1)
   const {page, setPage} = useTableCrudContext();
   const {filterValue, setFilterValue} = useTableCrudContext()
+  const {arrayFilters, setArrayFilters} = useTableCrudContext()
   const [rowsPerPage, setRowsPerPage] = useState(5)
-  const [debouncedValue] = useDebounce(filterValue, 1000);
+  
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter(column => column.isMobile)
   )
 
   const fetcher = async (url: string) => {
     return await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({arrayFilters}),
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -88,8 +92,8 @@ export function TableCrud({
     }).then((res) => res.json());
   }
 
-  const { data, isLoading } = useSWR<TableUsersProps>(
-    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}&search=${debouncedValue}` : null,
+  const { data, isLoading, mutate } = useSWR<TableUsersProps>(
+    token ? `${urlFetcher}?page=${page}&rows=${rowsPerPage}` : null,
     fetcher,
     {
       keepPreviousData: true,
@@ -98,18 +102,22 @@ export function TableCrud({
     }
   )
 
+  const searchTable = useCallback(() => {
+    // Mudar a URL para incluir arrayFilters e fazer a pesquisa
+    mutate()
+  }, [arrayFilters, mutate])
+  
   const sizes = `max-h-[${size.height}vh] max-w-[${size.width}vw]`
 
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])]
-
-    if (debouncedValue) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(debouncedValue.toLowerCase())
-      )
-    }
+    // if (arrayFilters) {
+    //   filteredUsers = filteredUsers.filter((user) =>
+    //     user.name.toLowerCase().includes(arrayFilters[0].value.toLowerCase())
+    //   )
+    // }
     return filteredUsers
-  }, [data?.users, debouncedValue])
+  }, [data?.users, arrayFilters])
 
   const pages = useMemo(() => {
     return data?.count ? Math.ceil(data.count / rowsPerPage) : 1
@@ -143,7 +151,7 @@ export function TableCrud({
         />
       </div>
     )
-  }, [filteredItems.length, page, pages, debouncedValue])
+  }, [filteredItems.length, page, pages, arrayFilters])
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
@@ -255,8 +263,9 @@ export function TableCrud({
 
   const topContent = useMemo(() => {
     return (
-      <div className="flex flex-col">
-        <div className="flex justify-end items-center">
+      <div className="flex flex-col mt-4">
+        <div className="flex justify-between items-center">
+          <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>Pesquisar</Button>
           <label className="flex items-center text-default-400 text-small">
             Qtd por páginas
             <select
@@ -277,7 +286,7 @@ export function TableCrud({
     filterValue,
     onRowsPerPageChange,
     data?.users.length,
-    debouncedValue
+    arrayFilters
   ])
 
   return (
