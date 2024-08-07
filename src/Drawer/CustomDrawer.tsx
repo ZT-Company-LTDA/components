@@ -28,7 +28,7 @@ const CustomDrawer: React.FC<Props> = ({ direction, ...props }) => {
     setIsOpen(false)
   }
   const handleOpen = () => {
-    if(props.lengthFiles == 0 ){
+    if(!!props.lengthFiles == false ){
       return toast.error(`Não existe arquivos na fila de upload.`);
     }
     if(isOpen==true) {
