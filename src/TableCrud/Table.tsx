@@ -331,7 +331,7 @@ export function Table({
         loadingState={loadingState}
       >
         {item => (
-          <TableRow key={item.clients}>
+          <TableRow key={item.id}>
             {columnKey => (
               <TableCell>
                 {renderCell(item, columnKey, isMobile, item)}
