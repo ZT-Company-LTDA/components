@@ -35,7 +35,7 @@ export const Filter = ({
           headers: {
             Authorization: `Bearer ${session?.user?.token as string}`,
           },
-          data: filterText,
+          data: {search:filterText},
           signal
         });
 
