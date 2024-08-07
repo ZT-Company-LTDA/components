@@ -297,7 +297,8 @@ export function TableCrud({
     filterValue,
     onRowsPerPageChange,
     data?.users.length,
-    arrayFilters
+    arrayFilters,
+    isMobile
   ])
 
   return (
