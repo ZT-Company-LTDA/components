@@ -1,7 +1,7 @@
 'use client'
 import { useCallback, useMemo, useState } from 'react'
 import {
-  Table,
+  Table as TableUI,
   TableHeader,
   TableColumn,
   TableBody,
@@ -63,7 +63,7 @@ interface TableCrudProps {
   size: Size
 }
 
-export function TableCrud({
+export function Table({
   columns,
   urlFetcher,
   token,
@@ -302,7 +302,7 @@ export function TableCrud({
   ])
 
   return (
-    <Table
+    <TableUI
       aria-label="Tabela de clientes"
       className="mt-6"
       topContent={topContent}
@@ -340,6 +340,6 @@ export function TableCrud({
           </TableRow>
         )}
       </TableBody>
-    </Table>
+    </TableUI>
   )
 }
