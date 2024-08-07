@@ -1,5 +1,5 @@
 import { Button } from '@nextui-org/react'
-import React, { useState, CSSProperties, Dispatch } from 'react'
+import React, { useState, CSSProperties, Dispatch, useEffect } from 'react'
 import Drawer from 'react-modern-drawer'
 import 'react-modern-drawer/dist/index.css'
 import { CiCircleInfo } from "react-icons/ci";
@@ -10,6 +10,7 @@ import {
   IoMdClose
 } from 'react-icons/io'
 import { useMediaQuery } from '../hooks/useMediaQuery'
+import toast from 'react-hot-toast';
 
 interface Props extends React.HTMLProps<HTMLDivElement> {
   direction: 'bottom' | 'top'
@@ -27,8 +28,15 @@ const CustomDrawer: React.FC<Props> = ({ direction, ...props }) => {
     setIsOpen(false)
   }
   const handleOpen = () => {
-    setIsOpen(true) // Reabre o Drawer
+    if(props.lengthFiles == 0 ){
+      return toast.error(`Não existe arquivos na fila de upload.`);
+    }
+    if(isOpen==true) {
+      return toast(`Fila de arquivos já está aberta.`)
+    }
+    setIsOpen(true)
   }
+  
   const getDrawerSize = () => {
     if (isMinimized) {
       return '50px'
@@ -53,7 +61,7 @@ const CustomDrawer: React.FC<Props> = ({ direction, ...props }) => {
   return (
     <>
 
-      <Button onClick={handleOpen} disabled={isOpen || !props.lengthFiles} className="w-full md:w-1/2">
+      <Button onClick={handleOpen} className="w-full md:w-1/2">
         Arquivos
       </Button>
       <Drawer
