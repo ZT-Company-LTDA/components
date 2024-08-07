@@ -130,7 +130,7 @@ export const Filter = ({
       onInputChange={list.setFilterText}
     >
       {(item: any) => (
-        <AutocompleteItem key={item.clients} value={item.clients}>
+        <AutocompleteItem key={item.id} value={item.id}>
           {item.name}
         </AutocompleteItem>
       )}
