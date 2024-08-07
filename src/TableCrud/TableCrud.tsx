@@ -272,13 +272,13 @@ export function TableCrud({
   const topContent = useMemo(() => {
     return (
       <div className="flex flex-col">
-        <div className="flex justify-between items-center">
+        <div className="flex gap-4 justify-between items-center">
           <div className='flex gap-6'>
-            <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>Pesquisar</Button>
-            <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>Limpar Filtros</Button>
+            <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>{isMobile? "" : <p>Pesquisar</p>}</Button>
+            <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>{isMobile? "" : <p>Limpar Filtros</p>}</Button>
           </div>
           <label className="flex items-center text-default-400 text-small">
-            Qtd por páginas
+            {!isMobile && "Qtd por páginas"}
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
