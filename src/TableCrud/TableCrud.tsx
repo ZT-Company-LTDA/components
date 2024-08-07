@@ -110,6 +110,7 @@ export function TableCrud({
 
   const searchTable = useCallback(() => {
     setIsSearching(true);
+    console.log(arrayFilters)
     mutate().then(() => {
       setIsSearching(false);
     });
