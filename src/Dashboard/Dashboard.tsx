@@ -5,11 +5,11 @@ import { MainArea } from "../MainArea/MainArea";
 import { ProviderScreen } from "../providers/ProviderScreen";
 import { ProviderTableCrud } from "../providers/ProviderTableCrud";
 
-export const Dashboard = ({screens}:{screens: any}) => {
+export const Dashboard = ({screens, aside}:{screens: any, aside?:boolean}) => {
   return (    
     <ProviderScreen>
       <ProviderTableCrud>
-        <SideBar screens={screens}>
+        <SideBar aside={aside} screens={screens}>
           <MainArea screens={screens}/>
         </SideBar>
       </ProviderTableCrud>

@@ -5,9 +5,10 @@ import { useState } from 'react';
 import { IconType } from 'react-icons';
 import { Button, DropdownMenu, Link, Tooltip, DropdownTrigger, Dropdown, DropdownItem, Avatar, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, Image } from "@nextui-org/react";
 import { ContextScreen } from '../contexts/ContextScreen';
+import { DynamicIcon } from '../DinamicIcon/DinamicIcon';
 
 interface MenuProps {
-  linkItems: Array<{ id: number, name: string, icon: JSX.Element }>;
+  linkItems: Array<{ id: number, name: string, icon: string, library:string }>;
 }
 
 const MenuItems = ({ linkItems }: MenuProps) => {
@@ -28,7 +29,7 @@ const MenuItems = ({ linkItems }: MenuProps) => {
             isIconOnly
             className="flex h-10 w-10 items-center justify-center text-white rounded-lg transition-colors data-[hover=true]:bg-[#3248F2]"
           >
-            {linkItem.icon}
+            <DynamicIcon iconName={linkItem.icon} library={linkItem.library}/>
           </Button>
         </Tooltip>
       ))}
@@ -38,10 +39,11 @@ const MenuItems = ({ linkItems }: MenuProps) => {
 
 interface SidebarRenderProps {
   children: React.ReactNode;
-  screens: Array<{ id: number, name: string, icon: JSX.Element }>;
+  screens: Array<{ id: number, name: string, icon: string, library:string }>;
+  aside?: boolean;
 }
 
-export const SideBar = ({ children, screens }: SidebarRenderProps) => {
+export const SideBar = ({ children, screens, aside }: SidebarRenderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const context = useContext(ContextScreen);
@@ -52,7 +54,7 @@ export const SideBar = ({ children, screens }: SidebarRenderProps) => {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="hidden md:flex md:flex-col md:w-[8%] md:border-r md:bg-background md:fixed md:h-full">
+      {aside && <aside className="hidden md:flex md:flex-col md:w-[8%] md:border-r md:bg-background md:fixed md:h-full">
         <div className="flex h-16 flex-col items-center justify-center border-b">
           <div className="font-extrabold text-black flex items-end relative">
             <Image src="./logo-cent-black.png" className="h-20 w-20" />
@@ -62,7 +64,7 @@ export const SideBar = ({ children, screens }: SidebarRenderProps) => {
         <nav className="flex flex-1 flex-col items-center justify-center gap-4 bg-black">
           <MenuItems linkItems={screens} />
         </nav>
-      </aside>
+      </aside>}
       <div className="flex flex-1 flex-col">
         <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
           <NavbarContent className="md:hidden" justify="start">
@@ -107,6 +109,7 @@ export const SideBar = ({ children, screens }: SidebarRenderProps) => {
                   size="lg"
                 >
                   {item.icon}{item.name}
+                  <DynamicIcon iconName={item.icon} library={item.library}/>
                 </Link>
               </NavbarMenuItem>
             ))}
