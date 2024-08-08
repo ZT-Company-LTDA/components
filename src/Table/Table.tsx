@@ -60,7 +60,7 @@ interface TableCrudProps {
   urlFetcher: string
   token: string | undefined
   elementName: string
-  size: Size
+  size: string
 }
 
 export function Table({
@@ -115,8 +115,6 @@ export function Table({
       setIsSearching(false);
     });
   }, [arrayFilters, mutate]);
-  
-  const sizes = `max-h-[${size.height}vh] max-w-[${size.width}vw]`
 
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])]
@@ -307,12 +305,13 @@ export function Table({
       className="mt-6"
       topContent={topContent}
       classNames={{
-        wrapper: sizes
+        wrapper: size,
+        table: ["w-full", "h-3/5"]
       }}
       topContentPlacement="inside"
       isHeaderSticky
       bottomContent={bottomContent}
-      bottomContentPlacement="outside"
+      bottomContentPlacement="inside"
     >
       <TableHeader columns={isMobile ? mobileColumns : columns}>
         {column => (
