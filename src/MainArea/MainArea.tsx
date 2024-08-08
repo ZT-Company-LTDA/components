@@ -21,7 +21,7 @@ export const MainArea = ({screens}:MainAreaProps) => {
   }, [idScreen])
 
   return(
-    <div className="md:pl-[8%]">
+    <div className="md:pl-[8%] h-full w-full">
       {
         screens.map((screen) =>(
           screen.id === idScreen && screen.component

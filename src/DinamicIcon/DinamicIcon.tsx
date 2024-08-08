@@ -4,6 +4,9 @@ import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
 import * as FiIcons from 'react-icons/fi';
 import * as RioIcons from 'react-icons/ri';
+import * as Io5Icons from 'react-icons/io5';
+import * as HiIcons from 'react-icons/hi2';
+import * as CiIcons from 'react-icons/ci'; 
 
 type IconLibraries = {
   [key: string]: { [key: string]: React.ComponentType<{ size?: number; color?: string; className?: string }> };
@@ -14,7 +17,10 @@ const iconLibraries: IconLibraries = {
   md: MdIcons,
   io: IoIcons,
 	fi: FiIcons,
-	ri: RioIcons
+	ri: RioIcons,
+  io5: Io5Icons, 
+  hi2: HiIcons,
+  ci: CiIcons,
 };
 
 interface DynamicIconProps {
