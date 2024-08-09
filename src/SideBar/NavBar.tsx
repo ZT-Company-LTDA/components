@@ -12,7 +12,7 @@ import {
   Dropdown,
   DropdownItem,
   Avatar,
-  Navbar,
+  Navbar as NavBarUI,
   NavbarBrand,
   NavbarContent,
   NavbarItem,
@@ -24,130 +24,18 @@ import {
 import { ContextScreen, useScreenContext } from "../contexts/ContextScreen";
 import { DynamicIcon } from "../DinamicIcon/DinamicIcon";
 import { CiLogout } from "react-icons/ci";
+import { IntraBar } from "./InfraBar/Intrabar";
+import { IconBar } from "./IconBar/IconBar";
+import { NavBarProps } from "./interfaces/navBar.interface";
 
-interface MenuProps {
-  linkItems: Array<{ id: number; name: string; icon: string; library: string }>;
-}
-
-const IntraBar = ({
-  screens,
-  setIsMenuOpen,
-}: {
-  screens: any[];
-  setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
-}) => {
-  const { setidScreen } = useScreenContext();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-
-  const handleSelected = (index: number, id: number) => {
-    setSelectedIndex(index);
-    setidScreen(id);
-    setIsMenuOpen(false);
-  };
-  return (
-    <nav className="flex flex-1 flex-col items-center justify-start gap-4 z-50 bg-red-800 text-gray-900 pt-8">
-      <ul className="h-3/4 w-full flex flex-col items-center text-base gap-1">
-        {screens.map((item, index) => (
-          <li
-            key={`${item}-${index}`}
-            className={`h-12 min-h-12 w-full flex items-center text-center rounded-l-full relative ${
-              selectedIndex === index &&
-              "bg-white text-gray-50 animation_selected"
-            }`}
-          >
-            {selectedIndex === index && (
-              <>
-                <span className="h-20 w-5 bg-white absolute -top-4 right-0"></span>
-                <span
-                  className="h-9 w-9 bg-red-800 absolute -top-9 right-0 rounded-full half-circle"
-                  id="none_animation"
-                ></span>
-                <span
-                  className="h-9 w-9 bg-red-800 absolute top-12 right-0 rounded-full"
-                  id="none_animation"
-                ></span>
-              </>
-            )}
-            <Link
-              className="w-full flex items-center justify-center gap-2"
-              href="#"
-              onClick={() => handleSelected(index, item.id)}
-            >
-              <DynamicIcon
-                iconName={item.icon}
-                library={item.library}
-                size={20}
-                className={`${
-                  selectedIndex === index ? "text-gray-800" : "text-gray-50"
-                }`}
-              />
-              <p
-                className={`${
-                  selectedIndex === index ? "text-gray-800 font-semibold" : "text-gray-50 font-semibold"
-                }`}
-              >
-                {item.name}
-              </p>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-};
-
-const MenuItems = ({ linkItems }: MenuProps) => {
-  const context = useContext(ContextScreen);
-
-  if (!context) {
-    throw new Error("ContextScreen must be used within a ProviderScreen");
-  }
-
-  return (
-    <>
-      {linkItems.map((linkItem, index) => (
-        <Tooltip
-          placement="right"
-          content={linkItem.name}
-          key={linkItem.id}
-          closeDelay={0}
-        >
-          <Button
-            onClick={() => context.setidScreen(linkItem.id)}
-            type="button"
-            variant="light"
-            isIconOnly
-            className="flex h-10 w-10 items-center justify-center text-white rounded-lg transition-colors data-[hover=true]:bg-[#3248F2]"
-          >
-            <DynamicIcon
-              size={20}
-              iconName={linkItem.icon}
-              library={linkItem.library}
-            />
-          </Button>
-        </Tooltip>
-      ))}
-    </>
-  );
-};
-
-interface SidebarRenderProps {
-  children: React.ReactNode;
-  screens: Array<{ id: number; name: string; icon: string; library: string }>;
-  aside?: boolean;
-  topbar?: boolean;
-  navBarType: "icon-bar" | "intra-bar";
-  logo?: JSX.Element;
-}
-
-export const SideBar = ({
+export const NavBar = ({
   children,
   screens,
   aside,
   topbar,
   navBarType = "icon-bar",
   logo
-}: SidebarRenderProps) => {
+}: NavBarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
   const context = useContext(ContextScreen);
@@ -179,7 +67,7 @@ export const SideBar = ({
           )}
           {navBarType == "icon-bar" && (
             <nav className="flex flex-1 flex-col items-center justify-center gap-4 bg-black">
-              <MenuItems linkItems={screens} />
+              <IconBar linkItems={screens} />
             </nav>
           )}
           {navBarType == "intra-bar" && (
@@ -189,7 +77,7 @@ export const SideBar = ({
       )}
       <div className="flex flex-1 flex-col">
         {topbar && (
-          <Navbar
+          <NavBarUI
             isBordered
             isMenuOpen={isMenuOpen}
             onMenuOpenChange={setIsMenuOpen}
@@ -249,7 +137,7 @@ export const SideBar = ({
                 </NavbarMenuItem>
               ))}
             </NavbarMenu>
-          </Navbar>
+          </NavBarUI>
         )}
         <main className="flex-1 p-4 md:p-2 max-md:h-screen max-md:w-screen">
           {children}

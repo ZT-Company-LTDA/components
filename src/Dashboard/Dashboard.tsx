@@ -1,5 +1,5 @@
 'use client'
-import { SideBar } from "../SideBar/SideBar";
+import { NavBar } from "../SideBar/NavBar";
 import React from "react";
 import { MainArea } from "../MainArea/MainArea";
 import { ProviderScreen } from "../providers/ProviderScreen";
@@ -10,9 +10,9 @@ export const Dashboard = ({screens, aside, topbar, navBarType, mainAreaStyle, lo
   return (    
     <ProviderScreen>
       <ProviderTableCrud>
-        <SideBar aside={aside} screens={screens} topbar={topbar} navBarType={navBarType} logo={logo}>
+        <NavBar aside={aside} screens={screens} topbar={topbar} navBarType={navBarType} logo={logo}>
           <MainArea screens={screens} mainAreaStyle={mainAreaStyle}/>
-        </SideBar>
+        </NavBar>
       </ProviderTableCrud>
     </ProviderScreen>
   );
