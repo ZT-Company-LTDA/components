@@ -45,30 +45,25 @@ const IntraBar = ({
     setIsMenuOpen(false);
   };
   return (
-    <nav className="flex flex-1 flex-col items-center justify-center gap-4 bg-slate-50 text-gray-900">
-      <div className="text-3xl flex">
-        <h1 className="font-bold mb-14 text-gray-600">Sinap</h1>
-        <h1 className="font-extrabold mb-14 text-red-800">SYS</h1>
-        <h1></h1>
-      </div>
+    <nav className="flex flex-1 flex-col items-center justify-start gap-4 z-50 bg-red-800 text-gray-900 pt-8">
       <ul className="h-3/4 w-full flex flex-col items-center text-base gap-1">
         {screens.map((item, index) => (
           <li
             key={`${item}-${index}`}
             className={`h-12 min-h-12 w-full flex items-center text-center rounded-l-full relative ${
               selectedIndex === index &&
-              "bg-red-800 text-gray-50 animation_selected"
+              "bg-white text-gray-50 animation_selected"
             }`}
           >
             {selectedIndex === index && (
               <>
-                <span className="h-20 w-5 bg-red-800 absolute -top-4 right-0"></span>
+                <span className="h-20 w-5 bg-white absolute -top-4 right-0"></span>
                 <span
-                  className="h-9 w-9 bg-slate-100 absolute -top-9 right-0 rounded-full half-circle"
+                  className="h-9 w-9 bg-red-800 absolute -top-9 right-0 rounded-full half-circle"
                   id="none_animation"
                 ></span>
                 <span
-                  className="h-9 w-9 bg-slate-100 absolute top-12 right-0 rounded-full"
+                  className="h-9 w-9 bg-red-800 absolute top-12 right-0 rounded-full"
                   id="none_animation"
                 ></span>
               </>
@@ -83,12 +78,12 @@ const IntraBar = ({
                 library={item.library}
                 size={20}
                 className={`${
-                  selectedIndex === index ? "text-gray-50" : "text-gray-900"
+                  selectedIndex === index ? "text-gray-800" : "text-gray-50"
                 }`}
               />
               <p
                 className={`${
-                  selectedIndex === index ? "text-gray-50" : "text-gray-900"
+                  selectedIndex === index ? "text-gray-800 font-semibold" : "text-gray-50 font-semibold"
                 }`}
               >
                 {item.name}
@@ -97,14 +92,6 @@ const IntraBar = ({
           </li>
         ))}
       </ul>
-      {/* <SignOutButton
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
-              >
-                <CiLogout className="w-5 h-5" />
-                Sair
-              </SignOutButton> */}
-      <Button>Sair</Button>
     </nav>
   );
 };
@@ -150,6 +137,7 @@ interface SidebarRenderProps {
   aside?: boolean;
   topbar?: boolean;
   navBarType: "icon-bar" | "intra-bar";
+  logo?: JSX.Element;
 }
 
 export const SideBar = ({
@@ -158,6 +146,7 @@ export const SideBar = ({
   aside,
   topbar,
   navBarType = "icon-bar",
+  logo
 }: SidebarRenderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: session } = useSession();
@@ -212,7 +201,7 @@ export const SideBar = ({
             </NavbarContent>
             <NavbarContent className="md:fixed md:left-3" justify="start">
               <NavbarBrand>
-                <Image src="/cent-black.png" className="h-20 w-20" />
+                {logo}
               </NavbarBrand>
             </NavbarContent>
             <NavbarContent className="md:fixed md:right-10" justify="end">
