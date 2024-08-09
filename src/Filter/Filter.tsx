@@ -29,7 +29,7 @@ export const Filter = ({
 
   let list = useAsyncList({
     async load({ signal, filterText }) {
-      if(session){
+      if(session && filterText){
         let res = await axios(`${urlAutocomplete}`, {
           method: 'POST',
           headers: {
