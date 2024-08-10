@@ -110,7 +110,6 @@ export function Table({
 
   const searchTable = useCallback(() => {
     setIsSearching(true);
-    console.log(arrayFilters)
     mutate().then(() => {
       setIsSearching(false);
     });
@@ -294,7 +293,7 @@ export function Table({
   }, [
     filterValue,
     onRowsPerPageChange,
-    data?.users.length,
+    data?.users.length ?? 0,
     arrayFilters,
     isMobile
   ])
