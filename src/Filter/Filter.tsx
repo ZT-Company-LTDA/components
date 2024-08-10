@@ -107,8 +107,6 @@ export const Filter = ({
           return newArrayFilters;
         }
       });
-
-      console.log(arrayFilters);
     },
     [name, setArrayFilters, setFilterValue, setPage]
   );
