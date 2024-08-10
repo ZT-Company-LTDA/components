@@ -31,6 +31,7 @@ import ModalDelete from "./ModalCrud/ModalDelete";
 import { useDebounce } from 'use-debounce';
 import { useTableCrudContext } from '../contexts/ContextTableCrud';
 import { FaSearch } from 'react-icons/fa';
+import axios from 'axios';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -80,14 +81,14 @@ export function Table({
   )
 
   const fetcher = async (url: string) => {
-    return await fetch(url, {
+    return await axios(url, {
       method: 'POST',
-      body: JSON.stringify({arrayFilters}),
+      data: JSON.stringify({arrayFilters}),
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }).then((res) => res.json());
+    }).then((res) => res.data);
   }
 
   const { data, isLoading, mutate } = useSWR<TableUsersProps>(
@@ -110,7 +111,6 @@ export function Table({
 
   const searchTable = useCallback(() => {
     setIsSearching(true);
-    console.log(arrayFilters)
     mutate().then(() => {
       setIsSearching(false);
     });
@@ -294,7 +294,7 @@ export function Table({
   }, [
     filterValue,
     onRowsPerPageChange,
-    data?.users.length,
+    data?.users.length ?? 0,
     arrayFilters,
     isMobile
   ])
