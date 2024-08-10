@@ -130,9 +130,8 @@ export const NavBar = ({
                     }}
                     size="lg"
                   >
-                    {item.icon}
-                    {item.name}
                     <DynamicIcon iconName={item.icon} library={item.library} />
+                    {item.name}
                   </Link>
                 </NavbarMenuItem>
               ))}
