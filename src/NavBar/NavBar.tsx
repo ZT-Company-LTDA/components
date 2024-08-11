@@ -60,7 +60,7 @@ export const NavBar = ({
           {topbar && (
             <div className="flex h-16 flex-col items-center justify-center border-b">
               <div className="font-extrabold text-black flex items-end relative">
-                <Image src="./logo-cent-black.png" className="h-20 w-20" />
+                {logo}
                 <span className="sr-only">Logo escrita em imagem</span>
               </div>
             </div>
@@ -130,9 +130,8 @@ export const NavBar = ({
                     }}
                     size="lg"
                   >
-                    {item.icon}
-                    {item.name}
                     <DynamicIcon iconName={item.icon} library={item.library} />
+                    {item.name}
                   </Link>
                 </NavbarMenuItem>
               ))}
