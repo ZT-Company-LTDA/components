@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ContextScreen } from '../contexts/ContextScreen';
 
 export const ProviderScreen = ({ children }: { children: React.ReactNode }) => {
-  const [idScreen, setidScreen] = useState<number>(1);
+  const [idScreen, setidScreen] = useState<number>(21);
   const [navBarType, setNavBarType] = useState('icon-bar')
 
   return (
