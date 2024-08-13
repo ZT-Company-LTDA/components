@@ -306,7 +306,8 @@ export function Table({
       topContent={topContent}
       classNames={{
         wrapper: size,
-        table: ["w-full", "h-3/5"]
+        table: ["w-full", "h-3/5", "justify-start", "items-start"],
+        tbody:["justify-start"]
       }}
       topContentPlacement="inside"
       isHeaderSticky
