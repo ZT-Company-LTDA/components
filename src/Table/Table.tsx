@@ -34,6 +34,7 @@ import { FaSearch, FaUserEdit } from 'react-icons/fa';
 import axios from 'axios';
 import Modal from '../Modal/Modal';
 import { IoEyeOutline } from 'react-icons/io5';
+import { IoIosAddCircle } from 'react-icons/io';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -59,12 +60,13 @@ interface Size {
 }
 
 interface TableCrudProps {
-  columns: Columns[]
-  urlFetcher: string
-  token: string | undefined
-  elementName: string
-  size: string
-  modalInputs: Array<{label:string, value:string, name:string}>
+  columns: Columns[];
+  urlFetcher: string;
+  token: string | undefined;
+  elementName: string;
+  size: string;
+  modalInputs: Array<{label:string, value:string, name:string}>;
+  add?:boolean;
 }
 
 export function Table({
@@ -73,7 +75,8 @@ export function Table({
   token,
   elementName,
   size,
-  modalInputs
+  modalInputs,
+  add
 }: TableCrudProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const {filterValue, arrayFilters, page, setPage, clear, setClear} = useTableCrudContext()
@@ -226,17 +229,17 @@ export function Table({
                   aria-label="Action event example"
                   onAction={key => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>}>
+                  <DropdownItem key="new" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>}>
+                  <DropdownItem key="copy" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
                     className="text-danger"
                     color="danger"
-                    startContent={<Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isDelete title={`Deletar ${elementName}`}/>}
+                    startContent={<Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isIcon isDelete title={`Deletar ${elementName}`}/>}
                   >
                     Deletar {elementName}
                   </DropdownItem>
@@ -248,17 +251,17 @@ export function Table({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>
+                    <Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>
+                    <Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
                   <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isDelete title={`Deletar ${elementName}`}/>
+                    <Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isIcon isDelete title={`Deletar ${elementName}`}/>
                   </span>
                 </Tooltip>
               </div>
@@ -278,6 +281,7 @@ export function Table({
           <div className='flex gap-6'>
             <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>{isMobile? "" : <p>Pesquisar</p>}</Button>
             <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>{isMobile? "" : <p>Limpar Filtros</p>}</Button>
+            {add && <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle />} isAdd title={`Adicionar ${elementName}`}/>}
           </div>
           <label className="flex items-center text-default-400 text-small">
             {!isMobile && "Qtd por páginas"}

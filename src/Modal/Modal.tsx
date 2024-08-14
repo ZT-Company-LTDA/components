@@ -10,6 +10,23 @@ import {
   Input,
 } from "@nextui-org/react";
 
+// Função utilitária para criar ou atualizar objetos aninhados
+const setNestedValue = (obj: any, path: string[], value: string) => {
+  const lastKey = path.pop()!;
+  const lastObj = path.reduce((acc, key) => {
+    if (!acc[key] || typeof acc[key] !== 'object') {
+      acc[key] = {};
+    }
+    return acc[key];
+  }, obj);
+  lastObj[lastKey] = value;
+};
+
+// Função para obter valores aninhados de forma segura
+const getNestedValue = (obj: any, path: string[]) => {
+  return path.reduce((acc, key) => (acc && acc[key] !== undefined) ? acc[key] : undefined, obj);
+};
+
 export default function Modal({
   trigger,
   elementName,
@@ -19,6 +36,7 @@ export default function Modal({
   isAdd,
   isUpdate,
   isView,
+  isIcon,
 }: {
   trigger: JSX.Element;
   elementName: string;
@@ -28,31 +46,32 @@ export default function Modal({
   isAdd?: boolean;
   isUpdate?: boolean;
   isView?: boolean;
+  isIcon?: boolean;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  
+
   // Estado para armazenar os valores dos inputs
-  const [inputValues, setInputValues] = useState<Record<string, string>>({});
+  const [inputValues, setInputValues] = useState<Record<string, any>>({});
 
   // Função para lidar com a mudança nos inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [name]: value, // Atualiza o valor correspondente no objeto JSON
-    }));
+    setInputValues((prevValues) => {
+      const updatedValues = { ...prevValues };
+      const path = name.split(".");
+      setNestedValue(updatedValues, path, value); // Cria ou atualiza o objeto aninhado
+      return updatedValues;
+    });
   };
 
-  // Função para lidar com a confirmação (ex: enviar dados)
-  const handleConfirm = () => {
-    // Aqui você pode utilizar o objeto inputValues conforme necessário
-    console.log("JSON criado:", inputValues);
-    // Implementar lógica adicional como enviar para uma API, etc.
-  };
+  const handleClick = () => {
+    console.log(inputValues);
+  }
 
   return (
     <>
-      <div onClick={onOpen}>{trigger}</div>
+      {isIcon && <div onClick={onOpen}>{trigger}</div>}
+      {!isIcon && <Button color="primary" onClick={onOpen}>{title}{trigger}</Button>}
       <ModalUI isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -65,7 +84,9 @@ export default function Modal({
                     key={input.name}
                     name={input.name}
                     placeholder={input.label}
-                    value={inputValues[input.name] || ""}
+                    value={typeof getNestedValue(inputValues, input.name.split(".")) === 'object'
+                      ? ""
+                      : getNestedValue(inputValues, input.name.split(".")) || ""}
                     onChange={handleInputChange}
                   />
                 ))}
@@ -74,10 +95,7 @@ export default function Modal({
                 <Button color="danger" variant="light" onPress={onClose}>
                   Fechar
                 </Button>
-                <Button color="primary" onPress={() => {
-                  handleConfirm();
-                  onClose();
-                }}>
+                <Button color="primary" onPress={handleClick}>
                   Confirmar
                 </Button>
               </ModalFooter>
