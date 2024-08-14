@@ -64,7 +64,7 @@ interface TableCrudProps {
   token: string | undefined
   elementName: string
   size: string
-  modalInputs: Array<{label:string, value:string}>
+  modalInputs: Array<{label:string, value:string, name:string}>
 }
 
 export function Table({
