@@ -20,7 +20,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { AiOutlineClear, AiOutlineMore } from "react-icons/ai";
+import { AiOutlineClear, AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ModalView from "./ModalCrud/ModalView";
@@ -30,8 +30,10 @@ import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
 import { useDebounce } from 'use-debounce';
 import { useTableCrudContext } from '../contexts/ContextTableCrud';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaUserEdit } from 'react-icons/fa';
 import axios from 'axios';
+import Modal from '../Modal/Modal';
+import { IoEyeOutline } from 'react-icons/io5';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -222,17 +224,17 @@ export function Table({
                   aria-label="Action event example"
                   onAction={key => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<ModalView />}>
+                  <DropdownItem key="new" startContent={<Modal trigger={<IoEyeOutline/>} title='Detalhes'/>}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<ModalEdit />}>
+                  <DropdownItem key="copy" startContent={<Modal trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
                     className="text-danger"
                     color="danger"
-                    startContent={<ModalDelete />}
+                    startContent={<Modal trigger={<AiOutlineUserDelete/>} title={`Deletar ${elementName}`}/>}
                   >
                     Deletar {elementName}
                   </DropdownItem>
