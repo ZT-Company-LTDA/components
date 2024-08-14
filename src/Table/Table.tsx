@@ -226,17 +226,17 @@ export function Table({
                   aria-label="Action event example"
                   onAction={key => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<Modal inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>}>
+                  <DropdownItem key="new" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<Modal inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>}>
+                  <DropdownItem key="copy" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
                     className="text-danger"
                     color="danger"
-                    startContent={<Modal inputs={modalInputs} trigger={<AiOutlineUserDelete/>} title={`Deletar ${elementName}`}/>}
+                    startContent={<Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isDelete title={`Deletar ${elementName}`}/>}
                   >
                     Deletar {elementName}
                   </DropdownItem>
@@ -248,17 +248,17 @@ export function Table({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>
+                    <Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} title='Detalhes'/>
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>
+                    <Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
                   <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <Modal inputs={modalInputs} trigger={<AiOutlineUserDelete/>} title={`Deletar ${elementName}`}/>
+                    <Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isDelete title={`Deletar ${elementName}`}/>
                   </span>
                 </Tooltip>
               </div>

@@ -13,12 +13,22 @@ import { FaUserEdit } from "react-icons/fa";
 
 export default function Modal({
   trigger,
+  elementName,
   title,
   inputs,
+  isDelete, 
+  isAdd,
+  isUpdate,
+  isView
 }: {
   trigger: JSX.Element;
+  elementName: string;
   title: string;
-  inputs: Array<{ label: string; value: string }>;
+  inputs?: Array<{ label: string; value: string }>;
+  isDelete?:boolean;
+  isAdd?:boolean;
+  isUpdate?:boolean;
+  isView?:boolean;
 }) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
@@ -31,16 +41,17 @@ export default function Modal({
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>
-                {inputs.map((input) => (
+                {isDelete && <h1>Deseja deletar o {elementName}?</h1>}
+                {inputs?.map((input) => (
                   <Input placeholder={input.label}/>
                 ))}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
-                  Close
+                  Fechar
                 </Button>
                 <Button color="primary" onPress={onClose}>
-                  Action
+                  Confirmar
                 </Button>
               </ModalFooter>
             </>
