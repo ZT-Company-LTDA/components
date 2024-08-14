@@ -281,14 +281,14 @@ export function Table({
           <div className='flex gap-6'>
             <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>{isMobile? "" : <p>Pesquisar</p>}</Button>
             <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>{isMobile? "" : <p>Limpar Filtros</p>}</Button>
-            {add && <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle />} isAdd title={`Adicionar ${elementName}`}/>}
+            {(add && !isMobile) && <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle className='w-5 h-5'/>} isAdd title={`Adicionar ${elementName}`}/>}
           </div>
           <label className="flex items-center text-default-400 text-small">
             {!isMobile && "Qtd por páginas"}
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
-            >
+              >
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="50">50</option>
@@ -308,6 +308,12 @@ export function Table({
   ])
 
   return (
+    <>    
+    {(add && isMobile) && 
+      <div className='mt-4'>
+        <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle className='w-5 h-5'/>} isAdd title={`Adicionar ${elementName}`}/>
+      </div>
+    }
     <TableUI
       aria-label="Tabela de clientes"
       className="mt-6"
@@ -349,5 +355,6 @@ export function Table({
         )}
       </TableBody>
     </TableUI>
+    </>
   )
 }

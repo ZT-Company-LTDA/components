@@ -71,7 +71,7 @@ export default function Modal({
   return (
     <>
       {isIcon && <div onClick={onOpen}>{trigger}</div>}
-      {!isIcon && <Button color="primary" onClick={onOpen}>{title}{trigger}</Button>}
+      {!isIcon && <Button className="w-full" variant="flat" color="primary" onClick={onOpen}>{title}{trigger}</Button>}
       <ModalUI isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
