@@ -1,38 +1,39 @@
 import React from "react";
-import {Modal as ModalUI, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {
+  Modal as ModalUI,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  Input,
+} from "@nextui-org/react";
 import { FaUserEdit } from "react-icons/fa";
 
-export default function Modal({trigger, title}:{trigger:JSX.Element, title:string}) {
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+export default function Modal({
+  trigger,
+  title,
+  inputs,
+}: {
+  trigger: JSX.Element;
+  title: string;
+  inputs: Array<{ label: string; value: string }>;
+}) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <>
-      <div onClick={onOpen}>
-        {trigger}
-      </div>
+      <div onClick={onOpen}>{trigger}</div>
       <ModalUI isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
               <ModalBody>
-                <p> 
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Magna exercitation reprehenderit magna aute tempor cupidatat consequat elit
-                  dolor adipisicing. Mollit dolor eiusmod sunt ex incididunt cillum quis. 
-                  Velit duis sit officia eiusmod Lorem aliqua enim laboris do dolor eiusmod. 
-                  Et mollit incididunt nisi consectetur esse laborum eiusmod pariatur 
-                  proident Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                </p>
+                {inputs.map((input) => (
+                  <Input placeholder={input.label}/>
+                ))}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
