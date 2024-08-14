@@ -246,17 +246,17 @@ export function Table({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <ModalView />
+                    <Modal trigger={<IoEyeOutline/>} title='Detalhes'/>
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <ModalEdit />
+                    <Modal trigger={<FaUserEdit/>} title={`Editar ${elementName}`}/>
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
                   <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <ModalDelete />
+                    <Modal trigger={<AiOutlineUserDelete/>} title={`Deletar ${elementName}`}/>
                   </span>
                 </Tooltip>
               </div>
