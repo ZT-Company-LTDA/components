@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal as ModalUI,
   ModalContent,
@@ -37,6 +37,7 @@ export default function Modal({
   isUpdate,
   isView,
   isIcon,
+  id
 }: {
   trigger: JSX.Element;
   elementName: string;
@@ -47,8 +48,55 @@ export default function Modal({
   isUpdate?: boolean;
   isView?: boolean;
   isIcon?: boolean;
+  id?: string | number;
 }) {
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  // Efeito que é disparado quando a modal é aberta
+  useEffect(() => {
+    const data = {
+      "name": "Ana Souza",
+      "password": "senhaSegura789",
+      "clinicId": 1,
+      "email": "ana.souza@exemplo.com",
+      "roleId": 3,
+      "responsibleId":1,
+      "patient": {
+        "name": "Ana Souza",
+        "userId": 2,
+        "birthDate": "2015-08-15T00:00:00.000Z",
+        "address": "Rua D, 789, Cidade E",
+        "rg": "SP-65.432.987",
+        "cpf": "987.654.321-00",
+        "phoneNumber": "987654321",
+        "isLegalAge": false
+      },
+      "parent": {
+        "name": "Maria Souza",
+        "phoneNumber": "123456789",
+        "address": "Rua D, 789, Cidade E",
+        "cpf": "123.456.789-00",
+        "rg": "MG-12.345.678"
+      }
+    }
+    
+    if (isOpen && id) {
+      // Função para buscar os dados com base no ID
+      const fetchData = async () => {
+        try {
+          // const response = await fetch(`/api/endpoint/${id}`);
+          // const data = await response.json();
+          setInputValues(data); // Preenche o estado com os dados recebidos
+        } catch (error) {
+          console.error("Erro ao buscar os dados:", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [isOpen, id]);
+
 
   // Estado para armazenar os valores dos inputs
   const [inputValues, setInputValues] = useState<Record<string, any>>({});
@@ -72,18 +120,19 @@ export default function Modal({
     <>
       {isIcon && <div onClick={onOpen}>{trigger}</div>}
       {!isIcon && <Button className="" variant="flat" color="primary" onClick={onOpen}>{title}{trigger}</Button>}
-      <ModalUI isOpen={isOpen} onOpenChange={onOpenChange}>
+      <ModalUI size="5xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>
+              <ModalHeader className="flex flex-wrap gap-1">{title}</ModalHeader>
+              <ModalBody className="flex flex-wrap gap-4 overflow-y-scroll">
                 {isDelete && <h1>Deseja deletar o {elementName}?</h1>}
                 {inputs?.map((input) => (
                   <Input
                     key={input.name}
                     name={input.name}
                     placeholder={input.label}
+                    className="max-w-72"
                     value={typeof getNestedValue(inputValues, input.name.split(".")) === 'object'
                       ? ""
                       : getNestedValue(inputValues, input.name.split(".")) || ""}

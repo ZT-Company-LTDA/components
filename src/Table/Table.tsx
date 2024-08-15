@@ -229,10 +229,10 @@ export function Table({
                   aria-label="Action event example"
                   onAction={key => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>}>
+                  <DropdownItem key="new" startContent={<Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>}>
+                  <DropdownItem key="copy" startContent={<Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
@@ -251,12 +251,12 @@ export function Table({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>
+                    <Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>
+                    <Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
