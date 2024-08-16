@@ -20,7 +20,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
-import { AiOutlineClear, AiOutlineMore } from "react-icons/ai";
+import { AiOutlineClear, AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import useSWR from "swr";
 import { CiSearch } from "react-icons/ci";
 import ModalView from "./ModalCrud/ModalView";
@@ -30,8 +30,11 @@ import ModalEdit from "./ModalCrud/ModalEdit";
 import ModalDelete from "./ModalCrud/ModalDelete";
 import { useDebounce } from 'use-debounce';
 import { useTableCrudContext } from '../contexts/ContextTableCrud';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaUserEdit } from 'react-icons/fa';
 import axios from 'axios';
+import Modal from '../Modal/Modal';
+import { IoEyeOutline } from 'react-icons/io5';
+import { IoIosAddCircle } from 'react-icons/io';
 
 const statusColorMap: Record<string, ChipProps['color']> = {
   Ativo: 'success',
@@ -57,11 +60,13 @@ interface Size {
 }
 
 interface TableCrudProps {
-  columns: Columns[]
-  urlFetcher: string
-  token: string | undefined
-  elementName: string
-  size: string
+  columns: Columns[];
+  urlFetcher: string;
+  token: string | undefined;
+  elementName: string;
+  size: string;
+  modalInputs: Array<{label:string, value:string, name:string}>;
+  add?:boolean;
 }
 
 export function Table({
@@ -69,7 +74,9 @@ export function Table({
   urlFetcher,
   token,
   elementName,
-  size
+  size,
+  modalInputs,
+  add
 }: TableCrudProps) {
   const isMobile = useMediaQuery('(max-width: 768px)')
   const {filterValue, arrayFilters, page, setPage, clear, setClear} = useTableCrudContext()
@@ -222,17 +229,17 @@ export function Table({
                   aria-label="Action event example"
                   onAction={key => alert(key)}
                 >
-                  <DropdownItem key="new" startContent={<ModalView />}>
+                  <DropdownItem key="new" startContent={<Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>}>
                     Detalhes
                   </DropdownItem>
-                  <DropdownItem key="copy" startContent={<ModalEdit />}>
+                  <DropdownItem key="copy" startContent={<Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>}>
                     Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
                     className="text-danger"
                     color="danger"
-                    startContent={<ModalDelete />}
+                    startContent={<Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isIcon isDelete title={`Deletar ${elementName}`}/>}
                   >
                     Deletar {elementName}
                   </DropdownItem>
@@ -244,17 +251,17 @@ export function Table({
               <div className="relative flex items-center justify-center gap-4">
                 <Tooltip content="Detalhes">
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <ModalView />
+                    <Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<IoEyeOutline/>} isIcon title='Detalhes'/>
                   </span>
                 </Tooltip>
                 <Tooltip content={`Editar ${elementName}`}>
                   <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <ModalEdit />
+                    <Modal id={1} elementName={elementName} inputs={modalInputs} trigger={<FaUserEdit/>} isIcon title={`Editar ${elementName}`}/>
                   </span>
                 </Tooltip>
                 <Tooltip color="danger" content={`Excluir ${elementName}`}>
                   <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <ModalDelete />
+                    <Modal elementName={elementName} trigger={<AiOutlineUserDelete/>} isIcon isDelete title={`Deletar ${elementName}`}/>
                   </span>
                 </Tooltip>
               </div>
@@ -274,13 +281,14 @@ export function Table({
           <div className='flex gap-6'>
             <Button variant='solid' color='primary' endContent={<FaSearch />} onClick={searchTable}>{isMobile? "" : <p>Pesquisar</p>}</Button>
             <Button variant='shadow' color='default' endContent={<AiOutlineClear className='w-4 h-4' />} onClick={clearFilters} className='text-gray-200 font-medium bg-gray-800'>{isMobile? "" : <p>Limpar Filtros</p>}</Button>
+            {(add && !isMobile) && <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle className='w-5 h-5'/>} isAdd title={`Adicionar ${elementName}`}/>}
           </div>
           <label className="flex items-center text-default-400 text-small">
             {!isMobile && "Qtd por páginas"}
             <select
               className="bg-transparent outline-none text-default-400 text-small"
               onChange={onRowsPerPageChange}
-            >
+              >
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="50">50</option>
@@ -300,6 +308,12 @@ export function Table({
   ])
 
   return (
+    <>    
+    {(add && isMobile) && 
+      <div className='mt-4'>
+        <Modal inputs={modalInputs} elementName={elementName} trigger={<IoIosAddCircle className='w-5 h-5'/>} isAdd title={`Adicionar ${elementName}`}/>
+      </div>
+    }
     <TableUI
       aria-label="Tabela de clientes"
       className="mt-6"
@@ -341,5 +355,6 @@ export function Table({
         )}
       </TableBody>
     </TableUI>
+    </>
   )
 }
