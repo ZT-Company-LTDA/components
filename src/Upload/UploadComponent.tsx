@@ -3,10 +3,16 @@ import React from 'react'
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { IoCloudUploadOutline } from 'react-icons/io5'
+import CustomDrawer from '../Drawer/CustomDrawer'
+import { Listbox, ListboxItem, Tooltip } from '@nextui-org/react'
+import { MdDelete } from 'react-icons/md'
+import { GrDocumentPdf } from 'react-icons/gr'
 
-interface Props {}
+interface Props {
+  shwoAcceptFiles: boolean
+}
 
-const UploadComponent: NextPage<Props> = ({}) => {
+const UploadComponent = ({shwoAcceptFiles}:Props) => {
   const [documents, setDocuments] = useState<File[]>()
   
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -37,47 +43,88 @@ const UploadComponent: NextPage<Props> = ({}) => {
     onDrop
   })
   
+  const AcceptedFileItems = () => {
+    return (
+      <CustomDrawer direction="bottom" lengthFiles={documents?.length}>
+        <Listbox
+          items={documents ?? []}
+          aria-label="Upload Drawer"
+          // onAction={(key) => console.log('key :>> ', key)}
+          emptyContent={'Sem arquivos para fazer upload.'}
+        >
+          {item => (
+            <ListboxItem
+              key={item.name}
+              color={'default'}
+              endContent={
+                <MdDelete
+                  onClick={() => {
+                    setDocuments(
+                      documents?.filter(doc => doc.name != item.name)
+                    )
+                  }}
+                  className='hover:text-red-600 hover:bg-gray-300 rounded-full hover:scale-110 transition-transform duration-200 w-5 h-5'
+                />
+              }
+              startContent={<GrDocumentPdf className="text-red-600" />}
+            >
+              <Tooltip placement="left-end" content={item.name} key={item.name} closeDelay={0}>
+                {item.name}
+              </Tooltip>
+            </ListboxItem>
+          )}
+        </Listbox>
+      </CustomDrawer>
+    )
+  }
+
   return (
-    <div
-    {...getRootProps({ className: 'dropzone' })}
-    className={`${'border-[3px] border-gray-300 border-dashed mb-4 rounded-xl max-md:w-full'} ${
-      isDragActive ? 'bg-gray-200' : ''
-    }`}
-    >
-      <input {...getInputProps()} />
-      <div className="flex flex-col items-center justify-center gap-6 h-full">
-        {isDragActive ? (
-          <>
-            <IoCloudUploadOutline
-              size="12vh"
-              className="text-gray-400 opacity-40"
-            />
-            <button
-              type="button"
-              onClick={() => open}
-              className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 p-4 text-xs"
-              disabled={true}
-            >
-              Selecionar arquivos
-            </button>
-          </>
-        ) : (
-          <>
-            <IoCloudUploadOutline
-              size="12vh"
-              className="text-gray-400 opacity-40"
-            />
-            <button
-              type="button"
-              onClick={() => open}
-              className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 text-xs"
-            >
-              Selecionar arquivos
-            </button>
-          </>
-        )}
+    <>
+      <div
+      {...getRootProps({ className: 'dropzone' })}
+      className={`${'border-[3px] border-gray-300 border-dashed mb-4 rounded-xl max-md:w-full'} ${
+        isDragActive ? 'bg-gray-200' : ''
+      }`}
+      >
+        <input {...getInputProps()} />
+        <div className="flex flex-col items-center justify-center gap-6 h-full">
+          {isDragActive ? (
+            <>
+              <IoCloudUploadOutline
+                size="12vh"
+                className="text-gray-400 opacity-40"
+              />
+              <button
+                type="button"
+                onClick={() => open}
+                className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 p-4 text-xs"
+                disabled={true}
+              >
+                Selecionar arquivos
+              </button>
+            </>
+          ) : (
+            <>
+              <IoCloudUploadOutline
+                size="12vh"
+                className="text-gray-400 opacity-40"
+              />
+              <button
+                type="button"
+                onClick={() => open}
+                className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 text-xs"
+              >
+                Selecionar arquivos
+              </button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+      {
+        shwoAcceptFiles &&
+        <AcceptedFileItems/>
+      }
+    </>
   )
 }
 
