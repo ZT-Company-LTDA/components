@@ -7,13 +7,15 @@ import CustomDrawer from '../Drawer/CustomDrawer'
 import { Listbox, ListboxItem, Tooltip } from '@nextui-org/react'
 import { MdDelete } from 'react-icons/md'
 import { GrDocumentPdf } from 'react-icons/gr'
+import toast from 'react-hot-toast'
 
 interface Props {
-  shwoAcceptFiles: boolean
+  showAcceptFiles?: boolean;
+  documents: File[] | undefined;
+  setDocuments:React.Dispatch<React.SetStateAction<File[] | undefined>>;
 }
 
-const UploadComponent = ({shwoAcceptFiles}:Props) => {
-  const [documents, setDocuments] = useState<File[]>()
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments}:Props) => {
   
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach(file => {
@@ -121,11 +123,9 @@ const UploadComponent = ({shwoAcceptFiles}:Props) => {
         </div>
       </div>
       {
-        shwoAcceptFiles &&
+        showAcceptFiles &&
         <AcceptedFileItems/>
       }
     </>
   )
 }
-
-export default UploadComponent
