@@ -37,7 +37,8 @@ export default function Modal({
   isUpdate,
   isView,
   isIcon,
-  id
+  id,
+  urlModalGetElement
 }: {
   trigger: JSX.Element;
   elementName: string;
@@ -49,52 +50,55 @@ export default function Modal({
   isView?: boolean;
   isIcon?: boolean;
   id?: string | number;
+  urlModalGetElement?: string;
 }) {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  // Efeito que é disparado quando a modal é aberta
   useEffect(() => {
-    const data = {
-      "name": "Ana Souza",
-      "password": "senhaSegura789",
-      "clinicId": 1,
-      "email": "ana.souza@exemplo.com",
-      "roleId": 3,
-      "responsibleId":1,
-      "patient": {
-        "name": "Ana Souza",
-        "userId": 2,
-        "birthDate": "2015-08-15T00:00:00.000Z",
-        "address": "Rua D, 789, Cidade E",
-        "rg": "SP-65.432.987",
-        "cpf": "987.654.321-00",
-        "phoneNumber": "987654321",
-        "isLegalAge": false
-      },
-      "parent": {
-        "name": "Maria Souza",
-        "phoneNumber": "123456789",
-        "address": "Rua D, 789, Cidade E",
-        "cpf": "123.456.789-00",
-        "rg": "MG-12.345.678"
+    if(isUpdate || isView){
+      if (isOpen && id) {
+        const fetchData = async () => {
+          try {
+            const response = await fetch(`${urlModalGetElement}/${id}`);
+            const data = await response.json();
+            setInputValues(data); 
+            console.log(inputValues);
+          } catch (error) {
+            console.error("Erro ao buscar os dados:", error);
+          }
+        };
+  
+        fetchData();
       }
     }
+    // console.log(id);
+    // const data = {
+    //   "name": "Ana Souza",
+    //   "password": "senhaSegura789",
+    //   "clinicId": 1,
+    //   "email": "ana.souza@exemplo.com",
+    //   "roleId": 3,
+    //   "responsibleId":1,
+    //   "patient": {
+    //     "name": "Ana Souza",
+    //     "userId": 2,
+    //     "birthDate": "2015-08-15T00:00:00.000Z",
+    //     "address": "Rua D, 789, Cidade E",
+    //     "rg": "SP-65.432.987",
+    //     "cpf": "987.654.321-00",
+    //     "phoneNumber": "987654321",
+    //     "isLegalAge": false
+    //   },
+    //   "parent": {
+    //     "name": "Maria Souza",
+    //     "phoneNumber": "123456789",
+    //     "address": "Rua D, 789, Cidade E",
+    //     "cpf": "123.456.789-00",
+    //     "rg": "MG-12.345.678"
+    //   }
+    // }
     
-    if (isOpen && id) {
-      // Função para buscar os dados com base no ID
-      const fetchData = async () => {
-        try {
-          // const response = await fetch(`/api/endpoint/${id}`);
-          // const data = await response.json();
-          setInputValues(data); // Preenche o estado com os dados recebidos
-        } catch (error) {
-          console.error("Erro ao buscar os dados:", error);
-        }
-      };
-
-      fetchData();
-    }
   }, [isOpen, id]);
 
 
@@ -107,7 +111,7 @@ export default function Modal({
     setInputValues((prevValues) => {
       const updatedValues = { ...prevValues };
       const path = name.split(".");
-      setNestedValue(updatedValues, path, value); // Cria ou atualiza o objeto aninhado
+      setNestedValue(updatedValues, path, value);
       return updatedValues;
     });
   };
