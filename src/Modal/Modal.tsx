@@ -56,6 +56,8 @@ export default function Modal({
     trigger?: () => boolean;
     type: string;
     placeholder?: string;
+    autocompleteUrl?:string;
+    hiddenValue?:string;
   }>;
   isDelete?: boolean;
   isAdd?: boolean;
@@ -156,10 +158,11 @@ export default function Modal({
                 {inputs?.map((input) => (
                   <>
                     {input.type == "checkbox" && (
-                      <Checkbox defaultSelected>{input.label}</Checkbox>
+                      <Checkbox key={input.name} defaultSelected>{input.label}</Checkbox>
                     )}
                     {input.type == "date" && (
                       <DatePicker
+                        key={input.name}
                         label={input.label}
                         variant="faded"
                         className="max-w-72"

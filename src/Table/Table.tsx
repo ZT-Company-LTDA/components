@@ -69,7 +69,7 @@ interface TableCrudProps {
   token: string | undefined;
   elementName: string;
   size: string;
-  modalInputs: Array<{ label: string; value: string; name: string, trigger?:() => boolean, type:string, placeholder:string }>;
+  modalInputs: Array<{ label: string; value: string; name: string, trigger?:() => boolean, type:string, placeholder:string, autocompleteUrl?:string, hiddenValue?:string }>;
   add?: boolean;
   urlModalGetElement?: string;
 }
