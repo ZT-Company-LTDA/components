@@ -56,8 +56,8 @@ export default function Modal({
     trigger?: () => boolean;
     type: string;
     placeholder?: string;
-    autocompleteUrl?:string;
-    hiddenValue?:string;
+    autocompleteUrl?: string;
+    hiddenValue?: string;
   }>;
   isDelete?: boolean;
   isAdd?: boolean;
@@ -144,6 +144,7 @@ export default function Modal({
       <ModalUI
         size={!isDelete ? "5xl" : "xl"}
         isOpen={isOpen}
+        key={elementName}
         onOpenChange={onOpenChange}
         scrollBehavior="inside"
       >
@@ -154,11 +155,17 @@ export default function Modal({
                 {title}
               </ModalHeader>
               <ModalBody className="flex flex-wrap gap-4 overflow-y-scroll">
-                {isDelete && <h1>Deseja deletar o {elementName} {inputValues.name}?</h1>}
+                {isDelete && (
+                  <h1>
+                    Deseja deletar o {elementName} {inputValues.name}?
+                  </h1>
+                )}
                 {inputs?.map((input) => (
-                  <>
+                  <React.Fragment key={input.name}>
                     {input.type == "checkbox" && (
-                      <Checkbox key={input.name} defaultSelected>{input.label}</Checkbox>
+                      <Checkbox key={input.name} defaultSelected>
+                        {input.label}
+                      </Checkbox>
                     )}
                     {input.type == "date" && (
                       <DatePicker
@@ -223,7 +230,7 @@ export default function Modal({
                         onChange={handleInputChange}
                       />
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </ModalBody>
               <ModalFooter>
