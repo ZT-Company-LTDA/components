@@ -69,7 +69,7 @@ interface TableCrudProps {
   token: string | undefined;
   elementName: string;
   size: string;
-  modalInputs: Array<{ label: string; value: string; name: string }>;
+  modalInputs: Array<{ label: string; value: string; name: string, trigger?:() => boolean, type:string, placeholder:string }>;
   add?: boolean;
   urlModalGetElement?: string;
 }
@@ -282,6 +282,7 @@ export function Table({
                         isIcon
                         isDelete
                         title={`Deletar ${elementName}`}
+                        urlModalGetElement={urlModalGetElement}
                       />
                     }
                   >
@@ -330,6 +331,7 @@ export function Table({
                       isIcon
                       isDelete
                       title={`Deletar ${elementName}`}
+                      urlModalGetElement={urlModalGetElement}
                     />
                   </span>
                 </Tooltip>

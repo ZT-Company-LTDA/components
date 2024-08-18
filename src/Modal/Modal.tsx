@@ -8,13 +8,16 @@ import {
   Button,
   useDisclosure,
   Input,
+  Checkbox,
+  DatePicker,
 } from "@nextui-org/react";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 
 // Função utilitária para criar ou atualizar objetos aninhados
 const setNestedValue = (obj: any, path: string[], value: string) => {
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
-    if (!acc[key] || typeof acc[key] !== 'object') {
+    if (!acc[key] || typeof acc[key] !== "object") {
       acc[key] = {};
     }
     return acc[key];
@@ -24,7 +27,10 @@ const setNestedValue = (obj: any, path: string[], value: string) => {
 
 // Função para obter valores aninhados de forma segura
 const getNestedValue = (obj: any, path: string[]) => {
-  return path.reduce((acc, key) => (acc && acc[key] !== undefined) ? acc[key] : undefined, obj);
+  return path.reduce(
+    (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
+    obj
+  );
 };
 
 export default function Modal({
@@ -38,12 +44,19 @@ export default function Modal({
   isView,
   isIcon,
   id,
-  urlModalGetElement
+  urlModalGetElement,
 }: {
   trigger: JSX.Element;
   elementName: string;
   title: string;
-  inputs?: Array<{ label: string; value: string; name: string }>;
+  inputs?: Array<{
+    label: string;
+    value: string;
+    name: string;
+    trigger?: () => boolean;
+    type: string;
+    placeholder?: string;
+  }>;
   isDelete?: boolean;
   isAdd?: boolean;
   isUpdate?: boolean;
@@ -52,23 +65,22 @@ export default function Modal({
   id?: string | number;
   urlModalGetElement?: string;
 }) {
-
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
-    if(isUpdate || isView){
+    if (isUpdate || isView || isDelete) {
       if (isOpen && id) {
         const fetchData = async () => {
           try {
             const response = await fetch(`${urlModalGetElement}/${id}`);
             const data = await response.json();
-            setInputValues(data); 
+            setInputValues(data);
             console.log(inputValues);
           } catch (error) {
             console.error("Erro ao buscar os dados:", error);
           }
         };
-  
+
         fetchData();
       }
     }
@@ -98,9 +110,7 @@ export default function Modal({
     //     "rg": "MG-12.345.678"
     //   }
     // }
-    
   }, [isOpen, id]);
-
 
   // Estado para armazenar os valores dos inputs
   const [inputValues, setInputValues] = useState<Record<string, any>>({});
@@ -118,39 +128,110 @@ export default function Modal({
 
   const handleClick = () => {
     console.log(inputValues);
-  }
+  };
 
   return (
     <>
       {isIcon && <div onClick={onOpen}>{trigger}</div>}
-      {!isIcon && <Button className="" variant="flat" color="primary" onClick={onOpen}>{title}{trigger}</Button>}
-      <ModalUI size="5xl" isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
+      {!isIcon && (
+        <Button className="" variant="flat" color="primary" onClick={onOpen}>
+          {title}
+          {trigger}
+        </Button>
+      )}
+      <ModalUI
+        size={!isDelete ? "5xl" : "xl"}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        scrollBehavior="inside"
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-wrap gap-1">{title}</ModalHeader>
+              <ModalHeader className="flex flex-wrap gap-1">
+                {title}
+              </ModalHeader>
               <ModalBody className="flex flex-wrap gap-4 overflow-y-scroll">
-                {isDelete && <h1>Deseja deletar o {elementName}?</h1>}
+                {isDelete && <h1>Deseja deletar o {elementName} {inputValues.name}?</h1>}
                 {inputs?.map((input) => (
-                  <Input
-                    key={input.name}
-                    name={input.name}
-                    placeholder={input.label}
-                    className="max-w-72"
-                    value={typeof getNestedValue(inputValues, input.name.split(".")) === 'object'
-                      ? ""
-                      : getNestedValue(inputValues, input.name.split(".")) || ""}
-                    onChange={handleInputChange}
-                  />
+                  <>
+                    {input.type == "checkbox" && (
+                      <Checkbox defaultSelected>{input.label}</Checkbox>
+                    )}
+                    {input.type == "date" && (
+                      <DatePicker
+                        label={input.label}
+                        variant="faded"
+                        className="max-w-72"
+                        defaultValue={parseAbsoluteToLocal(
+                          typeof getNestedValue(
+                            inputValues,
+                            input.name.split(".")
+                          ) === "object"
+                            ? ""
+                            : getNestedValue(
+                                inputValues,
+                                input.name.split(".")
+                              ) || "2021-11-07T07:45:00Z"
+                        )}
+                      />
+                    )}
+
+                    {input.type == "text" && (
+                      <Input
+                        label={input.label}
+                        key={input.name}
+                        name={input.name}
+                        placeholder={input.placeholder}
+                        className="max-w-72"
+                        value={
+                          typeof getNestedValue(
+                            inputValues,
+                            input.name.split(".")
+                          ) === "object"
+                            ? ""
+                            : getNestedValue(
+                                inputValues,
+                                input.name.split(".")
+                              ) || ""
+                        }
+                        onChange={handleInputChange}
+                      />
+                    )}
+                    {input.type == "password" && isAdd && (
+                      <Input
+                        label={input.label}
+                        key={input.name}
+                        name={input.name}
+                        placeholder={input.placeholder}
+                        className="max-w-72"
+                        type="password"
+                        value={
+                          typeof getNestedValue(
+                            inputValues,
+                            input.name.split(".")
+                          ) === "object"
+                            ? ""
+                            : getNestedValue(
+                                inputValues,
+                                input.name.split(".")
+                              ) || ""
+                        }
+                        onChange={handleInputChange}
+                      />
+                    )}
+                  </>
                 ))}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Fechar
                 </Button>
-                <Button color="primary" onPress={handleClick}>
-                  Confirmar
-                </Button>
+                {!isView && (
+                  <Button color="primary" onPress={handleClick}>
+                    Confirmar
+                  </Button>
+                )}
               </ModalFooter>
             </>
           )}
