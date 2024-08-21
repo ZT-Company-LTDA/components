@@ -12,6 +12,9 @@ import {
   DatePicker,
 } from "@nextui-org/react";
 import { parseAbsoluteToLocal } from "@internationalized/date";
+import { useSession } from "next-auth/react";
+import { Select } from "../Select/Select";
+
 
 
 interface CustomModalProps{
@@ -39,7 +42,7 @@ interface CustomModalProps{
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
-const setNestedValue = (obj: any, path: string[], value: string) => {
+export const setNestedValue = (obj: any, path: string[], value: string | number) => {
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
     if (!acc[key] || typeof acc[key] !== "object") {
@@ -73,6 +76,8 @@ export default function Modal({
   mobile
 }: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (isUpdate || isView || isDelete) {
@@ -247,6 +252,9 @@ export default function Modal({
                         }
                         onChange={handleInputChange}
                       />
+                    )}
+                    {input.type == "select" && (
+                      <Select name={input.name} elementName={elementName} url={input.autocompleteUrl!} key={input.name} label={input.label} setValue={setInputValues}/>
                     )}
                   </React.Fragment>
                 ))}
