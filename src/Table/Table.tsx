@@ -234,44 +234,55 @@ export function Table({
                 </DropdownTrigger>
                 <DropdownMenu
                   aria-label="Action event example"
-                  onAction={(key) => alert(key)}
+                  onAction={(key) => {
+                    if (key == "info") {
+                      console.log('keyinfo :>> ', key);
+                    }
+              
+                    if (key == "edit") {
+                      console.log('keyedit :>> ', key);
+                    }
+              
+                    if (key == "delete") {
+                      console.log('keydelete :>> ', key);
+                    }
+                  }}
                 >
                   <DropdownItem
-                    key="new"
+                    key="info"
+                    isReadOnly
                     startContent={
                       <Modal
                         id={element.id}
                         elementName={elementName}
                         inputs={modalInputs}
                         trigger={<IoEyeOutline />}
-                        isIcon
                         isView
+                        mobile={isMobile}
                         title="Detalhes"
                         urlModalGetElement={urlModalGetElement}
                       />
                     }
                   >
-                    Detalhes
                   </DropdownItem>
                   <DropdownItem
-                    key="copy"
+                    key="edit"
                     startContent={
                       <Modal
                         id={element.id}
                         elementName={elementName}
                         inputs={modalInputs}
                         trigger={<FaUserEdit />}
-                        isIcon
+                        mobile={isMobile}
                         isUpdate
                         title={`Editar ${elementName}`}
                         urlModalGetElement={urlModalGetElement}
                       />
                     }
                   >
-                    Editar {elementName}
                   </DropdownItem>
                   <DropdownItem
-                    key="edit"
+                    key="delete"
                     className="text-danger"
                     color="danger"
                     startContent={
@@ -279,14 +290,13 @@ export function Table({
                         id={element.id}
                         elementName={elementName}
                         trigger={<AiOutlineUserDelete />}
-                        isIcon
+                        mobile={isMobile}
                         isDelete
                         title={`Deletar ${elementName}`}
                         urlModalGetElement={urlModalGetElement}
                       />
                     }
                   >
-                    Deletar {elementName}
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
