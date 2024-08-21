@@ -18,6 +18,8 @@ interface SelectProps {
   name: string;
   isReadOnly?: boolean;
   setValue: (value: React.SetStateAction<Record<string, any>>) => void;
+  value?: string;
+  fill?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -27,6 +29,8 @@ export const Select: React.FC<SelectProps> = ({
   setValue,
   name,
   isReadOnly,
+  value,
+  fill
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [elements, setElements] = useState<ResultElement[]>([]);
@@ -81,6 +85,12 @@ export const Select: React.FC<SelectProps> = ({
     setShowDropdown(false);
     setClicked(!clicked);
   };
+
+  useEffect(() => {
+    if(fill && value) {
+      setSearchTerm(value);
+    }
+  })
 
   return (
     <div onClick={() => {

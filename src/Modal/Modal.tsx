@@ -399,6 +399,16 @@ export default function Modal({
                               label={input.label}
                               isReadOnly={isView}
                               setValue={setInputValues}
+                              fill={!isAdd ? true : false}
+                              value={typeof getNestedValue(
+                                inputValues,
+                                input.name.split(".")
+                              ) === "object"
+                                ? ""
+                                : getNestedValue(
+                                    inputValues,
+                                    input.name.split(".")
+                                  ) || ""}
                             />
                           )}
                         </>
