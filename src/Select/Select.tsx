@@ -15,10 +15,11 @@ interface SelectProps {
   url: string;
   label: string;
   name:string;
+  isReadOnly?: boolean;
   setValue: (value: React.SetStateAction<Record<string, any>>) => void
 }
 
-export const Select: React.FC<SelectProps> = ({ elementName, url, label, setValue, name }) => {
+export const Select: React.FC<SelectProps> = ({ elementName, url, label, setValue, name, isReadOnly }) => {
   
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [elements, setElements] = useState<ResultElement[]>([]);
@@ -76,6 +77,7 @@ export const Select: React.FC<SelectProps> = ({ elementName, url, label, setValu
         type="text"
         value={searchTerm}
         onChange={handleInputChange}
+        isReadOnly={isReadOnly}
         placeholder={`Digite o nome do ${elementName}`}
         className="max-w-72"
         label={label}

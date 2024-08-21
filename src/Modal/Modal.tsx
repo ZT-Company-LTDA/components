@@ -10,14 +10,16 @@ import {
   Input,
   Checkbox,
   DatePicker,
+  Skeleton, // Importando Skeleton
 } from "@nextui-org/react";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
 import axios from "axios";
+import { MdError } from "react-icons/md";
+import { AiFillCheckCircle } from "react-icons/ai";
 
-
-interface CustomModalProps{
+interface CustomModalProps {
   trigger: JSX.Element;
   elementName: string;
   title: string;
@@ -42,7 +44,11 @@ interface CustomModalProps{
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
-export const setNestedValue = (obj: any, path: string[], value: string | number | Date) => {
+export const setNestedValue = (
+  obj: any,
+  path: string[],
+  value: string | number | Date
+) => {
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
     if (!acc[key] || typeof acc[key] !== "object") {
@@ -61,7 +67,9 @@ const getNestedValue = (obj: any, path: string[]) => {
   );
 };
 
-const toZonedDateTime = (dateString: string | undefined): ZonedDateTime | undefined => {
+const toZonedDateTime = (
+  dateString: string | undefined
+): ZonedDateTime | undefined => {
   if (!dateString) return undefined;
 
   try {
@@ -74,15 +82,24 @@ const toZonedDateTime = (dateString: string | undefined): ZonedDateTime | undefi
     const minute = date.getUTCMinutes();
     const second = date.getUTCSeconds();
     const millisecond = date.getUTCMilliseconds();
-    const timeZone = 'UTC'; // Ajuste conforme necessário
+    const timeZone = "UTC"; // Ajuste conforme necessário
 
-    return new ZonedDateTime(year, month, day, timeZone, 0, hour, minute, second, millisecond);
+    return new ZonedDateTime(
+      year,
+      month,
+      day,
+      timeZone,
+      0,
+      hour,
+      minute,
+      second,
+      millisecond
+    );
   } catch (error) {
     console.error("Erro ao converter data:", error);
     return undefined;
   }
 };
-
 
 export default function Modal({
   trigger,
@@ -96,15 +113,22 @@ export default function Modal({
   isIcon,
   id,
   urlModalGetElement,
-  mobile
+  mobile,
 }: CustomModalProps) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
+  const [showErrorIcon, setShowErrorIcon] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const { data: session } = useSession();
 
   useEffect(() => {
     if (isUpdate || isView || isDelete) {
       if (isOpen && id) {
+        setIsLoading(true);
         const fetchData = async () => {
           try {
             const response = await fetch(`${urlModalGetElement}/${id}`);
@@ -113,6 +137,8 @@ export default function Modal({
             console.log(inputValues);
           } catch (error) {
             console.error("Erro ao buscar os dados:", error);
+          } finally {
+            setIsLoading(false);
           }
         };
 
@@ -138,25 +164,68 @@ export default function Modal({
   const handleInputDateChange = (date: ZonedDateTime, path: string) => {
     setInputValues((prevValues) => {
       const updatedValues = { ...prevValues };
-      const dateTime = date.toString()
+      const dateTime = date.toString();
       setNestedValue(updatedValues, path.split("."), new Date(dateTime));
       return updatedValues;
     });
   };
 
-  const handleClick = () => {
-    console.log(inputValues);
-    axios.post('http://localhost:3001/users', inputValues, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => {
-      console.log('Response:', response.data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+  const handleClick = async () => {
+    setIsSubmitting(true); // Inicia o estado de submissão
+    setProgress(10); // Inicia a barra de progresso
+    setShowSuccessIcon(false);
+    setShowErrorIcon(false); // Garante que o ícone de erro não apareça antes do tempo
+    setErrorMessage(""); // Reseta a mensagem de erro
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/users",
+        inputValues,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          onUploadProgress: (progressEvent) => {
+            const total = progressEvent.total || 1;
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / total
+            );
+            setProgress(percentCompleted);
+          },
+        }
+      );
+
+      console.log("Response:", response.data);
+      setProgress(100);
+      setShowSuccessIcon(true);
+      setTimeout(() => {
+        setShowSuccessIcon(false);
+        onClose();
+      }, 2500);
+    } catch (error: unknown) {
+      console.error("Error:", error);
+    
+      setShowErrorIcon(true);
+      setTimeout(() => {
+        setShowErrorIcon(false);
+        onClose();
+      }, 2500);
+    
+      if (axios.isAxiosError(error) && error.response) {
+        // Verifica se o erro é do axios e se existe uma resposta
+        setErrorMessage(
+          error.response.data?.message || "Ocorreu um erro no servidor. Tente novamente."
+        );
+      } else if (error instanceof Error) {
+        // Trata outros tipos de erro genéricos
+        setErrorMessage(error.message || "Ocorreu um erro. Tente novamente.");
+      } else {
+        setErrorMessage("Ocorreu um erro desconhecido. Tente novamente.");
+      }
+    }
+     finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
@@ -176,25 +245,19 @@ export default function Modal({
 
   return (
     <>
-    
-      
-      {
-        mobile 
-          ?
+      {mobile ? (
         <div onClick={onOpen} className="flex gap-2 w-full">
           {trigger}
           {title}
-        </div> 
-          :
-        isIcon 
-          ?
+        </div>
+      ) : isIcon ? (
         <div onClick={onOpen}>{trigger}</div>
-          :
+      ) : (
         <Button className="" variant="flat" color="primary" onClick={onOpen}>
-        {title}
-        {trigger}
+          {title}
+          {trigger}
         </Button>
-      }
+      )}
 
       <ModalUI
         size={!isDelete ? "5xl" : "xl"}
@@ -215,92 +278,151 @@ export default function Modal({
                     Deseja deletar o {elementName} {inputValues.name}?
                   </h1>
                 )}
-                {inputs?.map((input) => (
-                  <React.Fragment key={input.name}>
-                    {input.type == "checkbox" && (
-                      <Checkbox key={input.name} defaultSelected>
-                        {input.label}
-                      </Checkbox>
-                    )}
-                    {input.type == "date" && (
-                      <DatePicker
-                      key={input.name}
-                      label={input.label}
-                      variant="faded"
-                      className="max-w-72"
-                      onChange={(date) => handleInputDateChange(date, input.name)}
-                      defaultValue={
-                        toZonedDateTime(
-                          typeof getNestedValue(
-                            inputValues,
-                            input.name.split(".")
-                          ) === "object"
-                            ? undefined
-                            : getNestedValue(
-                                inputValues,
-                                input.name.split(".")
-                              )
-                        )
-                      }
-                    />
-                    )}
 
-                    {input.type == "text" && (
-                      <Input
-                        label={input.label}
-                        key={input.name}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        className="max-w-72"
-                        value={
-                          typeof getNestedValue(
-                            inputValues,
-                            input.name.split(".")
-                          ) === "object"
-                            ? ""
-                            : getNestedValue(
-                                inputValues,
-                                input.name.split(".")
-                              ) || ""
-                        }
-                        onChange={handleInputChange}
-                      />
-                    )}
-                    {input.type == "password" && isAdd && (
-                      <Input
-                        label={input.label}
-                        key={input.name}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        className="max-w-72"
-                        type="password"
-                        value={
-                          typeof getNestedValue(
-                            inputValues,
-                            input.name.split(".")
-                          ) === "object"
-                            ? ""
-                            : getNestedValue(
-                                inputValues,
-                                input.name.split(".")
-                              ) || ""
-                        }
-                        onChange={handleInputChange}
-                      />
-                    )}
-                    {input.type == "select" && (
-                      <Select name={input.name} elementName={elementName} url={input.autocompleteUrl!} key={input.name} label={input.label} setValue={setInputValues}/>
-                    )}
-                  </React.Fragment>
-                ))}
+                {showSuccessIcon ? (
+                  <div className="flex justify-center items-center h-20">
+                    <AiFillCheckCircle className="text-green-700 h-24 w-24" />
+                    <p className="text-green-700 mt-2">{elementName} adicionado com sucesso!</p>
+                  </div>
+                ) : showErrorIcon ? (
+                  <div className="flex flex-col justify-center items-center h-20">
+                    <MdError className="text-red-500 h-24 w-24" />
+                    <p className="text-red-500 mt-2">{errorMessage}</p>
+                  </div>
+                ) : isSubmitting ? (
+                  <div className="w-full">
+                    <div className="relative pt-1">
+                      <p className="mb-2">Adicionando {elementName}...</p>
+                      <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                        <div
+                          style={{ width: `${progress}%` }}
+                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-700 transition-all duration-300"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  inputs?.map((input) => (
+                    <React.Fragment key={input.name}>
+                      {isLoading &&
+                      input.type != "hidden" &&
+                      input.type != "password" ? (
+                        <Skeleton className="rounded-lg max-w-72">
+                          <div className="h-14 rounded-lg bg-default-300"></div>
+                        </Skeleton>
+                      ) : (
+                        <>
+                          {input.type == "checkbox" && (
+                            <Checkbox
+                              isReadOnly={isView}
+                              key={input.name}
+                              defaultSelected
+                            >
+                              {input.label}
+                            </Checkbox>
+                          )}
+                          {input.type == "date" && (
+                            <DatePicker
+                              key={input.name}
+                              label={input.label}
+                              variant="faded"
+                              className="max-w-72"
+                              onChange={(date) =>
+                                handleInputDateChange(date, input.name)
+                              }
+                              isReadOnly={isView}
+                              defaultValue={toZonedDateTime(
+                                typeof getNestedValue(
+                                  inputValues,
+                                  input.name.split(".")
+                                ) === "object"
+                                  ? undefined
+                                  : getNestedValue(
+                                      inputValues,
+                                      input.name.split(".")
+                                    )
+                              )}
+                            />
+                          )}
+
+                          {input.type == "text" && (
+                            <Input
+                              label={input.label}
+                              key={input.name}
+                              name={input.name}
+                              placeholder={input.placeholder}
+                              className="max-w-72"
+                              isReadOnly={isView}
+                              value={
+                                typeof getNestedValue(
+                                  inputValues,
+                                  input.name.split(".")
+                                ) === "object"
+                                  ? ""
+                                  : getNestedValue(
+                                      inputValues,
+                                      input.name.split(".")
+                                    ) || ""
+                              }
+                              onChange={handleInputChange}
+                            />
+                          )}
+                          {input.type == "password" && isAdd && (
+                            <Input
+                              label={input.label}
+                              key={input.name}
+                              name={input.name}
+                              placeholder={input.placeholder}
+                              className="max-w-72"
+                              isReadOnly={isView}
+                              type="password"
+                              value={
+                                typeof getNestedValue(
+                                  inputValues,
+                                  input.name.split(".")
+                                ) === "object"
+                                  ? ""
+                                  : getNestedValue(
+                                      inputValues,
+                                      input.name.split(".")
+                                    ) || ""
+                              }
+                              onChange={handleInputChange}
+                            />
+                          )}
+                          {input.type == "select" && (
+                            <Select
+                              name={input.name}
+                              elementName={elementName}
+                              url={input.autocompleteUrl!}
+                              key={input.name}
+                              label={input.label}
+                              isReadOnly={isView}
+                              setValue={setInputValues}
+                            />
+                          )}
+                        </>
+                      )}
+                    </React.Fragment>
+                  ))
+                )}
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={onClose}>
                   Fechar
                 </Button>
-                {!isView && (
-                  <Button color="primary" onPress={handleClick}>
-                    Confirmar
+                {!showSuccessIcon && !showErrorIcon && !isView && (
+                  <Button
+                    color={isDelete ? "danger" : "primary"}
+                    onPress={isDelete ? onClose : handleClick}
+                  >
+                    {isDelete
+                      ? "Deletar"
+                      : isAdd
+                      ? "Adicionar"
+                      : isUpdate
+                      ? "Atualizar"
+                      : "Salvar"}
                   </Button>
                 )}
               </ModalFooter>
