@@ -13,6 +13,31 @@ import {
 } from "@nextui-org/react";
 import { parseAbsoluteToLocal } from "@internationalized/date";
 
+
+interface CustomModalProps{
+  trigger: JSX.Element;
+  elementName: string;
+  title: string;
+  inputs?: Array<{
+    label: string;
+    value: string;
+    name: string;
+    trigger?: () => boolean;
+    type: string;
+    placeholder?: string;
+    autocompleteUrl?: string;
+    hiddenValue?: string;
+  }>;
+  isDelete?: boolean;
+  mobile?: boolean;
+  isAdd?: boolean;
+  isUpdate?: boolean;
+  isView?: boolean;
+  isIcon?: boolean;
+  id?: string | number;
+  urlModalGetElement?: string;
+}
+
 // Função utilitária para criar ou atualizar objetos aninhados
 const setNestedValue = (obj: any, path: string[], value: string) => {
   const lastKey = path.pop()!;
@@ -45,28 +70,8 @@ export default function Modal({
   isIcon,
   id,
   urlModalGetElement,
-}: {
-  trigger: JSX.Element;
-  elementName: string;
-  title: string;
-  inputs?: Array<{
-    label: string;
-    value: string;
-    name: string;
-    trigger?: () => boolean;
-    type: string;
-    placeholder?: string;
-    autocompleteUrl?: string;
-    hiddenValue?: string;
-  }>;
-  isDelete?: boolean;
-  isAdd?: boolean;
-  isUpdate?: boolean;
-  isView?: boolean;
-  isIcon?: boolean;
-  id?: string | number;
-  urlModalGetElement?: string;
-}) {
+  mobile
+}: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
@@ -134,13 +139,26 @@ export default function Modal({
 
   return (
     <>
-      {isIcon && <div onClick={onOpen}>{trigger}</div>}
-      {!isIcon && (
-        <Button className="" variant="flat" color="primary" onClick={onOpen}>
-          {title}
+    
+      
+      {
+        mobile 
+          ?
+        <div onClick={onOpen} className="flex gap-2 w-full">
           {trigger}
+          {title}
+        </div> 
+          :
+        isIcon 
+          ?
+        <div onClick={onOpen}>{trigger}</div>
+          :
+        <Button className="" variant="flat" color="primary" onClick={onOpen}>
+        {title}
+        {trigger}
         </Button>
-      )}
+      }
+
       <ModalUI
         size={!isDelete ? "5xl" : "xl"}
         isOpen={isOpen}
