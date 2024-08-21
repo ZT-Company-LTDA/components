@@ -11,13 +11,13 @@ import {
   Checkbox,
   DatePicker,
 } from "@nextui-org/react";
-import { parseAbsoluteToLocal } from "@internationalized/date";
+import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
 import { useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
-
+import axios from "axios";
 
 // Função utilitária para criar ou atualizar objetos aninhados
-export const setNestedValue = (obj: any, path: string[], value: string | number) => {
+export const setNestedValue = (obj: any, path: string[], value: string | number | Date) => {
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
     if (!acc[key] || typeof acc[key] !== "object") {
@@ -35,6 +35,29 @@ const getNestedValue = (obj: any, path: string[]) => {
     obj
   );
 };
+
+const toZonedDateTime = (dateString: string | undefined): ZonedDateTime | undefined => {
+  if (!dateString) return undefined;
+
+  try {
+    // Converte a string para uma instância de Date
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth() + 1; // Mês é zero-indexado
+    const day = date.getUTCDate();
+    const hour = date.getUTCHours();
+    const minute = date.getUTCMinutes();
+    const second = date.getUTCSeconds();
+    const millisecond = date.getUTCMilliseconds();
+    const timeZone = 'UTC'; // Ajuste conforme necessário
+
+    return new ZonedDateTime(year, month, day, timeZone, 0, hour, minute, second, millisecond);
+  } catch (error) {
+    console.error("Erro ao converter data:", error);
+    return undefined;
+  }
+};
+
 
 export default function Modal({
   trigger,
@@ -91,32 +114,6 @@ export default function Modal({
         fetchData();
       }
     }
-    // console.log(id);
-    // const data = {
-    //   "name": "Ana Souza",
-    //   "password": "senhaSegura789",
-    //   "clinicId": 1,
-    //   "email": "ana.souza@exemplo.com",
-    //   "roleId": 3,
-    //   "responsibleId":1,
-    //   "patient": {
-    //     "name": "Ana Souza",
-    //     "userId": 2,
-    //     "birthDate": "2015-08-15T00:00:00.000Z",
-    //     "address": "Rua D, 789, Cidade E",
-    //     "rg": "SP-65.432.987",
-    //     "cpf": "987.654.321-00",
-    //     "phoneNumber": "987654321",
-    //     "isLegalAge": false
-    //   },
-    //   "parent": {
-    //     "name": "Maria Souza",
-    //     "phoneNumber": "123456789",
-    //     "address": "Rua D, 789, Cidade E",
-    //     "cpf": "123.456.789-00",
-    //     "rg": "MG-12.345.678"
-    //   }
-    // }
   }, [isOpen, id]);
 
   // Estado para armazenar os valores dos inputs
@@ -133,9 +130,44 @@ export default function Modal({
     });
   };
 
+  const handleInputDateChange = (date: ZonedDateTime, path: string) => {
+    setInputValues((prevValues) => {
+      const updatedValues = { ...prevValues };
+      const dateTime = date.toString()
+      setNestedValue(updatedValues, path.split("."), new Date(dateTime));
+      return updatedValues;
+    });
+  };
+
   const handleClick = () => {
     console.log(inputValues);
+    axios.post('http://localhost:3001/users', inputValues, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      console.log('Response:', response.data);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
   };
+
+  useEffect(() => {
+    if (inputs) {
+      inputs.forEach((input) => {
+        if (input.type === "hidden" && input.hiddenValue) {
+          setInputValues((prevValues) => {
+            const updatedValues = { ...prevValues };
+            const path = input.name.split(".");
+            setNestedValue(updatedValues, path, parseInt(input.hiddenValue!));
+            return updatedValues;
+          });
+        }
+      });
+    }
+  }, [inputs]);
 
   return (
     <>
@@ -174,22 +206,25 @@ export default function Modal({
                     )}
                     {input.type == "date" && (
                       <DatePicker
-                        key={input.name}
-                        label={input.label}
-                        variant="faded"
-                        className="max-w-72"
-                        defaultValue={parseAbsoluteToLocal(
+                      key={input.name}
+                      label={input.label}
+                      variant="faded"
+                      className="max-w-72"
+                      onChange={(date) => handleInputDateChange(date, input.name)}
+                      defaultValue={
+                        toZonedDateTime(
                           typeof getNestedValue(
                             inputValues,
                             input.name.split(".")
                           ) === "object"
-                            ? ""
+                            ? undefined
                             : getNestedValue(
                                 inputValues,
                                 input.name.split(".")
-                              ) || "2021-11-07T07:45:00Z"
-                        )}
-                      />
+                              )
+                        )
+                      }
+                    />
                     )}
 
                     {input.type == "text" && (
