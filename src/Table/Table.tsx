@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Table as TableUI,
   TableHeader,
@@ -19,6 +19,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  useDisclosure,
 } from "@nextui-org/react";
 import {
   AiOutlineClear,
@@ -89,6 +90,19 @@ export function Table({
     useTableCrudContext();
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isSearching, setIsSearching] = useState(false);
+  const detalhesModal = useDisclosure();
+  const deleteModal = useDisclosure();
+  const editModal = useDisclosure();
+  const [forceUpdate, setForceUpdate] = useState(false);
+
+  useEffect(() => {
+    if (isMobile && (detalhesModal.isOpen || editModal.isOpen || deleteModal.isOpen)) {
+      setTimeout(() => {
+        // Força uma re-renderização
+        setForceUpdate(prev => !prev);
+      }, 100);
+    }
+  }, [isMobile, detalhesModal.isOpen, editModal.isOpen, deleteModal.isOpen]);
 
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter((column) => column.isMobile)
@@ -226,6 +240,7 @@ export function Table({
         case "actions":
           if (isMobile) {
             return (
+              <>
               <Dropdown>
                 <DropdownTrigger>
                   <Button variant="light" isIconOnly radius="full">
@@ -236,70 +251,83 @@ export function Table({
                   aria-label="Action event example"
                   onAction={(key) => {
                     if (key == "info") {
-                      console.log('keyinfo :>> ', key);
+                      detalhesModal.onOpen();
+                      setForceUpdate(prev => !prev);
                     }
-              
+                  
                     if (key == "edit") {
-                      console.log('keyedit :>> ', key);
+                      editModal.onOpen();
+                      setForceUpdate(prev => !prev);
                     }
-              
+                  
                     if (key == "delete") {
-                      console.log('keydelete :>> ', key);
+                      deleteModal.onOpen();
+                      setForceUpdate(prev => !prev);
                     }
                   }}
                 >
                   <DropdownItem
                     key="info"
-                    isReadOnly
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        inputs={modalInputs}
-                        trigger={<IoEyeOutline />}
-                        isView
-                        mobile={isMobile}
-                        title="Detalhes"
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
                   >
+                    Detalhes
                   </DropdownItem>
                   <DropdownItem
                     key="edit"
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        inputs={modalInputs}
-                        trigger={<FaUserEdit />}
-                        mobile={isMobile}
-                        isUpdate
-                        title={`Editar ${elementName}`}
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
                   >
+                    Editar
                   </DropdownItem>
                   <DropdownItem
                     key="delete"
                     className="text-danger"
                     color="danger"
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        trigger={<AiOutlineUserDelete />}
-                        mobile={isMobile}
-                        isDelete
-                        title={`Deletar ${elementName}`}
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
                   >
+                    Deletar
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
+
+              {detalhesModal.isOpen && (
+                <Modal
+                  key={`detalhes-${forceUpdate}`}
+                  id={element.id}
+                  elementName={elementName}
+                  inputs={modalInputs}
+                  isView
+                  mobile={isMobile}
+                  title="Detalhes"
+                  urlModalGetElement={urlModalGetElement}
+                  disclosure={detalhesModal}
+                  trigger={<IoEyeOutline />}
+                />
+              )}
+              {editModal.isOpen && (
+                <Modal
+                  key={`edit-${forceUpdate}`}
+                  id={element.id}
+                  elementName={elementName}
+                  disclosure={editModal}
+                  inputs={modalInputs}
+                  mobile={isMobile}
+                  isUpdate
+                  title={`Editar ${elementName}`}
+                  urlModalGetElement={urlModalGetElement}
+                  trigger={<FaUserEdit />}
+                />
+              )}
+              {deleteModal.isOpen && (
+                <Modal
+                  key={`delete-${forceUpdate}`}
+                  id={element.id}
+                  elementName={elementName}
+                  disclosure={deleteModal}
+                  mobile={isMobile}
+                  isDelete
+                  title={`Deletar ${elementName}`}
+                  urlModalGetElement={urlModalGetElement}
+                  trigger={<AiOutlineUserDelete />}
+                />
+              )}
+              </>
             );
           } else if (!isMobile) {
             return (
@@ -352,7 +380,7 @@ export function Table({
           return cellValue;
       }
     },
-    []
+    [deleteModal,deleteModal,editModal]
   );
 
   const topContent = useMemo(() => {

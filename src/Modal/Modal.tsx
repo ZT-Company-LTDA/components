@@ -18,6 +18,7 @@ import { Select } from "../Select/Select";
 import axios from "axios";
 import { MdError } from "react-icons/md";
 import { AiFillCheckCircle } from "react-icons/ai";
+import type { UseDisclosureReturn } from '@nextui-org/use-disclosure';
 
 interface CustomModalProps {
   trigger: JSX.Element;
@@ -41,6 +42,7 @@ interface CustomModalProps {
   isIcon?: boolean;
   id?: string | number;
   urlModalGetElement?: string;
+  disclosure?: UseDisclosureReturn;
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
@@ -114,8 +116,17 @@ export default function Modal({
   id,
   urlModalGetElement,
   mobile,
+  disclosure
 }: CustomModalProps) {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
+  const { isOpen, onOpen, onOpenChange, onClose } = disclosure ?? useDisclosure();
+  
+  useEffect(() => {
+
+    console.log('disclosure :>> ', disclosure);
+
+  }, [ isOpen, onOpen, onOpenChange, onClose])
+  
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -145,7 +156,7 @@ export default function Modal({
         fetchData();
       }
     }
-  }, [isOpen, id]);
+  }, [isOpen, id, disclosure]);
 
   // Estado para armazenar os valores dos inputs
   const [inputValues, setInputValues] = useState<Record<string, any>>({});
@@ -246,10 +257,7 @@ export default function Modal({
   return (
     <>
       {mobile ? (
-        <div onClick={onOpen} className="flex gap-2 w-full">
-          {trigger}
-          {title}
-        </div>
+        <></>
       ) : isIcon ? (
         <div onClick={onOpen}>{trigger}</div>
       ) : (
