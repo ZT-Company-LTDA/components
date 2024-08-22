@@ -72,6 +72,8 @@ interface TableCrudProps {
   modalInputs: Array<{ label: string; value: string; name: string, trigger?:() => boolean, type:string, placeholder:string, autocompleteUrl?:string, hiddenValue?:string }>;
   add?: boolean;
   urlModalGetElement?: string;
+  addModalUrl?: string;
+  updateModalUrl?: string;
 }
 
 export function Table({
@@ -83,6 +85,8 @@ export function Table({
   modalInputs,
   add,
   urlModalGetElement,
+  addModalUrl,
+  updateModalUrl
 }: TableCrudProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { filterValue, arrayFilters, page, setPage, clear, setClear } =
@@ -275,6 +279,7 @@ export function Table({
                         trigger={<FaUserEdit />}
                         mobile={isMobile}
                         isUpdate
+                        updateModalUrl={updateModalUrl}
                         title={`Editar ${elementName}`}
                         urlModalGetElement={urlModalGetElement}
                       />
@@ -327,6 +332,7 @@ export function Table({
                       trigger={<FaUserEdit />}
                       isIcon
                       isUpdate
+                      updateModalUrl={updateModalUrl}
                       title={`Editar ${elementName}`}
                       urlModalGetElement={urlModalGetElement}
                     />
@@ -382,6 +388,7 @@ export function Table({
                 inputs={modalInputs}
                 elementName={elementName}
                 trigger={<IoIosAddCircle className="w-5 h-5" />}
+                addModalUrl={addModalUrl}
                 isAdd
                 title={`Adicionar ${elementName}`}
               />
@@ -420,6 +427,7 @@ export function Table({
             elementName={elementName}
             trigger={<IoIosAddCircle className="w-5 h-5" />}
             isAdd
+            addModalUrl={addModalUrl}
             title={`Adicionar ${elementName}`}
           />
         </div>

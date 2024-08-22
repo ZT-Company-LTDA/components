@@ -41,13 +41,15 @@ interface CustomModalProps {
   isIcon?: boolean;
   id?: string | number;
   urlModalGetElement?: string;
+  addModalUrl? :string;
+  updateModalUrl?:string;
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
 export const setNestedValue = (
   obj: any,
   path: string[],
-  value: string | number | Date
+  value: string | number | Date | {id:number, value:string}
 ) => {
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
@@ -114,6 +116,8 @@ export default function Modal({
   id,
   urlModalGetElement,
   mobile,
+  addModalUrl,
+  updateModalUrl
 }: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -178,13 +182,17 @@ export default function Modal({
     setErrorMessage(""); // Reseta a mensagem de erro
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/users",
-        inputValues,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
+      
+      const method = isAdd ? 'post' : (isUpdate ? 'patch' : (isDelete ? 'delete' : 'get'));
+      
+      const response = await axios({
+        method,
+        url: isAdd ? addModalUrl : (isUpdate ? `${updateModalUrl}/${id}` : `${urlModalGetElement}/${id}`),
+        data: inputValues,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session?.user.token}`,
+        },
           onUploadProgress: (progressEvent) => {
             const total = progressEvent.total || 1;
             const percentCompleted = Math.round(
