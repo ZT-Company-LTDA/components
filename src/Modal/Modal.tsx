@@ -12,7 +12,7 @@ import {
   DatePicker,
   Skeleton, // Importando Skeleton
 } from "@nextui-org/react";
-import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
+import { CalendarDate, ZonedDateTime } from "@internationalized/date";
 import { signOut, useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
 import axios from "axios";
@@ -72,7 +72,7 @@ const getNestedValue = (obj: any, path: string[]) => {
 
 const toZonedDateTime = (
   dateString: string | undefined
-): ZonedDateTime | undefined => {
+): CalendarDate | undefined => {
   if (!dateString) return undefined;
 
   try {
@@ -84,20 +84,21 @@ const toZonedDateTime = (
     const hour = date.getUTCHours();
     const minute = date.getUTCMinutes();
     const second = date.getUTCSeconds();
-    const millisecond = date.getUTCMilliseconds();
-    const timeZone = "UTC"; // Ajuste conforme necessário
+    const millisecond = -10800000;
+    const timeZone = 'America/Sao_Paulo' // Ajuste conforme necessário
 
-    return new ZonedDateTime(
-      year,
-      month,
-      day,
-      timeZone,
-      0,
-      hour,
-      minute,
-      second,
-      millisecond
-    );
+    return new CalendarDate(year, month, day)
+    // return new ZonedDateTime(
+    //   year,
+    //   month,
+    //   day,
+    //   '',
+    //   0,
+    //   hour,
+    //   minute,
+    //   second,
+    //   millisecond
+    // );
   } catch (error) {
     console.error("Erro ao converter data:", error);
     return undefined;
@@ -167,7 +168,7 @@ export default function Modal({
     });
   };
 
-  const handleInputDateChange = (date: ZonedDateTime, path: string) => {
+  const handleInputDateChange = (date: CalendarDate, path: string) => {
     setInputValues((prevValues) => {
       const updatedValues = { ...prevValues };
       const dateTime = date.toString();
@@ -355,6 +356,7 @@ export default function Modal({
                               label={input.label}
                               variant="faded"
                               className="max-w-72"
+                              showMonthAndYearPickers
                               onChange={(date) =>
                                 handleInputDateChange(date, input.name)
                               }

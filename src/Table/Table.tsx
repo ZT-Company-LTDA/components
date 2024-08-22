@@ -13,7 +13,6 @@ import {
   ChipProps,
   Pagination,
   Spinner,
-  Input,
   Button,
   Dropdown,
   DropdownTrigger,
@@ -26,13 +25,8 @@ import {
   AiOutlineUserDelete,
 } from "react-icons/ai";
 import useSWR from "swr";
-import { CiSearch } from "react-icons/ci";
-import ModalView from "./ModalCrud/ModalView";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import * as React from "react";
-import ModalEdit from "./ModalCrud/ModalEdit";
-import ModalDelete from "./ModalCrud/ModalDelete";
-import { useDebounce } from "use-debounce";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { FaSearch, FaUserEdit } from "react-icons/fa";
 import axios from "axios";
