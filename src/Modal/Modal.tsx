@@ -43,6 +43,7 @@ interface CustomModalProps {
   urlModalGetElement?: string;
   addModalUrl? :string;
   updateModalUrl?:string;
+  searchTable?:() => void
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
@@ -117,7 +118,8 @@ export default function Modal({
   urlModalGetElement,
   mobile,
   addModalUrl,
-  updateModalUrl
+  updateModalUrl,
+  searchTable
 }: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -220,6 +222,9 @@ export default function Modal({
       setShowSuccessIcon(true);
       setTimeout(() => {
         setShowSuccessIcon(false);
+        if(searchTable){
+          searchTable();
+        };
         onClose();
       }, 2500);
     } catch (error: unknown) {

@@ -279,6 +279,7 @@ export function Table({
                         trigger={<FaUserEdit />}
                         mobile={isMobile}
                         isUpdate
+                        searchTable={searchTable}
                         updateModalUrl={updateModalUrl}
                         title={`Editar ${elementName}`}
                         urlModalGetElement={urlModalGetElement}
@@ -296,6 +297,7 @@ export function Table({
                         elementName={elementName}
                         trigger={<AiOutlineUserDelete />}
                         mobile={isMobile}
+                        searchTable={searchTable}
                         isDelete
                         title={`Deletar ${elementName}`}
                         urlModalGetElement={urlModalGetElement}
@@ -333,6 +335,7 @@ export function Table({
                       isIcon
                       isUpdate
                       updateModalUrl={updateModalUrl}
+                      searchTable={searchTable}
                       title={`Editar ${elementName}`}
                       urlModalGetElement={urlModalGetElement}
                     />
@@ -346,6 +349,7 @@ export function Table({
                       trigger={<AiOutlineUserDelete />}
                       isIcon
                       isDelete
+                      searchTable={searchTable}
                       title={`Deletar ${elementName}`}
                       urlModalGetElement={urlModalGetElement}
                     />
@@ -389,6 +393,7 @@ export function Table({
                 elementName={elementName}
                 trigger={<IoIosAddCircle className="w-5 h-5" />}
                 addModalUrl={addModalUrl}
+                searchTable={searchTable}
                 isAdd
                 title={`Adicionar ${elementName}`}
               />
@@ -427,6 +432,7 @@ export function Table({
             elementName={elementName}
             trigger={<IoIosAddCircle className="w-5 h-5" />}
             isAdd
+            searchTable={searchTable}
             addModalUrl={addModalUrl}
             title={`Adicionar ${elementName}`}
           />
