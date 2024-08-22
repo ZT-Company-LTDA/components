@@ -182,13 +182,25 @@ export default function Modal({
     setErrorMessage(""); // Reseta a mensagem de erro
 
     try {
+
+      const transformInputValues = (values:any) => {
+        const transformedValues = { ...values };
+        for (const key in transformedValues) {
+          if (transformedValues[key] && typeof transformedValues[key] === 'object' && 'id' in transformedValues[key]) {
+            transformedValues[key] = transformedValues[key].id; // Substitui o objeto pelo id
+          }
+        }
+        return transformedValues;
+      };
+  
+      const processedInputValues = transformInputValues(inputValues);
       
       const method = isAdd ? 'post' : (isUpdate ? 'patch' : (isDelete ? 'delete' : 'get'));
       
       const response = await axios({
         method,
         url: isAdd ? addModalUrl : (isUpdate ? `${updateModalUrl}/${id}` : `${urlModalGetElement}/${id}`),
-        data: inputValues,
+        data: processedInputValues,
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session?.user.token}`,

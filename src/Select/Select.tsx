@@ -32,9 +32,9 @@ export const Select: React.FC<SelectProps> = ({
   value,
   fill
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>(value || "");
   const [elements, setElements] = useState<ResultElement[]>([]);
-  const [selectedElement, setSelectedElement] = useState<number | null>(null);
+  const [selectedElement, setSelectedElement] = useState<ResultElement | null>(null);
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [debouncedQuery] = useDebounce(searchTerm, 1000);
   const [clicked, setClicked] = useState(false);
@@ -74,12 +74,12 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   const handleOptionClick = (element: ResultElement) => {
-    setSelectedElement(element.id);
+    setSelectedElement(element);
     setSearchTerm(element.value);
     setValue((prevValues) => {
       const updatedValues = { ...prevValues };
       const path = name.split(".");
-      setNestedValue(updatedValues, path, element.id);
+      setNestedValue(updatedValues, path, {id:element.id, value:element.value});
       return updatedValues;
     });
     setShowDropdown(false);
@@ -87,16 +87,21 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   useEffect(() => {
-    if(fill && value) {
+    if (fill && value) {
+      const selected = elements.find((el) => el.value === value) || null;
+      setSelectedElement(selected);
       setSearchTerm(value);
     }
-  })
+  }, [fill, value, elements]);
 
   return (
-    <div onClick={() => {
-      setClicked(!clicked);
-      setShowDropdown(!showDropdown);
-    }} className="relative max-w-72">
+    <div
+      onClick={() => {
+        setClicked(!clicked);
+        setShowDropdown(!showDropdown);
+      }}
+      className="relative max-w-72"
+    >
       <Input
         type="text"
         value={searchTerm}
@@ -113,7 +118,7 @@ export const Select: React.FC<SelectProps> = ({
       )}
       {showDropdown && (
         <ul className="absolute z-50 max-w-72 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
-          {searchTerm != "" ? (
+          {searchTerm !== "" ? (
             elements.length > 0 ? (
               elements.map((element) => (
                 <li
@@ -124,7 +129,7 @@ export const Select: React.FC<SelectProps> = ({
                   {element.value}
                 </li>
               ))
-            ) : search == false ? (
+            ) : search === false ? (
               <li className="px-3 py-2">Nenhum item encontrado</li>
             ) : (
               <li className="px-3 py-2 flex justify-between">
@@ -133,7 +138,7 @@ export const Select: React.FC<SelectProps> = ({
               </li>
             )
           ) : (
-            search == false && (
+            search === false && (
               <li className="px-3 py-2">Digite algo para pesquisar</li>
             )
           )}
