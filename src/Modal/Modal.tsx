@@ -444,7 +444,7 @@ export default function Modal({
                 {!showSuccessIcon && !showErrorIcon && !isView && (
                   <Button
                     color={isDelete ? "danger" : "primary"}
-                    onPress={isDelete ? onClose : handleClick}
+                    onPress={handleClick}
                   >
                     {isDelete
                       ? "Deletar"
