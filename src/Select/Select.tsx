@@ -92,7 +92,7 @@ export const Select: React.FC<SelectProps> = ({
       setSelectedElement(selected);
       setSearchTerm(value);
     }
-  }, [fill, value, elements]);
+  }, [fill]);
 
   return (
     <div

@@ -220,11 +220,11 @@ export default function Modal({
       console.log("Response:", response.data);
       setProgress(100);
       setShowSuccessIcon(true);
+      if(searchTable){
+        searchTable();
+      };
       setTimeout(() => {
         setShowSuccessIcon(false);
-        if(searchTable){
-          searchTable();
-        };
         onClose();
       }, 2500);
     } catch (error: unknown) {
