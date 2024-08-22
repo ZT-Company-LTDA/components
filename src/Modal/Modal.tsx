@@ -302,7 +302,7 @@ export default function Modal({
                 {showSuccessIcon ? (
                   <div className="flex flex-col justify-center items-center h-20">
                     <AiFillCheckCircle className="text-green-700 h-24 w-24" />
-                    <p className="text-green-700 mt-2">{elementName} adicionado com sucesso!</p>
+                    <p className="text-green-700 mt-2">{elementName} {isAdd ? 'adicionado': isUpdate ? 'atualizado': 'deletado'} com sucesso!</p>
                   </div>
                 ) : showErrorIcon ? (
                   <div className="flex flex-col justify-center items-center h-20">
