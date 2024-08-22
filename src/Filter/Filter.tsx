@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { useAsyncList } from "@react-stately/data";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 export const Filter = ({
   name,
@@ -29,41 +29,48 @@ export const Filter = ({
 
   let list = useAsyncList({
     async load({ signal, filterText }) {
-      if(session && filterText){
-        let res = await axios(`${urlAutocomplete}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${session?.user?.token as string}`,
-          },
-          data: {search:filterText},
-          signal
-        });
-
-        const result = res.data.results[0];
-
-        setArrayFilters((prevArrayFilters) => {
-          const index = prevArrayFilters.findIndex(
-            (filter) => filter.name === name
-          );
-          const value = result && result[name] !== undefined ? result[name] : "";
-          if (index === -1) {
-            // Não existe, então adiciona um novo
-            return [...prevArrayFilters, { name, value }];
-          } else {
-            // Existe, então atualiza o existente
-            const newArrayFilters = [...prevArrayFilters];
-            newArrayFilters[index].value = value;
-            return newArrayFilters;
+      if (session && filterText) {
+        try {
+          let res = await axios(`${urlAutocomplete}`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${session?.user?.token as string}`,
+            },
+            data: { search: filterText },
+            signal
+          });
+  
+          const result = res.data.results[0];
+  
+          setArrayFilters((prevArrayFilters) => {
+            const index = prevArrayFilters.findIndex(
+              (filter) => filter.name === name
+            );
+            const value = result && result[name] !== undefined ? result[name] : "";
+            if (index === -1) {
+              return [...prevArrayFilters, { name, value }];
+            } else {
+              const newArrayFilters = [...prevArrayFilters];
+              newArrayFilters[index].value = value;
+              return newArrayFilters;
+            }
+          });
+  
+          return {
+            items: res.data.results || []
+          };
+        } catch (error) {
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
+            signOut();
           }
-        });
-
-        return {
-          items: res.data.results || []
-        };
-      }else{
+          return {
+            items: []
+          };
+        }
+      } else {
         return {
           items: []
-        }
+        };
       }
     },
   });

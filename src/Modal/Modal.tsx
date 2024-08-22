@@ -13,7 +13,7 @@ import {
   Skeleton, // Importando Skeleton
 } from "@nextui-org/react";
 import { parseAbsoluteToLocal, ZonedDateTime } from "@internationalized/date";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
 import axios from "axios";
 import { MdError } from "react-icons/md";
@@ -237,6 +237,9 @@ export default function Modal({
       }, 2500);
     
       if (axios.isAxiosError(error) && error.response) {
+        if(error.response.status === 401){
+          signOut();
+        }
         // Verifica se o erro é do axios e se existe uma resposta
         setErrorMessage(
           error.response.data?.message || "Ocorreu um erro no servidor. Tente novamente."
@@ -448,6 +451,7 @@ export default function Modal({
                 </Button>
                 {!showSuccessIcon && !showErrorIcon && !isView && (
                   <Button
+                    isLoading={isSubmitting}
                     color={isDelete ? "danger" : "primary"}
                     onPress={handleClick}
                   >

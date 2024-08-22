@@ -39,6 +39,7 @@ import axios from "axios";
 import Modal from "../Modal/Modal";
 import { IoEyeOutline } from "react-icons/io5";
 import { IoIosAddCircle } from "react-icons/io";
+import { signOut } from "next-auth/react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -106,7 +107,11 @@ export function Table({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }).then((res) => res.data);
+    }).then((res) => res.data).catch((error) => {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        signOut(); 
+      }
+    });
   };
 
   const { data, isLoading, mutate } = useSWR<TableUsersProps>(

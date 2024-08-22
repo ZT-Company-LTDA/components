@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { Input, Spinner } from "@nextui-org/react";
 import { useDebounce } from "use-debounce";
 import { setNestedValue } from "../Modal/Modal";
@@ -56,6 +56,9 @@ export const Select: React.FC<SelectProps> = ({
           console.log("API response:", response.data); // Verifique a estrutura aqui
           setElements(response.data.results || []);
         } catch (error) {
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
+            signOut(); // Executa signOut se o status for 401
+          }
           console.error("Error fetching:", error);
         }
         setSearch(false);

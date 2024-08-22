@@ -5,6 +5,7 @@ import { ProviderScreen } from "../providers/ProviderScreen";
 import { ProviderTableCrud } from "../providers/ProviderTableCrud";
 import { useScreenContext } from "../contexts/ContextScreen";
 import { NavBar } from "../NavBar/NavBar";
+import { useSession } from "next-auth/react";
 
 export const Dashboard = ({
   screens,
@@ -27,7 +28,6 @@ export const Dashboard = ({
   const { setidScreen } = useScreenContext();
   
   useEffect(() => {setidScreen(initialScreenId)}, []);
-  
   return (
     <ProviderScreen>
       <ProviderTableCrud>
