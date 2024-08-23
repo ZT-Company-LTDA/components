@@ -52,6 +52,9 @@ export const setNestedValue = (
   path: string[],
   value: string | number | Date | {id:number, value:string}
 ) => {
+  if(value == 'Parente'){
+    value = 4;
+  }
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
     if (!acc[key] || typeof acc[key] !== "object") {
@@ -64,10 +67,14 @@ export const setNestedValue = (
 
 // Função para obter valores aninhados de forma segura
 const getNestedValue = (obj: any, path: string[]) => {
-  return path.reduce(
+  let value = path.reduce(
     (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
     obj
   );
+  if(value == 'Parente'){
+    value = 4;
+  }
+  return value;
 };
 
 const toZonedDateTime = (
@@ -270,7 +277,7 @@ export default function Modal({
         }
       });
     }
-  }, [inputs]);
+  }, [inputs, isOpen]);
 
   return (
     <>
