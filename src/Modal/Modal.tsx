@@ -225,7 +225,6 @@ export default function Modal({
         }
       );
 
-      console.log("Response:", response.data);
       setProgress(100);
       setShowSuccessIcon(true);
       if(searchTable){
@@ -310,9 +309,12 @@ export default function Modal({
               </ModalHeader>
               <ModalBody className="flex flex-wrap gap-4 overflow-y-scroll">
                 {isDelete && (
-                  <h1>
-                    Deseja deletar o {elementName} {inputValues.name}?
-                  </h1>
+                    inputValues?.name ?
+                    <h1>
+                      Deseja deletar o {elementName} {inputValues.name}?
+                    </h1>
+                    :
+                    <Skeleton className="h-3 w-full rounded-lg"/>
                 )}
 
                 {showSuccessIcon ? (
