@@ -34,6 +34,7 @@ import Modal from "../Modal/Modal";
 import { IoEyeOutline } from "react-icons/io5";
 import { IoIosAddCircle } from "react-icons/io";
 import { signOut } from "next-auth/react";
+import { CustomDropdown } from "../Dropdown/CustomDropdown";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -229,83 +230,92 @@ export function Table({
         case "actions":
           if (isMobile) {
             return (
-              <Dropdown>
-                <DropdownTrigger>
-                  <Button variant="light" isIconOnly radius="full">
-                    <AiOutlineMore className="w-6 h-16" />
-                  </Button>
-                </DropdownTrigger>
-                <DropdownMenu
-                  aria-label="Action event example"
-                  onAction={(key) => {
-                    if (key == "info") {
-                      console.log('keyinfo :>> ', key);
-                    }
+              // <Dropdown>
+              //   <DropdownTrigger>
+              //     <Button variant="light" isIconOnly radius="full">
+              //       <AiOutlineMore className="w-6 h-16" />
+              //     </Button>
+              //   </DropdownTrigger>
+              //   <DropdownMenu
+              //     aria-label="Action event example"
+              //     onAction={(key) => {
+              //       if (key == "info") {
+              //         console.log('keyinfo :>> ', key);
+              //       }
               
-                    if (key == "edit") {
-                      console.log('keyedit :>> ', key);
-                    }
+              //       if (key == "edit") {
+              //         console.log('keyedit :>> ', key);
+              //       }
               
-                    if (key == "delete") {
-                      console.log('keydelete :>> ', key);
-                    }
-                  }}
-                >
-                  <DropdownItem
-                    key="info"
-                    isReadOnly
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        inputs={modalInputs}
-                        trigger={<IoEyeOutline />}
-                        isView
-                        mobile={isMobile}
-                        title="Detalhes"
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
-                  >
-                  </DropdownItem>
-                  <DropdownItem
-                    key="edit"
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        inputs={modalInputs}
-                        trigger={<FaUserEdit />}
-                        mobile={isMobile}
-                        isUpdate
-                        searchTable={searchTable}
-                        updateModalUrl={updateModalUrl}
-                        title={`Editar ${elementName}`}
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
-                  >
-                  </DropdownItem>
-                  <DropdownItem
-                    key="delete"
-                    className="text-danger"
-                    color="danger"
-                    startContent={
-                      <Modal
-                        id={element.id}
-                        elementName={elementName}
-                        trigger={<AiOutlineUserDelete />}
-                        mobile={isMobile}
-                        searchTable={searchTable}
-                        isDelete
-                        title={`Deletar ${elementName}`}
-                        urlModalGetElement={urlModalGetElement}
-                      />
-                    }
-                  >
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+              //       if (key == "delete") {
+              //         console.log('keydelete :>> ', key);
+              //       }
+              //     }}
+              //   >
+              //     <DropdownItem
+              //       key="info"
+              //       isReadOnly
+              //       startContent={
+              //         <Modal
+              //           id={element.id}
+              //           elementName={elementName}
+              //           inputs={modalInputs}
+              //           trigger={<IoEyeOutline />}
+              //           isView
+              //           mobile={isMobile}
+              //           title="Detalhes"
+              //           urlModalGetElement={urlModalGetElement}
+              //         />
+              //       }
+              //     >
+              //     </DropdownItem>
+              //     <DropdownItem
+              //       key="edit"
+              //       startContent={
+              //         <Modal
+              //           id={element.id}
+              //           elementName={elementName}
+              //           inputs={modalInputs}
+              //           trigger={<FaUserEdit />}
+              //           mobile={isMobile}
+              //           isUpdate
+              //           searchTable={searchTable}
+              //           updateModalUrl={updateModalUrl}
+              //           title={`Editar ${elementName}`}
+              //           urlModalGetElement={urlModalGetElement}
+              //         />
+              //       }
+              //     >
+              //     </DropdownItem>
+              //     <DropdownItem
+              //       key="delete"
+              //       className="text-danger"
+              //       color="danger"
+              //       startContent={
+              //         <Modal
+              //           id={element.id}
+              //           elementName={elementName}
+              //           trigger={<AiOutlineUserDelete />}
+              //           mobile={isMobile}
+              //           searchTable={searchTable}
+              //           isDelete
+              //           title={`Deletar ${elementName}`}
+              //           urlModalGetElement={urlModalGetElement}
+              //         />
+              //       }
+              //     >
+              //     </DropdownItem>
+              //   </DropdownMenu>
+              // </Dropdown>
+              <CustomDropdown
+                element={element}
+                elementName={elementName}
+                modalInputs={modalInputs}
+                isMobile={isMobile}
+                urlModalGetElement={urlModalGetElement}
+                searchTable={searchTable}
+                updateModalUrl={updateModalUrl}
+              />
             );
           } else if (!isMobile) {
             return (
