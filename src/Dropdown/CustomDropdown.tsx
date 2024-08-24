@@ -84,7 +84,7 @@ export const CustomDropdown = ({
                 trigger={<></>}
                 isView
                 mobile={isMobile}
-                title="Detalhes"
+                title={`Detalhes ${elementName}`}
                 urlModalGetElement={urlModalGetElement}
               />
             </div>
