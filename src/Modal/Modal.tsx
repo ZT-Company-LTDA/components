@@ -53,9 +53,6 @@ export const setNestedValue = (
   path: string[],
   value: string | number | Date | {id:number, value:string}
 ) => {
-  if(value == 'Parente'){
-    value = 4;
-  }
   const lastKey = path.pop()!;
   const lastObj = path.reduce((acc, key) => {
     if (!acc[key] || typeof acc[key] !== "object") {
@@ -72,8 +69,8 @@ const getNestedValue = (obj: any, path: string[]) => {
     (acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined),
     obj
   );
-  if(value == 'Parente'){
-    value = 4;
+  if(value && typeof value === 'object' && 'id' in value){
+    value = value.value
   }
   return value;
 };
