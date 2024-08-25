@@ -44,6 +44,7 @@ interface CustomModalProps {
   addModalUrl? :string;
   updateModalUrl?:string;
   searchTable?:() => void
+  closeModalDropDown?: () => void;
 }
 
 // Função utilitária para criar ou atualizar objetos aninhados
@@ -127,7 +128,8 @@ export default function Modal({
   mobile,
   addModalUrl,
   updateModalUrl,
-  searchTable
+  searchTable,
+  closeModalDropDown
 }: CustomModalProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
@@ -158,6 +160,9 @@ export default function Modal({
 
         fetchData();
       }
+    }
+    if(isOpen == false && closeModalDropDown != undefined){
+      closeModalDropDown();
     }
   }, [isOpen, id]);
 

@@ -28,38 +28,51 @@ export const CustomDropdown = ({
   updateModalUrl
 }: CustomDropdownProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<ModalTypes | undefined>();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const openModal = (modalId: ModalTypes['modalId']) => setActiveModal({ modalId });
-  const closeModal = () => setActiveModal(undefined);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setActiveModal(undefined);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+      if(!isModalOpen){
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setIsDropdownOpen(false);
+        }
+      } else {
+        setIsModalOpen(false);
       }
     };
 
+    
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+    
+  }, [isModalOpen]);
 
   const handleAction = (key: string) => {
     if (key === 'info') {
       console.log('keyinfo :>> ', key);
       openModal('info');
+      setIsModalOpen(true);
     }
     if (key === 'edit') {
       console.log('keyedit :>> ', key);
       openModal('edit');
+      setIsModalOpen(true);
     }
     if (key === 'delete') {
       console.log('keydelete :>> ', key);
       openModal('delete');
+      setIsModalOpen(true);
     }
   };
 
@@ -86,6 +99,7 @@ export const CustomDropdown = ({
                 mobile={isMobile}
                 title="Detalhes"
                 urlModalGetElement={urlModalGetElement}
+                closeModalDropDown={closeModal}
               />
             </div>
             <div onClick={() => handleAction('edit')} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 cursor-pointer" role="menuitem">
@@ -101,6 +115,7 @@ export const CustomDropdown = ({
                 updateModalUrl={updateModalUrl}
                 title={`Editar ${elementName}`}
                 urlModalGetElement={urlModalGetElement}
+                closeModalDropDown={closeModal}
               />
             </div>
             <div onClick={() => handleAction('delete')} className="flex items-center px-4 py-2 text-sm text-red-700 hover:bg-red-100 hover:text-red-900 cursor-pointer" role="menuitem">
@@ -114,6 +129,7 @@ export const CustomDropdown = ({
                 isDelete
                 title={`Deletar ${elementName}`}
                 urlModalGetElement={urlModalGetElement}
+                closeModalDropDown={closeModal}
               />
             </div>
           </div>
