@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 import { Input, Spinner } from "@nextui-org/react";
@@ -71,6 +71,8 @@ export const Select: React.FC<SelectProps> = ({
     fetchElements();
   }, [debouncedQuery, url, session?.user?.token]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(true);
     setSearchTerm(e.target.value);
@@ -100,13 +102,22 @@ export const Select: React.FC<SelectProps> = ({
   return (
     <div
       onClick={() => {
-        setClicked(!clicked);
-        setShowDropdown(!showDropdown);
+        if (inputRef.current) {
+          inputRef.current.focus(); 
+        }
       }}
       className="relative max-w-72"
     >
       <Input
         type="text"
+        onFocus={() => {
+          setClicked(true);
+          setShowDropdown(true);
+        }}
+        onBlur={() => {
+          setClicked(false);
+          setShowDropdown(false);
+        }}
         value={searchTerm}
         onChange={handleInputChange}
         isReadOnly={isReadOnly}
