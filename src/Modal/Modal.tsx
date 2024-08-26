@@ -234,7 +234,6 @@ export default function Modal({
       };
       setTimeout(() => {
         setShowSuccessIcon(false);
-        onClose();
       }, 2500);
     } catch (error: unknown) {
       console.error("Error:", error);
@@ -242,7 +241,6 @@ export default function Modal({
       setShowErrorIcon(true);
       setTimeout(() => {
         setShowErrorIcon(false);
-        onClose();
       }, 2500);
     
       if (axios.isAxiosError(error) && error.response) {
