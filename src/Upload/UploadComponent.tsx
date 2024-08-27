@@ -1,35 +1,46 @@
 import { NextPage } from 'next'
 import React from 'react'
 import { useCallback, useState } from 'react'
-import { useDropzone } from 'react-dropzone'
+import { Accept, FileRejection, useDropzone } from 'react-dropzone'
 import { IoCloudUploadOutline } from 'react-icons/io5'
 import CustomDrawer from '../Drawer/CustomDrawer'
 import { Listbox, ListboxItem, Tooltip } from '@nextui-org/react'
 import { MdDelete } from 'react-icons/md'
 import { GrDocumentPdf } from 'react-icons/gr'
 import toast from 'react-hot-toast'
+import { acceptsFilesExtension, AcceptedFileTypeKey, AcceptedFileTypes } from './TypeAcceptFiles';
 
 interface Props {
   showAcceptFiles?: boolean;
   documents: File[] | undefined;
+  typeFiles: AcceptedFileTypeKey[];
+  showToastRejectFiles?: boolean;
   setDocuments:React.Dispatch<React.SetStateAction<File[] | undefined>>;
 }
 
-export const UploadComponent = ({showAcceptFiles,documents,setDocuments}:Props) => {
-  
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    acceptedFiles.forEach(file => {
-      const reader = new FileReader()
-      reader.onabort = () => console.log('file reading was aborted')
-      reader.onerror = () => console.log('file reading has failed')
-      reader.onload = () => {
-        // Do whatever you want with the file contents
-        const binaryStr = reader.result
-        console.log(binaryStr)
-      }
-      reader.readAsArrayBuffer(file)
-    })
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,showToastRejectFiles}:Props) => {  
+  const selectedExtensions = typeFiles.reduce((acc, key) => {
+    acc[key] = acceptsFilesExtension[key];
+    return acc;
+  }, {} as AcceptedFileTypes);
+
+  const onDrop = useCallback((acceptedFiles: File[],fileRejections:FileRejection[]) => {
     setDocuments(acceptedFiles)
+
+    fileRejections.forEach(file => {
+      toast.error(`O Arquivo ${file.file.name} não é aceito. Por favor coloque o tipo ${typeFiles}`)
+    })
+    // acceptedFiles.forEach(file => {
+    //   const reader = new FileReader()
+    //   reader.onabort = () => console.log('file reading was aborted')
+    //   reader.onerror = () => console.log('file reading has failed')
+    //   reader.onload = () => {
+    //     // Do whatever you want with the file contents
+    //     const binaryStr = reader.result
+    //     console.log(binaryStr)
+    //   }
+    //   reader.readAsArrayBuffer(file)
+    // })
   }, [])
 
   const {
@@ -39,9 +50,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments}:Props) 
     getInputProps,
     isDragActive
   } = useDropzone({
-    accept: {
-      'application/pdf': []
-    },
+    accept:selectedExtensions,
     onDrop
   })
   
