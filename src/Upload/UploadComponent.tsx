@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { Accept, FileRejection, useDropzone } from 'react-dropzone'
 import { IoCloudUploadOutline } from 'react-icons/io5'
 import CustomDrawer from '../Drawer/CustomDrawer'
-import { Listbox, ListboxItem, Tooltip } from '@nextui-org/react'
+import { Button, Listbox, ListboxItem, Tooltip } from '@nextui-org/react'
 import { MdDelete } from 'react-icons/md'
 import { GrDocumentPdf } from 'react-icons/gr'
 import toast from 'react-hot-toast'
@@ -54,6 +54,40 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
     accept:selectedExtensions,
     onDrop
   })
+
+  const handleSave = () => {
+    console.log('documents :>> ', documents);
+  //   if (!documents) {
+  //     toast.error(`Por favor, selecione um arquivo.`)
+  //     setLoading(false)
+  //     return
+  //   }
+  //   if (!(valueDesc && list.items.length == 1)) {
+  //     toast.error(`Por favor, preencha todos os formularios do documento.`)
+  //     setLoading(false)
+  //     return
+  //   }
+
+  //   const data: Data = {
+  //     title: '',
+  //     description: valueDesc,
+  //     companyId: session?.user.companyId,
+  //     clientId: Number(list.items[0].id)
+  //   }
+
+  //   const formData = createFormData(documents, data, 'pdfs', 'data')
+
+  //   toast.promise(sendDoc(formData), {
+  //     loading: 'Enviando arquivo...',
+  //     success: () => {
+  //       clearInputs()
+  //       return (
+  //         <b>Arquivo enviado com sucesso para o cliente {list.filterText}</b>
+  //       )
+  //     },
+  //     error: <b>Ocorreu um erro ao enviar o arquivo.</b>
+  //   })
+  }
   
   const AcceptedFileItems = () => {
     return (
@@ -133,10 +167,21 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
           )}
         </div>
       </div>
-      {
-        showAcceptFiles &&
-        <AcceptedFileItems/>
-      }
+      <div className="flex gap-2">
+        {
+          showAcceptFiles &&
+          <AcceptedFileItems/>
+        }
+        <Button
+          color="primary"
+          onClick={handleSave}
+          className="text-xs w-full md:w-1/2"
+          // isLoading={loading}
+          isDisabled={!documents?.length}
+        >
+          Enviar arquivos
+        </Button>
+      </div>
     </>
   )
 }
