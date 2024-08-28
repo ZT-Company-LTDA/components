@@ -65,6 +65,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
         >
           {item => (
             <ListboxItem
+              textValue='Items para fazer upload'
               key={item.name}
               color={'default'}
               endContent={
