@@ -1,5 +1,5 @@
 import { NextPage } from 'next'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useCallback, useState } from 'react'
 import { Accept, FileRejection, useDropzone } from 'react-dropzone'
 import { IoCloudUploadOutline } from 'react-icons/io5'
@@ -9,16 +9,17 @@ import { MdDelete } from 'react-icons/md'
 import { GrDocumentPdf } from 'react-icons/gr'
 import toast from 'react-hot-toast'
 import { acceptsFilesExtension, AcceptedFileTypeKey, AcceptedFileTypes } from './TypeAcceptFiles';
+import { IconType } from 'react-icons'
 
 interface Props {
   showAcceptFiles?: boolean;
   documents: File[] | undefined;
   typeFiles: AcceptedFileTypeKey[];
-  showToastRejectFiles?: boolean;
   setDocuments:React.Dispatch<React.SetStateAction<File[] | undefined>>;
+  IconBaseTypeFiles:IconType
 }
 
-export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,showToastRejectFiles}:Props) => {  
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles}:Props) => {  
   const selectedExtensions = typeFiles.reduce((acc, key) => {
     acc[key] = acceptsFilesExtension[key];
     return acc;
@@ -78,7 +79,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
                   className='hover:text-red-600 hover:bg-gray-300 rounded-full hover:scale-110 transition-transform duration-200 w-5 h-5'
                 />
               }
-              startContent={<GrDocumentPdf className="text-red-600" />}
+              startContent={<IconBaseTypeFiles className="text-red-600" />}
             >
               <Tooltip placement="left-end" content={item.name} key={item.name} closeDelay={0}>
                 {item.name}
