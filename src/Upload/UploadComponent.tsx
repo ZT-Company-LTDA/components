@@ -10,6 +10,8 @@ import { GrDocumentPdf } from 'react-icons/gr'
 import toast from 'react-hot-toast'
 import { acceptsFilesExtension, AcceptedFileTypeKey, AcceptedFileTypes } from './TypeAcceptFiles';
 import { IconType } from 'react-icons'
+import axios from 'axios'
+import useFormData from '../hooks/useCreateFormDataDocument'
 
 interface Props {
   showAcceptFiles?: boolean;
@@ -17,9 +19,16 @@ interface Props {
   typeFiles: AcceptedFileTypeKey[];
   setDocuments:React.Dispatch<React.SetStateAction<File[] | undefined>>;
   IconBaseTypeFiles:IconType
+  token:string;
+  dataWithDocuments?:any
+  keyDocFormData:string
+  keyFormData?:string
 }
 
-export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles}:Props) => {  
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData}:Props) => {  
+  const [loading, setLoading] = useState<boolean>(false)
+  const { createFormData } = useFormData()
+  
   const selectedExtensions = typeFiles.reduce((acc, key) => {
     acc[key] = acceptsFilesExtension[key];
     return acc;
@@ -55,39 +64,52 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
     onDrop
   })
 
-  const handleSave = () => {
-    console.log('documents :>> ', documents);
-  //   if (!documents) {
-  //     toast.error(`Por favor, selecione um arquivo.`)
-  //     setLoading(false)
-  //     return
-  //   }
-  //   if (!(valueDesc && list.items.length == 1)) {
-  //     toast.error(`Por favor, preencha todos os formularios do documento.`)
-  //     setLoading(false)
-  //     return
-  //   }
-
-  //   const data: Data = {
-  //     title: '',
-  //     description: valueDesc,
-  //     companyId: session?.user.companyId,
-  //     clientId: Number(list.items[0].id)
-  //   }
-
-  //   const formData = createFormData(documents, data, 'pdfs', 'data')
-
-  //   toast.promise(sendDoc(formData), {
-  //     loading: 'Enviando arquivo...',
-  //     success: () => {
-  //       clearInputs()
-  //       return (
-  //         <b>Arquivo enviado com sucesso para o cliente {list.filterText}</b>
-  //       )
-  //     },
-  //     error: <b>Ocorreu um erro ao enviar o arquivo.</b>
-  //   })
+  const clearDocs = () => {
+    setDocuments([])
   }
+
+  const sendDoc = async (formData: FormData) => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/documents/multiple/upload`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+      setLoading(false)
+    } catch (error) {
+      toast.error(`Ocorreu algum erro interno`)
+      setLoading(false)
+    }
+  }
+
+  const handleSave = () => {
+    setLoading(true)
+
+    if (!documents) {
+      toast.error(`Por favor, selecione um arquivo.`)
+      setLoading(false)
+      return
+    }
+
+    const formData = createFormData(documents, dataWithDocuments, keyDocFormData, keyFormData)
+
+    toast.promise(sendDoc(formData), {
+      loading: 'Enviando arquivo...',
+      success: () => {
+        clearDocs()
+        return (
+          <b>Arquivo enviado com sucesso.</b>
+        )
+      },
+      error: <b>Ocorreu um erro ao enviar o arquivo.</b>
+    })
+  }
+
   
   const AcceptedFileItems = () => {
     return (
@@ -176,7 +198,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
           color="primary"
           onClick={handleSave}
           className="text-xs w-full md:w-1/2"
-          // isLoading={loading}
+          isLoading={loading}
           isDisabled={!documents?.length}
         >
           Enviar arquivos

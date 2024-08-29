@@ -19,8 +19,8 @@ const useFormData = (): UseFormDataResult => {
   const createFormData = useCallback((
     files: File[], 
     data: Data, 
-    fileFieldName: string = 'pdfs',
-    jsonFieldName: string = 'data'
+    fileFieldName: string = 'doc',
+    jsonFieldName?: string
   ): FormData => {
     const formData = new FormData();
     
@@ -28,7 +28,9 @@ const useFormData = (): UseFormDataResult => {
       formData.append(fileFieldName, file);
     });
 
-    formData.append(jsonFieldName, JSON.stringify(data));
+    if(!!jsonFieldName){
+      formData.append(jsonFieldName, JSON.stringify(data));
+    }
 
     return formData;
   }, []);
