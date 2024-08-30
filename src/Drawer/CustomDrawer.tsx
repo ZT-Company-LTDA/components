@@ -61,8 +61,11 @@ const CustomDrawer: React.FC<Props> = ({ direction, ...props }) => {
   return (
     <>
 
-      <Button onClick={handleOpen} className="w-full md:w-1/2">
-        Arquivos
+      <Button
+        onClick={handleOpen}
+        className="w-full md:w-1/2 break-words text-center overflow-hidden whitespace-normal"
+      >
+        Abrir Lista de Arquivos
       </Button>
       <Drawer
         open={isOpen && !!props.lengthFiles}

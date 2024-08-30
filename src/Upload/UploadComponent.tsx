@@ -23,9 +23,10 @@ interface Props {
   dataWithDocuments?:any
   keyDocFormData:string
   keyFormData?:string
+  url:string
 }
 
-export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData}:Props) => {  
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData,url}:Props) => {  
   const [loading, setLoading] = useState<boolean>(false)
   const { createFormData } = useFormData()
   
@@ -71,7 +72,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
   const sendDoc = async (formData: FormData) => {
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/documents/multiple/upload`,
+        `${url}`,
         formData,
         {
           headers: {
@@ -163,14 +164,14 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
                 size="12vh"
                 className="text-gray-400 opacity-40"
               />
-              <button
+              <Button
                 type="button"
                 onClick={() => open}
-                className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 p-4 text-xs"
+                className="border-none text-center opacity-50 bg-[#DAD8D8] h-[50px] w-[70%] rounded-xl text-black duration-[0.6s] hover:bg-blue-600 hover:text-white mb-4 p-4 break-words overflow-hidden whitespace-normal"
                 disabled={true}
               >
                 Selecionar arquivos
-              </button>
+              </Button>
             </>
           ) : (
             <>
@@ -197,7 +198,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
         <Button
           color="primary"
           onClick={handleSave}
-          className="text-xs w-full md:w-1/2"
+          className="w-full md:w-1/2 break-words text-center overflow-hidden whitespace-normal"
           isLoading={loading}
           isDisabled={!documents?.length}
         >
