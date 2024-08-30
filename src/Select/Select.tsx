@@ -73,6 +73,26 @@ export const Select: React.FC<SelectProps> = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const dropdownRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleOptionMouseDown = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, element: ResultElement) => {
+    e.preventDefault(); // Evita o fechamento do dropdown
+    handleOptionClick(element); // Processa a seleção do item
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(true);
     setSearchTerm(e.target.value);
@@ -131,14 +151,14 @@ export const Select: React.FC<SelectProps> = ({
         <IoIosArrowDown className="absolute top-2 left-64" />
       )}
       {showDropdown && (
-        <ul className="absolute z-50 max-w-72 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
+        <ul ref={dropdownRef} className="absolute z-50 max-w-72 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
           {searchTerm !== "" ? (
             elements.length > 0 ? (
               elements.map((element) => (
                 <li
                   key={element.id}
                   className="px-3 py-2 cursor-pointer hover:bg-gray-200"
-                  onClick={() => handleOptionClick(element)}
+                  onMouseDown={(e) => handleOptionMouseDown(e, element)}
                 >
                   {element.value}
                 </li>

@@ -192,7 +192,7 @@ export default function Modal({
     setShowSuccessIcon(false);
     setShowErrorIcon(false); // Garante que o ícone de erro não apareça antes do tempo
     setErrorMessage(""); // Reseta a mensagem de erro
-
+    console.log(inputValues)
     try {
 
       const transformInputValues = (values:any) => {
