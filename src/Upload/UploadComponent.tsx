@@ -111,6 +111,10 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
     })
   }
 
+  const clearFiles = () => {
+    setDocuments([])
+  }
+
   
   const AcceptedFileItems = () => {
     return (
@@ -195,6 +199,14 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
           showAcceptFiles &&
           <AcceptedFileItems/>
         }
+        <Button
+          color="default"
+          onClick={clearFiles}
+          className="w-full md:w-1/2 break-words text-center overflow-hidden whitespace-normal"
+          isDisabled={!documents?.length}
+        >
+          Limpar fila de arquivos
+        </Button>
         <Button
           color="primary"
           onClick={handleSave}
