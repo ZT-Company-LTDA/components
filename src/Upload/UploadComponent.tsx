@@ -12,6 +12,7 @@ import { acceptsFilesExtension, AcceptedFileTypeKey, AcceptedFileTypes } from '.
 import { IconType } from 'react-icons'
 import axios from 'axios'
 import useFormData from '../hooks/useCreateFormDataDocument'
+import { signOut } from 'next-auth/react'
 
 interface Props {
   showAcceptFiles?: boolean;
@@ -78,12 +79,16 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
-          }
+          },
         }
       )
       setLoading(false)
     } catch (error) {
       toast.error(`Ocorreu algum erro interno`)
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        toast.error('Desculpe, sua sessão expirou.')
+        signOut(); 
+      }
       setLoading(false)
     }
   }
@@ -97,16 +102,11 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
       return
     }
 
-    const formData = createFormData(documents, dataWithDocuments, keyDocFormData, keyFormData)
+    const formData = createFormData(documents,dataWithDocuments,keyFormData,keyDocFormData)
 
     toast.promise(sendDoc(formData), {
       loading: 'Enviando arquivo...',
-      success: () => {
-        clearDocs()
-        return (
-          <b>Arquivo enviado com sucesso.</b>
-        )
-      },
+      success: <b>Arquivo enviado com sucesso.</b>,
       error: <b>Ocorreu um erro ao enviar o arquivo.</b>
     })
   }

@@ -35,6 +35,7 @@ import { IoEyeOutline } from "react-icons/io5";
 import { IoIosAddCircle } from "react-icons/io";
 import { signOut } from "next-auth/react";
 import { CustomDropdown } from "../Dropdown/CustomDropdown";
+import toast from "react-hot-toast";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -104,6 +105,7 @@ export function Table({
       },
     }).then((res) => res.data).catch((error) => {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
+        toast.error('Desculpe, sua sessão expirou.')
         signOut(); 
       }
     });
