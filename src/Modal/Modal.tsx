@@ -18,6 +18,7 @@ import { Select } from "../Select/Select";
 import axios from "axios";
 import { MdError } from "react-icons/md";
 import { AiFillCheckCircle } from "react-icons/ai";
+import { callValidations } from "../utils/functions/callValidations";
 
 interface CustomModalProps {
   trigger: JSX.Element;
@@ -28,6 +29,7 @@ interface CustomModalProps {
     value: string;
     name: string;
     trigger?: () => boolean;
+    validation?: string
     type: string;
     placeholder?: string;
     autocompleteUrl?: string;
@@ -135,6 +137,7 @@ export default function Modal({
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
   const [showErrorIcon, setShowErrorIcon] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [arrayErrors, setArrayErrors] = useState<Array<{isValid:boolean, error:string, inputName:string}>>([])
 
   const { data: session } = useSession();
 
@@ -167,14 +170,33 @@ export default function Modal({
   const [inputValues, setInputValues] = useState<Record<string, any>>({});
 
   // Função para lidar com a mudança nos inputs
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, inputName:string, validation?:string) => {
     const { name, value } = e.target;
+    
+    if(validation) {
+      let objValidation = callValidations(validation, value);
+      objValidation = {...objValidation, inputName}
+      const arrayValidation = arrayErrors.filter(item => item.inputName !== objValidation.inputName)
+      setArrayErrors([...arrayValidation, objValidation])
+    }
     setInputValues((prevValues) => {
       const updatedValues = { ...prevValues };
       const path = name.split(".");
       setNestedValue(updatedValues, path, value);
       return updatedValues;
     });
+  };
+
+  const handleInputChangeError = (value: string, validation?:string) : string => {
+   // const { name, value } = e.target;
+    
+    if(validation) {
+      const obj = callValidations(validation, value);
+      if(!obj.isValid){
+        return obj.error
+      }
+    }
+    return ''
   };
 
   const handleInputDateChange = (date: CalendarDate, path: string) => {
@@ -262,6 +284,16 @@ export default function Modal({
       setIsSubmitting(false);
     }
   };
+
+  const isError = (inputName:string) => {
+    const objValidation = arrayErrors.filter(item => item.inputName === inputName);
+    if(objValidation.length > 0) {
+      return objValidation[0].error
+    }
+    else{
+      return '';
+    }
+  }
 
   useEffect(() => {
     if (inputs) {
@@ -385,6 +417,7 @@ export default function Modal({
                           )}
 
                           {input.type == "text" && (
+                            <>
                             <Input
                               label={input.label}
                               key={input.name}
@@ -403,10 +436,13 @@ export default function Modal({
                                       input.name.split(".")
                                     ) || ""
                               }
-                              onChange={handleInputChange}
+                              onChange={(e) => {handleInputChange(e, input.name, input.validation)}}
                             />
+                            <p>{isError(input.name)}</p>
+                            </>
                           )}
                           {input.type == "password" && isAdd && (
+                            <>
                             <Input
                               label={input.label}
                               key={input.name}
@@ -426,8 +462,11 @@ export default function Modal({
                                       input.name.split(".")
                                     ) || ""
                               }
-                              onChange={handleInputChange}
+                              onChange={(e) => {handleInputChange(e, input.name, input.validation)}}
                             />
+                            <p>{isError(input.name)}</p>
+                            
+                            </>
                           )}
                           {input.type == "select" && (
                             <Select
