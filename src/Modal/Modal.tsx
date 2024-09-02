@@ -209,6 +209,7 @@ export default function Modal({
   };
 
   const handleClick = async () => {
+    if(arrayErrors.filter(item => item.isValid == false).length > 0){return false}
     setIsSubmitting(true); // Inicia o estado de submissão
     setProgress(10); // Inicia a barra de progresso
     setShowSuccessIcon(false);
@@ -292,6 +293,20 @@ export default function Modal({
     }
     else{
       return '';
+    }
+  }
+
+  const isValidFilter = (inputName:string, validation:string) => {
+    const newArray = arrayErrors.filter(item => item.inputName === inputName); 
+    if(newArray.length > 0 && validation != '') {
+      if(newArray[0].isValid){
+        return false
+      }
+      else{
+        return true
+      }
+    } else {
+      return false
     }
   }
 
@@ -417,7 +432,7 @@ export default function Modal({
                           )}
 
                           {input.type == "text" && (
-                            <>
+                            <div>
                             <Input
                               label={input.label}
                               key={input.name}
@@ -425,6 +440,7 @@ export default function Modal({
                               placeholder={input.placeholder}
                               className="max-w-72"
                               isReadOnly={isView}
+                              isInvalid={isValidFilter(input.name, input.validation || '')}
                               value={
                                 typeof getNestedValue(
                                   inputValues,
@@ -438,11 +454,11 @@ export default function Modal({
                               }
                               onChange={(e) => {handleInputChange(e, input.name, input.validation)}}
                             />
-                            <p>{isError(input.name)}</p>
-                            </>
+                            <p className="text-[0.65rem] text-red-400 font-semibold mt-2">{isError(input.name)}</p>
+                            </div>
                           )}
                           {input.type == "password" && isAdd && (
-                            <>
+                            <div>
                             <Input
                               label={input.label}
                               key={input.name}
@@ -450,6 +466,7 @@ export default function Modal({
                               placeholder={input.placeholder}
                               className="max-w-72"
                               isReadOnly={isView}
+                              isInvalid={isValidFilter(input.name, input.validation || '')}
                               type="password"
                               value={
                                 typeof getNestedValue(
@@ -464,9 +481,9 @@ export default function Modal({
                               }
                               onChange={(e) => {handleInputChange(e, input.name, input.validation)}}
                             />
-                            <p>{isError(input.name)}</p>
+                            <p className="text-[0.65rem] text-red-400 font-semibold mt-2">{isError(input.name)}</p>
                             
-                            </>
+                            </div>
                           )}
                           {input.type == "select" && (
                             <Select
