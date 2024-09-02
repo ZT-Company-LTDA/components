@@ -342,7 +342,7 @@ export default function Modal({
       )}
 
       <ModalUI
-        size={!isDelete ? "5xl" : "xl"}
+        size={!isDelete ? "md" : "xl"}
         isOpen={isOpen}
         key={elementName}
         onOpenChange={onOpenChange}
@@ -354,7 +354,7 @@ export default function Modal({
               <ModalHeader className="flex flex-wrap gap-1">
                 {title}
               </ModalHeader>
-              <ModalBody className="flex flex-wrap gap-4 overflow-y-scroll">
+              <ModalBody className="flex flex-grow gap-4 overflow-y-auto">
                 {isDelete && (
                     inputValues?.name ?
                     <h1>
@@ -411,8 +411,9 @@ export default function Modal({
                               key={input.name}
                               label={input.label}
                               variant="faded"
-                              className="max-w-72"
+                              className="max-w-96"
                               showMonthAndYearPickers
+                              isRequired={isAdd ? true : false}
                               onChange={(date) =>
                                 handleInputDateChange(date, input.name)
                               }
@@ -438,7 +439,8 @@ export default function Modal({
                               key={input.name}
                               name={input.name}
                               placeholder={input.placeholder}
-                              className="max-w-72"
+                              isRequired={isAdd ? true : false}
+                              className="max-w-96"
                               isReadOnly={isView}
                               isInvalid={isValidFilter(input.name, input.validation || '')}
                               value={
@@ -464,7 +466,8 @@ export default function Modal({
                               key={input.name}
                               name={input.name}
                               placeholder={input.placeholder}
-                              className="max-w-72"
+                              isRequired={isAdd ? true : false}
+                              className="max-w-96"
                               isReadOnly={isView}
                               isInvalid={isValidFilter(input.name, input.validation || '')}
                               type="password"
@@ -495,6 +498,7 @@ export default function Modal({
                               isReadOnly={isView}
                               setValue={setInputValues}
                               fill={!isAdd ? true : false}
+                              isAdd={isAdd}
                               value={typeof getNestedValue(
                                 inputValues,
                                 input.name.split(".")
