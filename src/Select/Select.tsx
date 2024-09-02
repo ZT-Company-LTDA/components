@@ -20,6 +20,7 @@ interface SelectProps {
   setValue: (value: React.SetStateAction<Record<string, any>>) => void;
   value?: string;
   fill?: boolean;
+  isAdd?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -30,7 +31,8 @@ export const Select: React.FC<SelectProps> = ({
   name,
   isReadOnly,
   value,
-  fill
+  fill,
+  isAdd
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>(value || "");
   const [elements, setElements] = useState<ResultElement[]>([]);
@@ -126,7 +128,7 @@ export const Select: React.FC<SelectProps> = ({
           inputRef.current.focus(); 
         }
       }}
-      className="relative max-w-72"
+      className="relative max-w-96"
     >
       <Input
         type="text"
@@ -138,20 +140,21 @@ export const Select: React.FC<SelectProps> = ({
           setClicked(false);
           setShowDropdown(false);
         }}
+        isRequired={isAdd ? true : false}
         value={searchTerm}
         onChange={handleInputChange}
         isReadOnly={isReadOnly}
         placeholder={`Digite o nome do ${elementName}`}
-        className="max-w-72"
+        className="max-w-96"
         label={label}
       />
       {showDropdown ? (
-        <IoIosArrowUp className="absolute top-2 left-64" />
+        <IoIosArrowUp className="absolute top-2 left-[22rem]" />
       ) : (
-        <IoIosArrowDown className="absolute top-2 left-64" />
+        <IoIosArrowDown className="absolute top-2 left-[22rem]" />
       )}
       {showDropdown && (
-        <ul ref={dropdownRef} className="absolute z-50 max-w-72 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
+        <ul ref={dropdownRef} className="absolute z-50 max-w-96 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
           {searchTerm !== "" ? (
             elements.length > 0 ? (
               elements.map((element) => (
