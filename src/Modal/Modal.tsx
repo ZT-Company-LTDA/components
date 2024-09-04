@@ -417,7 +417,7 @@ export default function Modal({
                           )}
                           {input.type == "image" && (
                             <UploadImageInput 
-                              setInputValues={setInputValues}
+                              isView={isView}
                               setImage={setImage}
                               image={image}
                               imageUrl={imageUrl}
