@@ -142,6 +142,7 @@ export default function Modal({
   const [arrayErrors, setArrayErrors] = useState<Array<{isValid:boolean, error:string, inputName:string}>>([])
   const { createFormData } = useFormData()
   const [image, setImage] = useState<File>();
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const { data: session } = useSession();
 
@@ -154,6 +155,7 @@ export default function Modal({
             const response = await fetch(`${urlModalGetElement}/${id}`);
             const data = await response.json();
             setInputValues(data);
+            setImageUrl(data.image);
             console.log(inputValues);
           } catch (error) {
             console.error("Erro ao buscar os dados:", error);
@@ -418,6 +420,8 @@ export default function Modal({
                               setInputValues={setInputValues}
                               setImage={setImage}
                               image={image}
+                              imageUrl={imageUrl}
+                              setImageUrl={setImageUrl}
                             />
                           )}
                           {input.type == "date" && (

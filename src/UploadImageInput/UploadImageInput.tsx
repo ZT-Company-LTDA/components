@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai"; // Exemplo de ícone; você pode escolher outro
 import { setNestedValue } from "../Modal/Modal";
 
@@ -6,12 +6,16 @@ export const UploadImageInput = ({
   setInputValues,
   setImage,
   image,
+  setImageUrl,
+  imageUrl,
 }: {
   setInputValues: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   setImage: React.Dispatch<React.SetStateAction<File | undefined>>;
   image: File | undefined;
+  setImageUrl: React.Dispatch<React.SetStateAction<string>>,
+  imageUrl:string,
 }) => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(imageUrl);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
