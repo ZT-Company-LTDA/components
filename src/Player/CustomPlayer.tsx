@@ -5,6 +5,8 @@ import ReactPlayer, { ReactPlayerProps } from 'react-player';
 import PlayerControls from './PlayerControls';
 import PlayerOverlay from './PlayerOverlay';
 import { INITIAL_STATE, reducer } from './States';
+import screenfull from 'screenfull';
+import { findDOMNode } from 'react-dom';
 
 interface PlayerProps extends ReactPlayerProps {
   labelOverlay: string;
@@ -48,6 +50,10 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
   const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
   const playerRef = React.useRef<ReactPlayer>(null);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
+  
+  const handleFullscreen = () => {
+    screenfull.toggle(findDOMNode(wrapperRef.current) as Element);
+  };
 
   const handlePreview = () => {
     dispatch({ type: 'PLAY' });
@@ -77,7 +83,7 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
   };
 
   return (
-    <StyledPlayer state={state} ref={wrapperRef}>
+    <StyledPlayer state={state} ref={wrapperRef} onDoubleClick={handleFullscreen} onClick={() => dispatch({ type: 'TOGGLE_PLAY' })}>
       <ReactPlayer
         ref={playerRef}
         url={url}
@@ -87,7 +93,7 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
         playIcon={
           <PlayArrowRounded
             sx={{
-              color: 'red',
+              color: 'white',
               fontSize: '5rem',
             }}
           />
@@ -105,7 +111,7 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
         onProgress={handleProgress}
         onClickPreview={handlePreview}
       />
-      <PlayerOverlay state={state} label={labelOverlay}/>
+      <PlayerOverlay state={state} label={labelOverlay} dispatch={dispatch}/>
       {!state.controls && !state.light && (
         <PlayerControls state={state} dispatch={dispatch} playerRef={playerRef} wrapperRef={wrapperRef} />
       )}
