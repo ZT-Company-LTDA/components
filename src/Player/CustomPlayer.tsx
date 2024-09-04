@@ -87,8 +87,8 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
         playIcon={
           <PlayArrowRounded
             sx={{
-              color: 'white',
-              fontSize: '6rem',
+              color: 'red',
+              fontSize: '5rem',
             }}
           />
         }
