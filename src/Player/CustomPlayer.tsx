@@ -83,34 +83,36 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
   };
 
   return (
-    <StyledPlayer state={state} ref={wrapperRef} onDoubleClick={handleFullscreen} onClick={() => dispatch({ type: 'TOGGLE_PLAY' })}>
-      <ReactPlayer
-        ref={playerRef}
-        url={url}
-        width="100%"
-        height="100%"
-        light={light}
-        playIcon={
-          <PlayArrowRounded
-            sx={{
-              color: 'white',
-              fontSize: '5rem',
-            }}
-          />
-        }
-        controls={state.controls}
-        loop={state.loop}
-        muted={state.muted}
-        playing={state.playing}
-        playbackRate={state.playbackRate}
-        volume={state.volume}
-        onPlay={handlePlay}
-        onEnded={handleEnded}
-        onPause={handlePause}
-        onDuration={handleDuration}
-        onProgress={handleProgress}
-        onClickPreview={handlePreview}
-      />
+    <StyledPlayer state={state} ref={wrapperRef}>
+      <span onDoubleClick={handleFullscreen} onClick={() => dispatch({ type: 'TOGGLE_PLAY' })}>
+        <ReactPlayer
+          ref={playerRef}
+          url={url}
+          width="100%"
+          height="100%"
+          light={light}
+          playIcon={
+            <PlayArrowRounded
+              sx={{
+                color: 'white',
+                fontSize: '5rem',
+              }}
+            />
+          }
+          controls={state.controls}
+          loop={state.loop}
+          muted={state.muted}
+          playing={state.playing}
+          playbackRate={state.playbackRate}
+          volume={state.volume}
+          onPlay={handlePlay}
+          onEnded={handleEnded}
+          onPause={handlePause}
+          onDuration={handleDuration}
+          onProgress={handleProgress}
+          onClickPreview={handlePreview}
+        />
+      </span>
       <PlayerOverlay state={state} label={labelOverlay} dispatch={dispatch}/>
       {!state.controls && !state.light && (
         <PlayerControls state={state} dispatch={dispatch} playerRef={playerRef} wrapperRef={wrapperRef} />
