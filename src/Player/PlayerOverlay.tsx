@@ -42,11 +42,11 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = (props) => {
             {label}
           </Typography>
         </Fade>
-        <Fade in>
+        {/* <Fade in>
           <Typography variant="overline" color={'white'}>
             2022
           </Typography>
-        </Fade>
+        </Fade> */}
       </Box>
     </StyledPlayerOverlay>
   );
