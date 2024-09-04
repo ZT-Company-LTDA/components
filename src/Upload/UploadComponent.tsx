@@ -194,28 +194,30 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
           )}
         </div>
       </div>
-      <div className="flex gap-2">
-        {
-          showAcceptFiles &&
-          <AcceptedFileItems/>
-        }
-        <Button
-          color="default"
-          onClick={clearFiles}
-          className="w-full md:w-1/2 break-words text-center overflow-hidden whitespace-normal"
-          isDisabled={!documents?.length}
-        >
-          Limpar fila de arquivos
-        </Button>
+      <div className="flex flex-col gap-2 md:flex-row md:gap-2">
         <Button
           color="primary"
           onClick={handleSave}
-          className="w-full md:w-1/2 break-words text-center overflow-hidden whitespace-normal"
+          className="w-full break-words text-center overflow-hidden whitespace-normal"
           isLoading={loading}
           isDisabled={!documents?.length}
         >
           Enviar arquivos
         </Button>
+        <div className="flex w-full gap-2">
+          <Button
+            color="default"
+            onClick={clearFiles}
+            className="w-full break-words text-center overflow-hidden whitespace-normal"
+            isDisabled={!documents?.length}
+          >
+            Limpar fila de arquivos
+          </Button>
+          {
+            showAcceptFiles && 
+            <AcceptedFileItems/>
+          }
+        </div>
       </div>
     </>
   )

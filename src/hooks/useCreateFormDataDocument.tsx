@@ -30,10 +30,6 @@ const useFormData = (): UseFormDataResult => {
       formData.append(jsonFieldName, JSON.stringify(data));
     }
 
-    for (let [key, value] of formData.entries()) {
-      console.log(key,value);
-    }
-
     return formData;
   }, []);
 
