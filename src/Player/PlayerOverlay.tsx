@@ -38,7 +38,7 @@ const PlayerOverlay: React.FC<PlayerOverlayProps> = (props) => {
           <Chip label={label} color={'warning'} />
         </Fade> */}
         <Fade in>
-          <Typography variant="h4" color={'white'} mt={2}>
+          <Typography variant="h6" color={'white'} mt={2}>
             {label}
           </Typography>
         </Fade>
