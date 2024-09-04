@@ -19,6 +19,8 @@ import axios from "axios";
 import { MdError } from "react-icons/md";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { callValidations } from "../utils/functions/callValidations";
+import { UploadImageInput } from "../UploadImageInput/UploadImageInput";
+import useFormData from "../hooks/useCreateFormDataDocument";
 
 interface CustomModalProps {
   trigger: JSX.Element;
@@ -138,6 +140,8 @@ export default function Modal({
   const [showErrorIcon, setShowErrorIcon] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayErrors, setArrayErrors] = useState<Array<{isValid:boolean, error:string, inputName:string}>>([])
+  const { createFormData } = useFormData()
+  const [image, setImage] = useState<File>();
 
   const { data: session } = useSession();
 
@@ -231,24 +235,27 @@ export default function Modal({
       const processedInputValues = transformInputValues(inputValues);
       
       const method = isAdd ? 'post' : (isUpdate ? 'patch' : (isDelete ? 'delete' : 'get'));
-      
-      const response = await axios({
-        method,
-        url: isAdd ? addModalUrl : (isUpdate ? `${updateModalUrl}/${id}` : `${urlModalGetElement}/${id}`),
-        data: processedInputValues,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session?.user.token}`,
-        },
-          onUploadProgress: (progressEvent) => {
-            const total = progressEvent.total || 1;
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / total
-            );
-            setProgress(percentCompleted);
+
+      if(image){
+        const formData = createFormData([image], inputValues, 'profile_image', 'inputValues');
+        const response = await axios({
+          method,
+          url: isAdd ? addModalUrl : (isUpdate ? `${updateModalUrl}/${id}` : `${urlModalGetElement}/${id}`),
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${session?.user.token}`,
           },
-        }
-      );
+            onUploadProgress: (progressEvent) => {
+              const total = progressEvent.total || 1;
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / total
+              );
+              setProgress(percentCompleted);
+            },
+          }
+        );
+      }
 
       setProgress(100);
       setShowSuccessIcon(true);
@@ -405,6 +412,13 @@ export default function Modal({
                             >
                               {input.label}
                             </Checkbox>
+                          )}
+                          {input.type == "image" && (
+                            <UploadImageInput 
+                              setInputValues={setInputValues}
+                              setImage={setImage}
+                              image={image}
+                            />
                           )}
                           {input.type == "date" && (
                             <DatePicker

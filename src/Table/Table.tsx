@@ -213,7 +213,7 @@ export function Table({
         case "text":
           return (
             <div className="flex flex-col">
-              <p className="text-bold text-sm capitalize text-default-400">
+              <p className="text-bold text-sm text-default-400">
                 {cellValue || column.voidValueMessage || ""}
               </p>
             </div>
