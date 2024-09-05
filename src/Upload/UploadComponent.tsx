@@ -28,7 +28,7 @@ interface Props {
   triggerSearch?:() => void
 }
 
-export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData,url}:Props) => {  
+export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData,url, triggerSearch}:Props) => {  
   const [loading, setLoading] = useState<boolean>(false)
   const { createFormData } = useFormData()
   
@@ -92,6 +92,9 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
       }
       setLoading(false)
     }
+    if(triggerSearch){
+      triggerSearch();
+    };
   }
 
   const handleSave = () => {
