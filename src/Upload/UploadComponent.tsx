@@ -25,6 +25,7 @@ interface Props {
   keyDocFormData:string
   keyFormData?:string
   url:string
+  triggerSearch?:() => void
 }
 
 export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFiles,IconBaseTypeFiles,token,dataWithDocuments,keyFormData,keyDocFormData,url}:Props) => {  
