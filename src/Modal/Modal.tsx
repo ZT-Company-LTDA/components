@@ -516,6 +516,7 @@ export default function Modal({
                               setValue={setInputValues}
                               fill={!isAdd ? true : false}
                               isAdd={isAdd}
+                              isView={isView}
                               value={typeof getNestedValue(
                                 inputValues,
                                 input.name.split(".")

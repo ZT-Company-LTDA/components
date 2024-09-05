@@ -21,6 +21,7 @@ interface SelectProps {
   value?: string;
   fill?: boolean;
   isAdd?: boolean;
+  isView?: boolean;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -32,7 +33,8 @@ export const Select: React.FC<SelectProps> = ({
   isReadOnly,
   value,
   fill,
-  isAdd
+  isAdd,
+  isView
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>(value || "");
   const [elements, setElements] = useState<ResultElement[]>([]);
@@ -133,13 +135,18 @@ export const Select: React.FC<SelectProps> = ({
       <Input
         type="text"
         onFocus={() => {
-          setClicked(true);
-          setShowDropdown(true);
+          if(!isView){
+            setClicked(true);
+            setShowDropdown(true);
+          }
         }}
         onBlur={() => {
-          setClicked(false);
-          setShowDropdown(false);
+          if(!isView){
+            setClicked(false);
+            setShowDropdown(false);
+          }
         }}
+        disabled={isView}
         isRequired={isAdd ? true : false}
         value={searchTerm}
         onChange={handleInputChange}
