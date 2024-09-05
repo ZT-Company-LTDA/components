@@ -141,7 +141,7 @@ export default function Modal({
   const [errorMessage, setErrorMessage] = useState("");
   const [arrayErrors, setArrayErrors] = useState<Array<{isValid:boolean, error:string, inputName:string}>>([])
   const { createFormData } = useFormData()
-  const [image, setImage] = useState<File>();
+  const [image, setImage] = useState<File | string>();
   const [imageUrl, setImageUrl] = useState<string>('');
 
   const { data: session } = useSession();
@@ -239,7 +239,7 @@ export default function Modal({
       const method = isAdd ? 'post' : (isUpdate ? 'patch' : (isDelete ? 'delete' : 'get'));
 
       if(image){
-        const formData = createFormData([image], inputValues, 'profile_image', 'inputValues');
+        const formData = createFormData([image as File], inputValues, 'profile_image', 'inputValues');
         const response = await axios({
           method,
           url: isAdd ? addModalUrl : (isUpdate ? `${updateModalUrl}/${id}` : `${urlModalGetElement}/${id}`),
@@ -419,7 +419,6 @@ export default function Modal({
                             <UploadImageInput 
                               isView={isView}
                               setImage={setImage}
-                              image={image}
                               imageUrl={imageUrl}
                               setImageUrl={setImageUrl}
                             />

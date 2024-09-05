@@ -4,18 +4,22 @@ import { AiOutlineCloudUpload } from "react-icons/ai"; // Exemplo de ícone; voc
 export const UploadImageInput = ({
   isView,
   setImage,
-  image,
   setImageUrl,
   imageUrl,
 }: {
   isView: boolean | undefined;
-  setImage: React.Dispatch<React.SetStateAction<File | undefined>>;
-  image: File | undefined;
+  setImage: React.Dispatch<React.SetStateAction<File | string | undefined>>;
   setImageUrl: React.Dispatch<React.SetStateAction<string>>,
   imageUrl:string,
 }) => {
   const [selectedFile, setSelectedFile] = useState<string | null>(imageUrl);
-  
+
+  useEffect(() => {
+    if (imageUrl) {
+      setImage(imageUrl);
+    }
+  }, [imageUrl]);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setSelectedFile(URL.createObjectURL(file!));
