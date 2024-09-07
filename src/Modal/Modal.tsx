@@ -152,8 +152,8 @@ export default function Modal({
         setIsLoading(true);
         const fetchData = async () => {
           try {
-            const response = await fetch(`${urlModalGetElement}/${id}`);
-            const data = await response.json();
+            const response = await axios.get(`${urlModalGetElement}/${id}`);
+            const data = response.data;
             setInputValues(data);
             setImageUrl(data.image);
             console.log(inputValues);
