@@ -4,8 +4,8 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { useAsyncList } from "@react-stately/data";
-import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
+import axios from "../utils/AxiosInstance";
 
 export const Filter = ({
   name,
@@ -60,9 +60,7 @@ export const Filter = ({
             items: res.data.results || []
           };
         } catch (error) {
-          if (axios.isAxiosError(error) && error.response?.status === 401) {
-            signOut();
-          }
+          console.error('error filter',error);
           return {
             items: []
           };

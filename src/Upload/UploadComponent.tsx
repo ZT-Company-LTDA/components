@@ -10,7 +10,7 @@ import { GrDocumentPdf } from 'react-icons/gr'
 import toast from 'react-hot-toast'
 import { acceptsFilesExtension, AcceptedFileTypeKey, AcceptedFileTypes } from './TypeAcceptFiles';
 import { IconType } from 'react-icons'
-import axios from 'axios'
+import axios from "../utils/AxiosInstance";
 import useFormData from '../hooks/useCreateFormDataDocument'
 import { signOut } from 'next-auth/react'
 
@@ -86,10 +86,6 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
       setLoading(false)
     } catch (error) {
       toast.error(`Ocorreu algum erro interno`)
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        toast.error('Desculpe, sua sessão expirou.')
-        signOut(); 
-      }
       setLoading(false)
     }
     if(triggerSearch){

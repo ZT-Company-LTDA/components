@@ -15,7 +15,7 @@ import {
 import { CalendarDate, ZonedDateTime } from "@internationalized/date";
 import { signOut, useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
-import axios from "axios";
+import axios from "../utils/AxiosInstance";
 import { MdError } from "react-icons/md";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { callValidations } from "../utils/functions/callValidations";
@@ -275,15 +275,7 @@ export default function Modal({
         setShowErrorIcon(false);
       }, 2500);
     
-      if (axios.isAxiosError(error) && error.response) {
-        if(error.response.status === 401){
-          signOut();
-        }
-        // Verifica se o erro é do axios e se existe uma resposta
-        setErrorMessage(
-          error.response.data?.message || "Ocorreu um erro no servidor. Tente novamente."
-        );
-      } else if (error instanceof Error) {
+      if (error instanceof Error) {
         // Trata outros tipos de erro genéricos
         setErrorMessage(error.message || "Ocorreu um erro. Tente novamente.");
       } else {

@@ -29,13 +29,11 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import * as React from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { FaSearch, FaUserEdit } from "react-icons/fa";
-import axios from "axios";
+import axios from "../utils/AxiosInstance";
 import Modal from "../Modal/Modal";
 import { IoEyeOutline } from "react-icons/io5";
 import { IoIosAddCircle } from "react-icons/io";
-import { signOut } from "next-auth/react";
 import { CustomDropdown } from "../Dropdown/CustomDropdown";
-import toast from "react-hot-toast";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -104,10 +102,7 @@ export function Table({
         "Content-Type": "application/json",
       },
     }).then((res) => res.data).catch((error) => {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        toast.error('Desculpe, sua sessão expirou.')
-        signOut(); 
-      }
+      console.error('error fecther table',error);
     });
   };
 
