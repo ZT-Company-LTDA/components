@@ -22,11 +22,17 @@ axios.interceptors.response.use(
     if (axiosLib.isAxiosError(error) && error.response?.status === 401) {
       toast.error('Falha na autenticação, você está sendo deslogado. Entre novamente em sua conta.',{
         duration: 5000,
+        position:'bottom-center'
       })
-
+      
       setTimeout(async () => {
         await signOut({ callbackUrl: '/signin' });
       }, 5000);
+    }else{      
+      toast.error(error.message,{
+        duration: 3000
+      })
+      console.error(error);
     }
     return Promise.reject(error);
   }
