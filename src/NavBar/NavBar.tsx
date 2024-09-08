@@ -122,6 +122,7 @@ export const NavBar = ({
               {screens.map((item, index) => (
                 <NavbarMenuItem key={`${item.id}-${index}`}>
                   <Link
+                    href={`/dashboard/${item.route?.toLowerCase()}`}
                     className="w-full gap-2"
                     color="foreground"
                     onClick={() => {
@@ -138,7 +139,7 @@ export const NavBar = ({
             </NavbarMenu>
           </NavBarUI>
         )}
-        <main className="flex-1 p-3 md:p-1 max-md:h-screen max-md:w-screen">
+        <main className="flex h-full md:w-full items-end justify-end p-3 md:p-0 max-md:h-screen max-md:w-screen">
           {children}
         </main>
       </div>

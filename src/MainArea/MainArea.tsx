@@ -2,30 +2,34 @@ import * as React from "react";
 import { ContextScreen, useScreenContext } from "../contexts/ContextScreen";
 import { useContext, useEffect } from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
+import { usePathname } from "next/navigation";
 
 interface MainAreaProps {
-  screens: Screen[],
+  screens: Array<{ id: number; name: string; icon: string; library: string; component?: JSX.Element; route?:string }>;
   mainAreaStyle:any
+  children: React.ReactNode
 }
 
 interface Screen {
   id: number;
   component: any;
+  route:string
 }
 
-export const MainArea = ({screens, mainAreaStyle}:MainAreaProps) => {
+export const MainArea = ({screens, mainAreaStyle, children}:MainAreaProps) => {
   const {idScreen, navBarType} = useScreenContext();
   const {setArrayFilters} = useTableCrudContext();
+  const pathname = usePathname()
   
   useEffect(() => {
     setArrayFilters([])
   }, [idScreen])
 
   return(
-    <div className={`${navBarType =='icon-bar' ? 'md:pl-[8%]' : 'md:pl-[15%]'} h-full w-full ${mainAreaStyle.backgroundColor}`}>
+    <div className={`h-full w-full md:w-[85%] p-4 ${mainAreaStyle.backgroundColor}`}>
       {
         screens.map((screen) =>(
-          screen.id === idScreen && screen.component
+          pathname.startsWith(`/dashboard/${screen.route?.toLowerCase()}`) && children
         ))
       }
     </div>

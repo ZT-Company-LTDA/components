@@ -15,14 +15,16 @@ export const Dashboard = ({
   mainAreaStyle,
   logo,
   initialScreenId,
+  children
 }: {
-  screens: any;
+  screens: Array<{ id: number; name: string; icon: string; library: string; component?: JSX.Element; route?:string }> ;
   aside?: boolean;
   topbar?: boolean;
   navBarType: "icon-bar" | "intra-bar";
   mainAreaStyle: any;
   logo?: JSX.Element;
   initialScreenId: number;
+  children: React.ReactNode;
 }) => {
 
   const { setidScreen } = useScreenContext();
@@ -38,7 +40,7 @@ export const Dashboard = ({
           navBarType={navBarType}
           logo={logo}
         >
-          <MainArea screens={screens} mainAreaStyle={mainAreaStyle} />
+          <MainArea screens={screens} mainAreaStyle={mainAreaStyle}>{children}</MainArea>
         </NavBar>
       </ProviderTableCrud>
     </ProviderScreen>
