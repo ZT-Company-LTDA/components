@@ -118,7 +118,7 @@ export const Select: React.FC<SelectProps> = ({
       setSelectedElement(selected);
       setSearchTerm(value);
     }
-  }, [fill]);
+  }, [fill, value, elements]);
 
   return (
     <div

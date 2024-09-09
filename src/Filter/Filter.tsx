@@ -22,10 +22,30 @@ export const Filter = ({
   const { setPage, arrayFilters, setArrayFilters, clear } = useTableCrudContext();
   const { data: session } = useSession();
 
+  const onClear = useCallback(() => {
+    setFilterValue("");
+    setPage(1);
+
+    setArrayFilters((prevArrayFilters) => {
+      const index = prevArrayFilters.findIndex(
+        (filter) => filter.name === name
+      );
+      if (index === -1) {
+        // Não existe, então adiciona um novo
+        return [...prevArrayFilters, { name, value: "" }];
+      } else {
+        // Existe, então atualiza o existente
+        const newArrayFilters = [...prevArrayFilters];
+        newArrayFilters[index].value = "";
+        return newArrayFilters;
+      }
+    });
+  }, [name, setArrayFilters, setFilterValue, setPage]);
+  
   useEffect(() => {
     setFilterValue("");
     onClear();
-  }, [clear]);
+  }, [clear, onClear]);
 
   let list = useAsyncList({
     async load({ signal, filterText }) {
@@ -72,26 +92,6 @@ export const Filter = ({
       }
     },
   });
-
-  const onClear = useCallback(() => {
-    setFilterValue("");
-    setPage(1);
-
-    setArrayFilters((prevArrayFilters) => {
-      const index = prevArrayFilters.findIndex(
-        (filter) => filter.name === name
-      );
-      if (index === -1) {
-        // Não existe, então adiciona um novo
-        return [...prevArrayFilters, { name, value: "" }];
-      } else {
-        // Existe, então atualiza o existente
-        const newArrayFilters = [...prevArrayFilters];
-        newArrayFilters[index].value = "";
-        return newArrayFilters;
-      }
-    });
-  }, [name, setArrayFilters, setFilterValue, setPage]);
 
   const onSearchChange = useCallback(
     (value?: string) => {

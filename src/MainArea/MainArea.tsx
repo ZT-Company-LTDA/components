@@ -23,7 +23,7 @@ export const MainArea = ({screens, mainAreaStyle, children}:MainAreaProps) => {
   
   useEffect(() => {
     setArrayFilters([])
-  }, [idScreen])
+  }, [idScreen, setArrayFilters])
 
   return(
     <div className={`h-full w-full md:w-[85%] p-4 ${mainAreaStyle.backgroundColor}`}>

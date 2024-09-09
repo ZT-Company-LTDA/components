@@ -29,7 +29,8 @@ export const Dashboard = ({
 
   const { setidScreen } = useScreenContext();
   
-  useEffect(() => {setidScreen(initialScreenId)}, []);
+  useEffect(() => {setidScreen(initialScreenId)}, [setidScreen, initialScreenId]);
+  
   return (
     <ProviderScreen>
       <ProviderTableCrud>

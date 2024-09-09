@@ -129,7 +129,7 @@ export function Table({
     mutate().then(() => {
       setIsSearching(false);
     });
-  }, [arrayFilters, mutate]);
+  }, [mutate]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])];
