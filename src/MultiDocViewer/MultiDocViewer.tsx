@@ -1,27 +1,53 @@
-import { Textarea, Button } from '@nextui-org/react';
-import React, { useState, useEffect } from 'react';
+import { Textarea, Button, Skeleton } from '@nextui-org/react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AcceptedFileTypeKey } from '../Upload/TypeAcceptFiles';
 import axios from "../utils/AxiosInstance";
+import 'react-quill/dist/quill.snow.css';
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
+type SelectedOption = "PHOTO" | "VIDEO" | "EVOLUTION" | "REPORTS";
 type MultiDocViewerProps = {
-  url: string;
+  uuid: string;
+  url?:string;
+  token: string;
+  folder:SelectedOption;
   fileType: AcceptedFileTypeKey
   onSave: (newContent:string)=>void
 }
 
-export const MultiDocumentViewer = ({ url, fileType, onSave }:MultiDocViewerProps) => {
+export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }:MultiDocViewerProps) => {
   const [content, setContent] = useState('');
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
-    if (fileType === 'text/plain') {
-      axios.get(url, {
-        responseType: 'text'
-      })
-        .then(response => setContent(response.data))
-        .catch(error => console.error('Error fetching text file:', error));
+  const dataDoc = async (uuidAws: string, token: string) => {
+    try {
+      const response = await axios.get(`/documents/getData/${uuidAws}`, {
+        params: {
+          folder: folder,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response.data.content;
+    } catch (error) {
+      console.error('Error fetching document data:', error);
+      return null;
     }
-  }, [url, fileType]);
+  };
+
+  const { data, isLoading, error } = useSWR(
+    uuid && fileType === 'text/plain' ? [uuid, token] : null,
+    async ([uuidAws, token]) => await dataDoc(uuidAws, token),
+    {
+      keepPreviousData: true,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -34,18 +60,18 @@ export const MultiDocumentViewer = ({ url, fileType, onSave }:MultiDocViewerProp
     }
   };
 
-  const handleChange = (event:React.ChangeEvent<HTMLInputElement>) => {
-    setContent(event.target.value);
-  };
+  useEffect(() => {
+    if (data) {
+      setContent(data);
+    }
+  }, [data]);
 
   if (fileType === 'application/pdf') {
     return (
       <iframe
         src={url}
-        width="100%"
-        height="100%"
         title="PDF Viewer"
-        className="h-[80vh]"
+        className='h-full w-full'
         style={{ border: 'none' }}
       >
         Seu navegador não suporta a visualização de PDF.
@@ -53,31 +79,52 @@ export const MultiDocumentViewer = ({ url, fileType, onSave }:MultiDocViewerProp
     );
   } else if (fileType === 'text/plain') {
     return (
-      <div className="bg-white p-4 h-[80vh] flex flex-col">
+      <>
         {isEditing ? (
-          <>
-            <Textarea
-              value={content}
-              onChange={handleChange}
-              className="flex-grow mb-4"
-            />
-            <Button onClick={handleSave}>Salvar</Button>
-          </>
+          <div className='flex flex-col h-full w-full items-center justify-between'>
+            {
+              <ReactQuill
+                value={content}
+                onChange={setContent}
+                modules={{
+                  toolbar: [
+                    [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['bold', 'italic', 'underline'],
+                    // ['link', 'image'],
+                    [{ 'align': [] }],
+                    ['clean'],
+                  ],
+                }}
+                theme="snow" 
+                formats={[
+                  'header', 'font', 'list', 'bullet', 'bold', 'italic', 'underline',
+                  'link', 'align'
+                ]}
+                className="bg-white text-black rounded-lg border-none w-full h-[80%]"
+                key="multi-doc-view"
+              />
+            }
+            <Button onClick={handleSave} className='w-1/2'>Salvar</Button>
+          </div>
         ) : (
-          <>
-            <pre className="whitespace-pre-wrap flex-grow mb-4">{content}</pre>
-            <Button onClick={handleEdit}>Editar</Button>
-          </>
+          <div className='flex flex-col justify-between h-full w-full items-center overflow-y-scroll' onClick={handleEdit}>
+            {
+              <div
+                dangerouslySetInnerHTML={{ __html: content }} 
+                className='max-w-[90%] break-words'
+              />
+            }
+          </div>
         )}
-      </div>
+      </>
     );
   } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
     return (
       <iframe
         src={url}
-        width="100%"
         title="Conteúdo do arquivo de texto"
-        className="h-[80vh] bg-white"
+        className="bg-white"
         style={{ border: "none" }}
       >
         Seu navegador não suporta a exibição deste conteúdo.
@@ -87,9 +134,8 @@ export const MultiDocumentViewer = ({ url, fileType, onSave }:MultiDocViewerProp
     return (
       <iframe
         src={url}
-        width="100%"
         title="Conteúdo do arquivo de texto"
-        className="h-[80vh] bg-white"
+        className="bg-white"
         style={{ border: "none" }}
       >
         Seu navegador não suporta a exibição deste conteúdo.
