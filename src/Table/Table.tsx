@@ -176,6 +176,7 @@ export function Table({
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
+      console.log('element', element)
       const column = columns.find((col) => col.uid === columnKey);
       if (!column) return null;
 
@@ -197,7 +198,9 @@ export function Table({
               avatarProps={{
                 radius: "lg",
                 name: element.name,
+                size:'sm',
                 isBordered: true,
+                src:element.image
               }}
               description={element.email}
               name={cellValue}

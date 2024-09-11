@@ -7,7 +7,7 @@ interface CustomSkeletonProps extends SkeletonProps {
 
 export default function CustomSkeleton({ numberSkeletons, ...props }: CustomSkeletonProps) {
   return (
-    <div className="md:flex gap-2 md:flex-wrap md:overflow-hidden">
+    <div className="md:flex gap-10 md:flex-wrap md:overflow-hidden opacity-50">
       {Array.from({ length: numberSkeletons }).map((_, index) => (
         <Card key={index} className="w-[200px] space-y-5 p-4" radius="lg">
           <Skeleton className="rounded-lg" {...props}>

@@ -1,11 +1,10 @@
-import { Textarea, Button, Skeleton } from '@nextui-org/react';
-import React, { useState, useEffect, useCallback } from 'react';
+import { Button, Skeleton, skeleton } from '@nextui-org/react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AcceptedFileTypeKey } from '../Upload/TypeAcceptFiles';
 import axios from "../utils/AxiosInstance";
-import 'react-quill/dist/quill.snow.css';
-import dynamic from 'next/dynamic';
 import useSWR from 'swr';
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+import DOMPurify from 'dompurify';
+import EditorComponent from '../TipTap/Editor';
 
 type SelectedOption = "PHOTO" | "VIDEO" | "EVOLUTION" | "REPORTS";
 type MultiDocViewerProps = {
@@ -13,7 +12,7 @@ type MultiDocViewerProps = {
   url?:string;
   token: string;
   folder:SelectedOption;
-  fileType: AcceptedFileTypeKey
+  fileType: AcceptedFileTypeKey | undefined
   onSave: (newContent:string)=>void
 }
 
@@ -53,19 +52,27 @@ export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     setIsEditing(false);
     if (onSave) {
       onSave(content);
     }
-  };
+  }, [content, onSave]);
 
   useEffect(() => {
-    if (data) {
+    if (data && data !== content) {
       setContent(data);
     }
-  }, [data]);
+  }, [data,fileType]);
 
+  useEffect(() => {
+    console.log('content :>> ', content);
+  }, [content])
+  
+  // const createMarkup = (html:string) => {
+  //   return { __html: DOMPurify.sanitize(html) };
+  // };
+  
   if (fileType === 'application/pdf') {
     return (
       <iframe
@@ -79,45 +86,16 @@ export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }
     );
   } else if (fileType === 'text/plain') {
     return (
-      <>
-        {isEditing ? (
-          <div className='flex flex-col h-full w-full items-center justify-between'>
-            {
-              <ReactQuill
-                value={content}
-                onChange={setContent}
-                modules={{
-                  toolbar: [
-                    [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                    ['bold', 'italic', 'underline'],
-                    // ['link', 'image'],
-                    [{ 'align': [] }],
-                    ['clean'],
-                  ],
-                }}
-                theme="snow" 
-                formats={[
-                  'header', 'font', 'list', 'bullet', 'bold', 'italic', 'underline',
-                  'link', 'align'
-                ]}
-                className="bg-white text-black rounded-lg border-none w-full h-[80%]"
-                key="multi-doc-view"
-              />
-            }
-            <Button onClick={handleSave} className='w-1/2'>Salvar</Button>
-          </div>
-        ) : (
-          <div className='flex flex-col justify-between h-full w-full items-center overflow-y-scroll' onClick={handleEdit}>
-            {
-              <div
-                dangerouslySetInnerHTML={{ __html: content }} 
-                className='max-w-[90%] break-words'
-              />
-            }
-          </div>
-        )}
-      </>
+      <div className='flex flex-col h-full w-full items-center justify-between overflow-y-auto'>
+      {isLoading ? <Skeleton/> :
+        <EditorComponent
+          content={content}
+          setContent={(newContent:string) => setContent(newContent)}
+          onSave={()=>console.log('salvou')}
+        />
+      }
+        {/* <Button onClick={handleSave} className='w-1/2 mt-2' variant='solid' color='primary'>Salvar</Butto                     n> */}
+      </div>
     );
   } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
     return (
