@@ -46,15 +46,18 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 import { Button } from "@nextui-org/react";
+import toast from "react-hot-toast";
 
 export default function EditorComponent({
   setContent,
   content,
-  onSave
+  onSave,
+  oncloseModal
 }: {
   setContent: (value: string) => void;
   content: string;
   onSave?: (newContent:string)=>void
+  oncloseModal?: ()=>void
 }) {
   const editor = useEditor({
     extensions: [
@@ -118,8 +121,10 @@ export default function EditorComponent({
   }, [editor, setContent,isEditable,]);
 
   const handleEdit = () => {
-    if(isEditable==true && onSave){
+    if(isEditable && onSave){
       onSave(content)
+      if(!!oncloseModal) oncloseModal()
+      toast.success('Foi salvo com sucesso o documento.')
     }
     setIsEditable(!isEditable)
   }
