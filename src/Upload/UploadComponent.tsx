@@ -54,7 +54,7 @@ export const UploadComponent = ({showAcceptFiles,documents,setDocuments,typeFile
     //   }
     //   reader.readAsArrayBuffer(file)
     // })
-  }, [])
+  }, [setDocuments, typeFiles])
 
   const {
     acceptedFiles,

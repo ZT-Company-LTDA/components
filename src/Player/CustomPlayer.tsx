@@ -52,7 +52,9 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   
   const handleFullscreen = () => {
-    screenfull.toggle(findDOMNode(wrapperRef.current) as Element);
+    if (screenfull.isEnabled && wrapperRef.current) {
+      screenfull.request(wrapperRef.current);
+    }
   };
 
   const handlePreview = () => {

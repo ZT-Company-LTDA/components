@@ -56,14 +56,18 @@ const StyledPlayerControls = styled('div')`
 `;
 
 const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
-  const { state, dispatch, wrapperRef, playerRef } = props;
+  const { state, dispatch, playerRef } = props;
+
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   const handleSound = (_event: Event, newValue: number | number[]) => {
     dispatch({ type: 'VOLUME', payload: newValue });
   };
 
   const handleFullscreen = () => {
-    screenfull.toggle(findDOMNode(wrapperRef.current) as Element);
+    if (screenfull.isEnabled && wrapperRef.current) {
+      screenfull.request(wrapperRef.current);
+    }
   };
 
   const handleSeek = (_event: Event, newValue: number | number[]) => {
@@ -134,7 +138,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   };
 
   return (
-    <StyledPlayerControls className={'video-player__controls'}>
+    <StyledPlayerControls ref={wrapperRef} className={'video-player__controls'}>
       <Stack direction="row" alignItems="center">
         {renderSeekSlider()}
       </Stack>

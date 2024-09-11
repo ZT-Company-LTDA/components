@@ -170,7 +170,7 @@ export default function Modal({
     if(isOpen == false && closeModalDropDown != undefined){
       closeModalDropDown();
     }
-  }, [isOpen, id]);
+  }, [isOpen, id, closeModalDropDown]);
 
   // Estado para armazenar os valores dos inputs
   const [inputValues, setInputValues] = useState<Record<string, any>>({});

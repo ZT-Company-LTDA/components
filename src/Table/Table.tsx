@@ -64,7 +64,16 @@ interface TableCrudProps {
   token: string | undefined;
   elementName: string;
   size: string;
-  modalInputs: Array<{ label: string; value: string; name: string, trigger?:() => boolean, type:string, placeholder:string, autocompleteUrl?:string, hiddenValue?:string }>;
+  modalInputs: Array<{
+    label: string;
+    value: string;
+    name: string;
+    trigger?: () => boolean;
+    type: string;
+    placeholder: string;
+    autocompleteUrl?: string;
+    hiddenValue?: string;
+  }>;
   add?: boolean;
   urlModalGetElement?: string;
   addModalUrl?: string;
@@ -81,7 +90,7 @@ export function Table({
   add,
   urlModalGetElement,
   addModalUrl,
-  updateModalUrl
+  updateModalUrl,
 }: TableCrudProps) {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { filterValue, arrayFilters, page, setPage, clear, setClear } =
@@ -101,9 +110,11 @@ export function Table({
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-    }).then((res) => res.data).catch((error) => {
-      console.error('error fecther table',error);
-    });
+    })
+      .then((res) => res.data)
+      .catch((error) => {
+        console.error("error fecther table", error);
+      });
   };
 
   const { data, isLoading, mutate } = useSWR<TableUsersProps>(
@@ -116,20 +127,20 @@ export function Table({
     }
   );
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     if (clear) {
       setClear(false);
     } else {
       setClear(true);
     }
-  };
+  }, [clear, setClear]);
 
   const searchTable = useCallback(() => {
     setIsSearching(true);
     mutate().then(() => {
       setIsSearching(false);
     });
-  }, [arrayFilters, mutate]);
+  }, [mutate]);
 
   const filteredItems = useMemo(() => {
     let filteredUsers = [...(data?.users ?? [])];
@@ -139,7 +150,7 @@ export function Table({
     //   )
     // }
     return filteredUsers;
-  }, [data?.users, arrayFilters]);
+  }, [data?.users]);
 
   const pages = useMemo(() => {
     return data?.count ? Math.ceil(data.count / rowsPerPage) : 1;
@@ -152,7 +163,7 @@ export function Table({
       setRowsPerPage(Number(e.target.value));
       setPage(1);
     },
-    []
+    [setPage]
   );
 
   const bottomContent = useMemo(() => {
@@ -172,7 +183,7 @@ export function Table({
         />
       </div>
     );
-  }, [filteredItems.length, page, pages, arrayFilters]);
+  }, [filteredItems.length, page, setPage, pages]);
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
@@ -294,7 +305,14 @@ export function Table({
           return cellValue;
       }
     },
-    []
+    [
+      columns,
+      elementName,
+      modalInputs,
+      searchTable,
+      updateModalUrl,
+      urlModalGetElement,
+    ]
   );
 
   const topContent = useMemo(() => {
@@ -348,11 +366,14 @@ export function Table({
       </div>
     );
   }, [
-    filterValue,
     onRowsPerPageChange,
-    data?.users.length ?? 0,
-    arrayFilters,
     isMobile,
+    add,
+    addModalUrl,
+    clearFilters,
+    elementName,
+    modalInputs,
+    searchTable,
   ]);
 
   return (
