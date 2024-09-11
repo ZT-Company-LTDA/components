@@ -26,7 +26,7 @@ export const MainArea = ({screens, mainAreaStyle, children}:MainAreaProps) => {
   }, [idScreen, setArrayFilters])
 
   return(
-    <div className={`h-full w-full md:w-[85%] md:z-50 p-4 ${mainAreaStyle.backgroundColor}`}>
+    <div className={`h-full w-full md:w-[85%] z-30 md:z-50 p-4 ${mainAreaStyle.backgroundColor}`}>
       {
         screens.map((screen) =>(
           pathname.startsWith(`/dashboard/${screen.route?.toLowerCase()}`) && children
