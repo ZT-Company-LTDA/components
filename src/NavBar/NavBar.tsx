@@ -43,7 +43,7 @@ export const NavBar = ({
 
   useEffect(() => {
     setNavBarType(navBarType);
-  },[])
+  },[navBarType, setNavBarType])
 
   if (!context) {
     throw new Error("ContextScreen must be used within a ProviderScreen");

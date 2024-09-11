@@ -1,3 +1,4 @@
+import { Image } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai"; // Exemplo de ícone; você pode escolher outro
 
@@ -18,7 +19,7 @@ export const UploadImageInput = ({
     if (imageUrl) {
       setImage(imageUrl);
     }
-  }, [imageUrl]);
+  }, [imageUrl, setImage]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -39,7 +40,7 @@ export const UploadImageInput = ({
         />
         {/* Exibição da imagem selecionada */}
         {selectedFile ? (
-          <img
+          <Image
             src={selectedFile}
             alt="Selected"
             className="w-full h-full object-cover"
