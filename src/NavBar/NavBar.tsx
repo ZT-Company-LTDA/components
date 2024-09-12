@@ -110,7 +110,7 @@ export const NavBar = ({
                     <DropdownItem showDivider>Pagamentos</DropdownItem>
                     <DropdownItem
                       className="text-red-500"
-                      onClick={() => signOut()}
+                      onPress={() => signOut()}
                     >
                       Sair
                     </DropdownItem>
@@ -125,7 +125,7 @@ export const NavBar = ({
                     href={`/dashboard/${item.route?.toLowerCase()}`}
                     className="w-full gap-2"
                     color="foreground"
-                    onClick={() => {
+                    onPress={() => {
                       context.setidScreen(item.id);
                       setIsMenuOpen(!isMenuOpen);
                     }}

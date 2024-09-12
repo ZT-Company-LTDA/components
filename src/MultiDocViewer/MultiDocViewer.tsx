@@ -5,6 +5,7 @@ import axios from "../utils/AxiosInstance";
 import useSWR from 'swr';
 import DOMPurify from 'dompurify';
 import EditorComponent from '../TipTap/Editor';
+import { CardMedia } from '@mui/material';
 
 type SelectedOption = "PHOTO" | "VIDEO" | "EVOLUTION" | "REPORTS";
 type MultiDocViewerProps = {
@@ -13,12 +14,10 @@ type MultiDocViewerProps = {
   token: string;
   folder:SelectedOption;
   fileType: AcceptedFileTypeKey | undefined
-  onSave: (newContent:string)=>void
+  onCloseModal:() => void;
 }
 
-export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }:MultiDocViewerProps) => {
-  const [content, setContent] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseModal }:MultiDocViewerProps) => {
 
   const dataDoc = async (uuidAws: string, token: string) => {
     try {
@@ -47,31 +46,10 @@ export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }
       revalidateOnReconnect: false,
     }
   );
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = useCallback(() => {
-    setIsEditing(false);
-    if (onSave) {
-      onSave(content);
-    }
-  }, [content, onSave]);
-
-  useEffect(() => {
-    if (data && data !== content) {
-      setContent(data);
-    }
-  }, [data,fileType]);
-
-  useEffect(() => {
-    console.log('content :>> ', content);
-  }, [content])
   
-  // const createMarkup = (html:string) => {
-  //   return { __html: DOMPurify.sanitize(html) };
-  // };
+  const createMarkup = (html:string) => {
+    return { __html: DOMPurify.sanitize(html) };
+  };
   
   if (fileType === 'application/pdf') {
     return (
@@ -89,12 +67,11 @@ export const MultiDocumentViewer = ({ uuid, fileType, onSave, token,url,folder }
       <div className='flex flex-col h-full w-full items-center justify-between overflow-y-auto'>
       {isLoading ? <Skeleton/> :
         <EditorComponent
-          content={content}
-          setContent={(newContent:string) => setContent(newContent)}
-          onSave={()=>console.log('salvou')}
+          content={data}
+          onCloseModal={onCloseModal}
+          onSave={(newContent:string)=>console.log('Editou o arquivo, novo texto: ', newContent )}
         />
       }
-        {/* <Button onClick={handleSave} className='w-1/2 mt-2' variant='solid' color='primary'>Salvar</Butto                     n> */}
       </div>
     );
   } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {

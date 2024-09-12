@@ -49,16 +49,16 @@ import { Button } from "@nextui-org/react";
 import toast from "react-hot-toast";
 
 export default function EditorComponent({
-  setContent,
   content,
-  onSave,
-  oncloseModal
+  onCloseModal,
+  onSave
 }: {
-  setContent: (value: string) => void;
   content: string;
-  onSave?: (newContent:string)=>void
-  oncloseModal?: ()=>void
+  onCloseModal?:()=>void;
+  onSave: (newContent:string) => void;
 }) {
+  const [isEditable, setIsEditable] = React.useState(!onSave)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -77,7 +77,7 @@ export default function EditorComponent({
       Paragraph,
       Text,
       Heading.configure({
-        levels:[1,2,3,4]
+        levels:[1,2,3]
       }),
       Dropcursor,
       Code,
@@ -94,7 +94,7 @@ export default function EditorComponent({
     content: content,
     editorProps: {
       attributes:{
-        class:  'prose prose-h1:text-4xl prose-h1:font-bold prose-h2:text-xl prose-h2:font-semibold prose-h3:text-base prose-h3:font-medium text-sm' +
+        class:  'prose prose-h1:text-4xl prose-h1:font-bold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-medium text-sm' +
                 'prose prose-li:marker:text-black prose-li:marker:text-sm prose-li:my-1 prose-p:my-1' +
                 'prose prose-code:rounded-md prose-code:px-1 prose-code:py-1 prose-code:bg-gray-300' +
                 'prose prose-sm sm:prose-sm lg:prose-sm xl:prose-sm m-5 h-[100%] min-h-[100%] max-h-[100%] w-[100%] min-w-[100%] break-words overflow-y-auto focus:outline-none'
@@ -102,43 +102,28 @@ export default function EditorComponent({
       }
     },
     immediatelyRender:false,
+    editable:isEditable
   });
 
-  const [isEditable, setIsEditable] = React.useState(false)
-
-  React.useEffect(() => {
-    if (editor) {
-      const updateContent = () => {
-        setContent(editor.getHTML());
-      };
-      editor.setEditable(isEditable)
-      console.log('isEditable', isEditable)
-      editor.on('update', updateContent);
-      return () => {
-        editor.off('update', updateContent);
-      };
-    }
-  }, [editor, setContent,isEditable,]);
-
   const handleEdit = () => {
-    if(isEditable && onSave){
-      onSave(content)
-      if(!!oncloseModal) oncloseModal()
-      toast.success('Foi salvo com sucesso o documento.')
+    if(isEditable && !!onSave){
+      if( !editor?.getText() ) return toast.error('Escreva algo para salvar o novo conteudo.')
+      onSave(editor.getHTML())
+      if(onCloseModal) onCloseModal()
     }
     setIsEditable(!isEditable)
   }
 
   return (
-    <>
+    <div className="flex flex-col items-center justify-center w-full h-full">
       {editor && <ProjectCreateContentToolbar editor={editor} isEditable={isEditable}/>}
       <EditorContent editor={editor} className="w-full h-[80%] flex items-center justify-center bg-white text-black border-1 border-gray-300 rounded-sm p-1 max-h-[80%] mb-2"/>
       {
         !!onSave && 
-        <Button onPress={handleEdit} className="w-60">
+        <Button onPress={handleEdit} className="w-1/3">
         {!isEditable ? 'Editar' : 'Salvar'}
         </Button>
       }
-    </>
+    </div>
   );
 }

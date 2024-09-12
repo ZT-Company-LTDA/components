@@ -27,7 +27,7 @@ axios.interceptors.response.use(
       
       setTimeout(async () => {
         await signOut({ callbackUrl: '/signin' });
-      }, 5000);
+      }, 3000);
     }else{      
       toast.error(error.message,{
         duration: 3000

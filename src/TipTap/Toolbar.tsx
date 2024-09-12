@@ -58,6 +58,16 @@ const ProjectCreateContentToolbar = ({ editor, isEditable }: { editor: Editor, i
         }}
       >
         <StyledToggleButtonGroup size="small" aria-label="text alignment">
+
+          <ToggleButton
+            onClick={() => editor.chain().focus().undo().run()}
+            value="undo"
+            aria-label="undo"
+            disabled={!isEditable}
+          >
+            <UndoIcon />
+          </ToggleButton>
+
           <ToggleButton
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
             selected={editor.isActive({ textAlign: "left" })}
@@ -163,6 +173,15 @@ const ProjectCreateContentToolbar = ({ editor, isEditable }: { editor: Editor, i
         <StyledToggleButtonGroup size="small" aria-label="text formatting">
 
           <ToggleButton
+            onClick={() => editor.chain().focus().redo().run()}
+            value="redo"
+            aria-label="redo"
+            disabled={!isEditable}
+          >
+            <RedoIcon />
+          </ToggleButton>
+          
+          <ToggleButton
             value="h1"
             aria-label="H1 Text"
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -190,16 +209,6 @@ const ProjectCreateContentToolbar = ({ editor, isEditable }: { editor: Editor, i
             disabled={!isEditable}
           >
             <Typography fontWeight={800}>H3</Typography>
-          </ToggleButton>
-
-          <ToggleButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-            selected={editor.isActive("heading", { level: 4 })}
-            value="h4"
-            aria-label="H4 Text"
-            disabled={!isEditable}
-          >
-            <Typography fontWeight={700}>H4</Typography>
           </ToggleButton>
 
           <ToggleButton
@@ -280,25 +289,13 @@ const ProjectCreateContentToolbar = ({ editor, isEditable }: { editor: Editor, i
             <FormatListNumberedIcon />
           </ToggleButton>
 
-        </StyledToggleButtonGroup>
-        
-        <StyledToggleButtonGroup size="small" exclusive aria-label="text alignment">
           <ToggleButton
-            onClick={() => editor.chain().focus().undo().run()}
-            value="undo"
-            aria-label="undo"
+            onClick={() => editor.chain().focus().clearNodes().run()}
+            value="clear-node"
+            aria-label="clear-node"
             disabled={!isEditable}
           >
-            <UndoIcon />
-          </ToggleButton>
-
-          <ToggleButton
-            onClick={() => editor.chain().focus().redo().run()}
-            value="redo"
-            aria-label="redo"
-            disabled={!isEditable}
-          >
-            <RedoIcon />
+            <ClearIcon />
           </ToggleButton>
 
           <ToggleButton
@@ -308,15 +305,6 @@ const ProjectCreateContentToolbar = ({ editor, isEditable }: { editor: Editor, i
             disabled={!isEditable}
           >
             <LayersClearIcon />
-          </ToggleButton>
-          
-          <ToggleButton
-            onClick={() => editor.chain().focus().clearNodes().run()}
-            value="clear-node"
-            aria-label="clear-node"
-            disabled={!isEditable}
-          >
-            <ClearIcon />
           </ToggleButton>
 
         </StyledToggleButtonGroup>
