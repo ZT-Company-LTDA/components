@@ -97,7 +97,8 @@ export default function EditorComponent({
         class:  'prose prose-h1:text-4xl prose-h1:font-bold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-medium text-sm' +
                 'prose prose-li:marker:text-black prose-li:marker:text-sm prose-li:my-1 prose-p:my-1' +
                 'prose prose-code:rounded-md prose-code:px-1 prose-code:py-1 prose-code:bg-gray-300' +
-                'prose prose-sm sm:prose-sm lg:prose-sm xl:prose-sm m-5 h-[100%] min-h-[100%] max-h-[100%] w-[100%] min-w-[100%] break-words overflow-y-auto focus:outline-none'
+                'prose prose-sm sm:prose-sm lg:prose-sm xl:prose-sm m-5 h-[100%] min-h-[100%] max-h-[100%] w-[100%] min-w-[100%] break-words overflow-y-auto focus:outline-none'+
+                'prose prose-a:cursor-pointer prose-a:text-blue-600' //links
 
       }
     },
