@@ -14,7 +14,7 @@ type MultiDocViewerProps = {
   token: string;
   folder:SelectedOption;
   fileType: AcceptedFileTypeKey | undefined
-  onCloseModal?: (() => void) | undefined;
+  onCloseModal?: () => void;
 }
 
 export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseModal }:MultiDocViewerProps) => {
