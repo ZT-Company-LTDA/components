@@ -54,7 +54,7 @@ export default function EditorComponent({
   onSave
 }: {
   content: string;
-  onCloseModal?:()=>void;
+  onCloseModal?: (() => void) | undefined;
   onSave: (newContent:string) => void;
 }) {
   const [isEditable, setIsEditable] = React.useState(!onSave)
