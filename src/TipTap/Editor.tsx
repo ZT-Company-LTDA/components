@@ -50,11 +50,11 @@ import toast from "react-hot-toast";
 
 export default function EditorComponent({
   content,
-  oncloseModal,
+  onCloseModal,
   onSave
 }: {
   content: string;
-  oncloseModal?: any;
+  onCloseModal?: ()=>void;
   onSave: (newContent:string) => void;
 }) {
   const [isEditable, setIsEditable] = React.useState(!onSave)
@@ -110,7 +110,7 @@ export default function EditorComponent({
     if(isEditable && !!onSave){
       if( !editor?.getText() ) return toast.error('Escreva algo para salvar o novo conteudo.')
       onSave(editor.getHTML())
-      if(oncloseModal) oncloseModal()
+      if(onCloseModal) onCloseModal()
     }
     setIsEditable(!isEditable)
   }

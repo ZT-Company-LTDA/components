@@ -68,7 +68,7 @@ export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseMo
       {isLoading ? <Skeleton/> :
         <EditorComponent
           content={data}
-          oncloseModal={onCloseModal}
+          onCloseModal={onCloseModal}
           onSave={(newContent:string)=>console.log('Editou o arquivo, novo texto: ', newContent )}
         />
       }
