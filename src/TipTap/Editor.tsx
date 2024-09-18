@@ -116,7 +116,7 @@ export default function EditorComponent({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full">
+    <div className="flex flex-col items-center justify-center w-full h-full max-h-full">
       {editor && <ProjectCreateContentToolbar editor={editor} isEditable={isEditable}/>}
       <EditorContent editor={editor} className="w-full h-[80%] flex items-center justify-center bg-white text-black border-1 border-gray-300 rounded-sm p-1 max-h-[90%] mb-2"/>
       {
