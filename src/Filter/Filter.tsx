@@ -4,8 +4,8 @@ import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { useAsyncList } from "@react-stately/data";
-import { signOut, useSession } from "next-auth/react";
 import axios from "../utils/AxiosInstance";
+import { parseCookies } from "nookies";
 
 export const Filter = ({
   name,
@@ -20,8 +20,7 @@ export const Filter = ({
 }) => {
   const [filterValue, setFilterValue] = useState("");
   const { setPage, arrayFilters, setArrayFilters, clear } = useTableCrudContext();
-  const { data: session } = useSession();
-
+  const token = parseCookies().token
   const onClear = useCallback(() => {
     setFilterValue("");
     setPage(1);
@@ -49,12 +48,12 @@ export const Filter = ({
 
   let list = useAsyncList({
     async load({ signal, filterText }) {
-      if (session && filterText) {
+      if (token && filterText) {
         try {
           let res = await axios(`${urlAutocomplete}`, {
             method: 'POST',
             headers: {
-              Authorization: `Bearer ${session?.user?.token as string}`,
+              Authorization: `Bearer ${token}`,
             },
             data: { search: filterText },
             signal

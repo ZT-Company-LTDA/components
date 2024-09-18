@@ -7,7 +7,7 @@ import DOMPurify from 'dompurify';
 import EditorComponent from '../TipTap/Editor';
 import { CardMedia } from '@mui/material';
 
-type SelectedOption = "PHOTO" | "VIDEO" | "EVOLUTION" | "REPORTS";
+export type SelectedOption = "PHOTO" | "VIDEOS" | "EVOLUTION" | "REPORTS";
 type MultiDocViewerProps = {
   uuid: string;
   url?:string;

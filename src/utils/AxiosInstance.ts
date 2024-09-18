@@ -1,6 +1,7 @@
 // axiosInstance.ts
 import axiosLib from 'axios';
 import { signOut } from 'next-auth/react';
+import {setCookie} from "nookies";
 import toast from 'react-hot-toast';
 
 const axios = axiosLib.create({
@@ -12,8 +13,10 @@ axios.interceptors.response.use(
     const authHeader:string = response.config.headers['Authorization'] as string
     if (authHeader) {
       const token = authHeader.split(' ')[1]
-      console.log('Token:', token);
-      localStorage.setItem('token', token);
+      setCookie(null,'token', token, {
+        maxAge: 14400,
+        path:'/'
+      });
     }
     return response;
     
