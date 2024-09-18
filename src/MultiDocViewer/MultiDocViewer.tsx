@@ -47,10 +47,6 @@ export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseMo
     }
   );
   
-  const createMarkup = (html:string) => {
-    return { __html: DOMPurify.sanitize(html) };
-  };
-  
   if (fileType === 'application/pdf') {
     return (
       <iframe
