@@ -238,7 +238,7 @@ export default function Modal({
       
       const method = isAdd ? 'post' : (isUpdate ? 'patch' : (isDelete ? 'delete' : 'get'));
 
-      if(image){
+      if(image || method === 'delete'){
         const formData = createFormData([image as File], inputValues, 'profile_image', 'inputValues');
         const response = await axios({
           method,
