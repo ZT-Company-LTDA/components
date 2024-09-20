@@ -43,7 +43,7 @@ export const UploadImageInput = ({
           <Image
             src={selectedFile}
             alt="Selected"
-            className="w-full h-full object-cover"
+            className="w-full h-full"
           />
         ) : (
           <div className="flex flex-col justify-center text-center items-center w-full h-full text-gray-500">
