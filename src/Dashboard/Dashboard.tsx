@@ -15,6 +15,7 @@ export const Dashboard = ({
   mainAreaStyle,
   logo,
   initialScreenId,
+  actions,
   children
 }: {
   screens: Array<{ id: number; name: string; icon: string; library: string; component?: JSX.Element; route?:string }> ;
@@ -23,13 +24,18 @@ export const Dashboard = ({
   navBarType: "icon-bar" | "intra-bar";
   mainAreaStyle: any;
   logo?: JSX.Element;
+  actions: Array<{id:number, name:string}>;
   initialScreenId: number;
   children: React.ReactNode;
 }) => {
 
-  const { setidScreen } = useScreenContext();
+  const { setidScreen, setActions } = useScreenContext();
   
-  useEffect(() => {setidScreen(initialScreenId)}, [setidScreen, initialScreenId]);
+  useEffect(() => {
+    setidScreen(initialScreenId);
+    setActions(actions);
+    console.log(actions);
+  },[setidScreen, initialScreenId]);
   
   return (
     <ProviderScreen>
