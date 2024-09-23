@@ -38,7 +38,7 @@ export const Dashboard = ({
   },[setidScreen, initialScreenId]);
   
   return (
-    <ProviderScreen>
+    <ProviderScreen actionsDB={actions}>
       <ProviderTableCrud>
         <NavBar
           aside={aside}

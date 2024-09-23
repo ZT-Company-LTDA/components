@@ -34,6 +34,7 @@ import Modal from "../Modal/Modal";
 import { IoEyeOutline } from "react-icons/io5";
 import { IoIosAddCircle } from "react-icons/io";
 import { CustomDropdown } from "../Dropdown/CustomDropdown";
+import { useScreenContext } from "../contexts/ContextScreen";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   Ativo: "success",
@@ -97,6 +98,8 @@ export function Table({
     useTableCrudContext();
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [isSearching, setIsSearching] = useState(false);
+
+  const { actions } = useScreenContext();
 
   const [mobileColumns, setMobileColumns] = useState(
     columns.filter((column) => column.isMobile)
@@ -187,7 +190,8 @@ export function Table({
 
   const renderCell = useCallback(
     (element: any, columnKey: React.Key, isMobile: boolean, item: any) => {
-      console.log('element', element)
+      console.log("element", element);
+      console.log("actions", actions);
       const column = columns.find((col) => col.uid === columnKey);
       if (!column) return null;
 
@@ -209,9 +213,9 @@ export function Table({
               avatarProps={{
                 radius: "lg",
                 name: element.name,
-                size:'sm',
+                size: "sm",
                 isBordered: true,
-                src:element.image
+                src: element.image,
               }}
               description={element.email}
               name={cellValue}
@@ -254,50 +258,56 @@ export function Table({
           } else if (!isMobile) {
             return (
               <div className="relative flex items-center justify-center gap-4">
-                <Tooltip content="Detalhes">
-                  <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal
-                      id={element.id}
-                      elementName={elementName}
-                      inputs={modalInputs}
-                      trigger={<IoEyeOutline />}
-                      isIcon
-                      isView
-                      title="Detalhes"
-                      urlModalGetElement={urlModalGetElement}
-                    />
-                  </span>
-                </Tooltip>
-                <Tooltip content={`Editar ${elementName}`}>
-                  <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                    <Modal
-                      id={element.id}
-                      elementName={elementName}
-                      inputs={modalInputs}
-                      trigger={<FaUserEdit />}
-                      isIcon
-                      isUpdate
-                      updateModalUrl={updateModalUrl}
-                      searchTable={searchTable}
-                      title={`Editar ${elementName}`}
-                      urlModalGetElement={urlModalGetElement}
-                    />
-                  </span>
-                </Tooltip>
-                <Tooltip color="danger" content={`Excluir ${elementName}`}>
-                  <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                    <Modal
-                      id={element.id}
-                      elementName={elementName}
-                      trigger={<AiOutlineUserDelete />}
-                      isIcon
-                      isDelete
-                      searchTable={searchTable}
-                      title={`Deletar ${elementName}`}
-                      urlModalGetElement={urlModalGetElement}
-                    />
-                  </span>
-                </Tooltip>
+                {actions.find((action) => action.id == 1) && (
+                  <Tooltip content="Detalhes">
+                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <Modal
+                        id={element.id}
+                        elementName={elementName}
+                        inputs={modalInputs}
+                        trigger={<IoEyeOutline />}
+                        isIcon
+                        isView
+                        title="Detalhes"
+                        urlModalGetElement={urlModalGetElement}
+                      />
+                    </span>
+                  </Tooltip>
+                )}
+                {actions.find((action) => action.id == 3) && (
+                  <Tooltip content={`Editar ${elementName}`}>
+                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                      <Modal
+                        id={element.id}
+                        elementName={elementName}
+                        inputs={modalInputs}
+                        trigger={<FaUserEdit />}
+                        isIcon
+                        isUpdate
+                        updateModalUrl={updateModalUrl}
+                        searchTable={searchTable}
+                        title={`Editar ${elementName}`}
+                        urlModalGetElement={urlModalGetElement}
+                      />
+                    </span>
+                  </Tooltip>
+                )}
+                {actions.find((action) => action.id == 4) && (
+                  <Tooltip color="danger" content={`Excluir ${elementName}`}>
+                    <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                      <Modal
+                        id={element.id}
+                        elementName={elementName}
+                        trigger={<AiOutlineUserDelete />}
+                        isIcon
+                        isDelete
+                        searchTable={searchTable}
+                        title={`Deletar ${elementName}`}
+                        urlModalGetElement={urlModalGetElement}
+                      />
+                    </span>
+                  </Tooltip>
+                )}
               </div>
             );
           }
