@@ -5,10 +5,10 @@ import { IconButton, Slider, Stack, styled, Typography } from '@mui/material';
 import { ReactPlayerProps } from 'react-player';
 import { format } from 'date-fns';
 import { FullscreenRounded, VolumeDownRounded, VolumeUpRounded } from '@mui/icons-material';
-import { FaVolumeUp } from 'react-icons/fa';
+import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 
 const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
-  const { state, dispatch, playerRef, handleFullscreen,handleVolumeChange,volume } = props;
+  const { state, dispatch, playerRef, handleFullscreen } = props;
 
   const handleSeek = (_event: Event, newValue: number | number[]) => {
     playerRef.current.seekTo(newValue as number);
@@ -43,14 +43,19 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   const renderSoundSlider = () => {
     return (
       <div className="volume-control flex items-center">
-        <FaVolumeUp className="text-white mr-2"/>
+        {
+          !!state.volume ?
+          <FaVolumeUp className="text-white mr-2 cursor-pointer" onClick={()=>dispatch({ type: 'VOLUME', payload:0})}/>
+          :
+          <FaVolumeMute className="text-white mr-2 cursor-pointer" onClick={()=>dispatch({ type: 'VOLUME', payload: 1 })}/>
+        }
         <input
           type="range"
           min={0}
           max={1}
           step="any"
-          value={volume}
-          onChange={handleVolumeChange}
+          value={state.volume}
+          onChange={(e) => dispatch({ type: 'VOLUME', payload: e.target.value })}
           className="w-20 rounded-lg"
         />
       </div>
@@ -78,7 +83,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   };
 
   return (
-    <div className='z-50 absolute w-full bottom-0 transition-opacity duration-300 ease-in-out'>
+    <div className='z-50 absolute w-full bottom-0 transition-opacity duration-300 ease-in-out' style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
       <Stack direction="row" alignItems="center">
         {renderSeekSlider()}
       </Stack>

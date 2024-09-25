@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactPlayer,{ReactPlayerProps} from "react-player";
 import PlayerControls from "./PlayerControls";
 import { INITIAL_STATE, reducer } from './States';
@@ -11,9 +11,9 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
   const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
   const playerRef = React.useRef<ReactPlayer>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [volume, setVolume] = React.useState(0.5);
   const [controlsVisible, setControlsVisible] = React.useState(true);
   let hideTimeout: NodeJS.Timeout;
+  let mouseMoveTimeout: NodeJS.Timeout;
 
   const handleFullscreen = () => {
     if (screenfull.isEnabled && containerRef.current) {
@@ -21,24 +21,48 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
     }
   };
 
-
   const handlePlayerClick = () => {
     setControlsVisible(true);
-    clearTimeout(hideTimeout); // Limpa timeout anterior, se houver
+    resetHideTimeout();
   };
   
-  // Função para mostrar os controles quando o mouse entra na área do player
   const handleMouseEnter = () => {
     setControlsVisible(true);
-    clearTimeout(hideTimeout); // Limpa timeout anterior, se houver
+    resetHideTimeout();
   };
 
-  // Função para ocultar os controles quando o mouse sai da área do player
   const handleMouseLeave = () => {
     hideTimeout = setTimeout(() => {
       setControlsVisible(false);
-    }, 3000); // Oculta os controles 3 segundos após o mouse sair
+    }, 3000);
   };
+
+  const handleMouseMove = () => {
+    setControlsVisible(true);
+
+    clearTimeout(mouseMoveTimeout);
+    mouseMoveTimeout = setTimeout(() => {
+      setControlsVisible(false);
+    }, 3000);
+  };
+
+   const resetHideTimeout = () => {
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      setControlsVisible(false);
+    }, 3000);
+  };
+
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.addEventListener("mousemove", handleMouseMove);
+    }
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener("mousemove", handleMouseMove);
+      }
+    };
+  }, []);
 
   const handlePreview = () => {
     dispatch({ type: 'PLAY' });
@@ -67,10 +91,6 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
     dispatch({ type: 'DURATION', payload: duration });
   };
 
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setVolume(parseFloat(e.target.value));
-  };
-
   return (
     <div
       ref={containerRef}
@@ -80,41 +100,45 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
       onMouseLeave={handleMouseLeave}
       onClick={handlePlayerClick}
     >
-      <ReactPlayer
-        ref={playerRef}
-        url={url}
-        width="100%"
-        height="100%"
-        playIcon={
-          <div
+      <div
+        className="w-full h-full"
+        onDoubleClick={handleFullscreen}
+        onClick={state.playing ? handlePause : handlePlay}
+      >
+        <ReactPlayer
+          ref={playerRef}
+          url={url}
+          width="100%"
+          height="100%"
+          playIcon={
+            <div
             className="bg-white text-black rounded-xl flex justify-center items-center h-14 w-14"
-          >
-            <FaPlay
-              fontSize="2rem"
-            />
-          </div>
-        }
-        controls={state.controls}
-        loop={state.loop}
-        muted={state.muted}
-        playing={state.playing}
-        playbackRate={state.playbackRate}
-        volume={volume}
-        onPlay={handlePlay}
-        onEnded={handleEnded}
-        onPause={handlePause}
-        onDuration={handleDuration}
-        onProgress={handleProgress}
-        onClickPreview={handlePreview}
-      />
+            >
+              <FaPlay
+                fontSize="2rem"
+                />
+            </div>
+          }
+          controls={state.controls}
+          loop={state.loop}
+          muted={state.muted}
+          playing={state.playing}
+          playbackRate={state.playbackRate}
+          volume={state.volume}
+          onPlay={handlePlay}
+          onEnded={handleEnded}
+          onPause={handlePause}
+          onDuration={handleDuration}
+          onProgress={handleProgress}
+          onClickPreview={handlePreview}
+          />
+      </div>
       { controlsVisible && 
         <PlayerControls 
           state={state} 
           dispatch={dispatch} 
           playerRef={playerRef}
-          handleFullscreen={handleFullscreen} 
-          handleVolumeChange={handleVolumeChange} 
-          volume={volume}
+          handleFullscreen={handleFullscreen}
         />
       }
     </div>
