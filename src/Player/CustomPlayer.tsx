@@ -1,60 +1,31 @@
-import * as React from 'react';
-import { styled } from '@mui/material';
-import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
-import ReactPlayer, { ReactPlayerProps } from 'react-player';
-import PlayerControls from './PlayerControls';
-import PlayerOverlay from './PlayerOverlay';
+"use client";
+import React, { useRef, useState } from "react";
+import ReactPlayer,{ReactPlayerProps} from "react-player";
+import PlayerControls from "./PlayerControls";
 import { INITIAL_STATE, reducer } from './States';
+import {FaPlay} from 'react-icons/fa'
 import screenfull from 'screenfull';
-import { findDOMNode } from 'react-dom';
 
-interface PlayerProps extends ReactPlayerProps {
-  labelOverlay: string;
-}
-
-const StyledPlayer = styled('div')<ReactPlayerProps>`
-  position: relative;
-  aspect-ratio: 16/9;
-  border-radius: 8px;
-
-  video,
-  .react-player__preview {
-    border-radius: 8px;
-  }
-
-  // defined from script, if props light is true then is visible
-  .react-player__preview:before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.1), transparent);
-  }
-
-  &:hover {
-    .video-player__controls {
-      opacity: 1;
-    }
-  }
-
-  .video-player__controls {
-    opacity: ${({ state }) => (state.light ? '0' : state.playing ? '0' : '1')};
-  }
-`;
-
-const CustomPlayer: React.FC<PlayerProps> = (props) => {
+export const VideoPlayer = (props:ReactPlayerProps) => {
   const { url, light,labelOverlay } = props;
   const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
   const playerRef = React.useRef<ReactPlayer>(null);
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
-  
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [volume, setVolume] = React.useState(0.5);
+  const [controlsVisible, setControlsVisible] = React.useState(true);
+
   const handleFullscreen = () => {
-    if (screenfull.isEnabled && wrapperRef.current) {
-      screenfull.request(wrapperRef.current);
+    if (screenfull.isEnabled && containerRef.current) {
+      screenfull.toggle(containerRef.current);
     }
+  };
+
+  const handlePlayerClick = () => {
+    setControlsVisible(true);
+
+    setTimeout(() => {
+      setControlsVisible(false);
+    }, 3000);
   };
 
   const handlePreview = () => {
@@ -84,43 +55,54 @@ const CustomPlayer: React.FC<PlayerProps> = (props) => {
     dispatch({ type: 'DURATION', payload: duration });
   };
 
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(parseFloat(e.target.value));
+  };
+
   return (
-    <StyledPlayer state={state} ref={wrapperRef}>
-      <span onDoubleClick={handleFullscreen} onClick={() => dispatch({ type: 'TOGGLE_PLAY' })}>
-        <ReactPlayer
-          ref={playerRef}
-          url={url}
-          width="100%"
-          height="100%"
-          light={light}
-          playIcon={
-            <PlayArrowRounded
-              sx={{
-                color: 'white',
-                fontSize: '5rem',
-              }}
+    <div
+      ref={containerRef}
+      className="relative max-w-full mx-auto bg-black h-[50%]"
+      style={{ aspectRatio: "16/9" }}
+      onClick={handlePlayerClick}
+    >
+      <ReactPlayer
+        ref={playerRef}
+        url={url}
+        width="100%"
+        height="100%"
+        playIcon={
+          <div
+            className="bg-white text-black rounded-xl flex justify-center items-center h-14 w-14"
+          >
+            <FaPlay
+              fontSize="2rem"
             />
-          }
-          controls={state.controls}
-          loop={state.loop}
-          muted={state.muted}
-          playing={state.playing}
-          playbackRate={state.playbackRate}
-          volume={state.volume}
-          onPlay={handlePlay}
-          onEnded={handleEnded}
-          onPause={handlePause}
-          onDuration={handleDuration}
-          onProgress={handleProgress}
-          onClickPreview={handlePreview}
+          </div>
+        }
+        controls={state.controls}
+        loop={state.loop}
+        muted={state.muted}
+        playing={state.playing}
+        playbackRate={state.playbackRate}
+        volume={volume}
+        onPlay={handlePlay}
+        onEnded={handleEnded}
+        onPause={handlePause}
+        onDuration={handleDuration}
+        onProgress={handleProgress}
+        onClickPreview={handlePreview}
+      />
+      { controlsVisible && 
+        <PlayerControls 
+          state={state} 
+          dispatch={dispatch} 
+          playerRef={playerRef}
+          handleFullscreen={handleFullscreen} 
+          handleVolumeChange={handleVolumeChange} 
+          volume={volume}
         />
-      </span>
-      <PlayerOverlay state={state} label={labelOverlay} dispatch={dispatch}/>
-      {!state.controls && !state.light && (
-        <PlayerControls state={state} dispatch={dispatch} playerRef={playerRef} wrapperRef={wrapperRef} />
-      )}
-    </StyledPlayer>
+      }
+    </div>
   );
 };
-
-export default CustomPlayer;

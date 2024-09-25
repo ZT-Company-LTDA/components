@@ -3,7 +3,7 @@ import { ReactPlayerProps } from 'react-player';
 const INITIAL_STATE: ReactPlayerProps = {
   playing: false,
   controls: false,
-  volume: 0.8,
+  volume: 0.1,
   light: true,
   progress: {
     playedSeconds: 0,

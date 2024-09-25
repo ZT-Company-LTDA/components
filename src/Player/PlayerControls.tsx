@@ -5,70 +5,10 @@ import { IconButton, Slider, Stack, styled, Typography } from '@mui/material';
 import { ReactPlayerProps } from 'react-player';
 import { format } from 'date-fns';
 import { FullscreenRounded, VolumeDownRounded, VolumeUpRounded } from '@mui/icons-material';
-import screenfull from 'screenfull';
-import { findDOMNode } from 'react-dom';
-
-const StyledPlayerControls = styled('div')`
-  position: absolute;
-  padding: 10px;
-  box-sizing: border-box;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-  opacity: 0;
-  transition: opacity 0.2s ease-in-out;
-
-  .video-player__slider {
-    width: 100%;
-    color: #fff;
-    box-sizing: border-box;
-
-    &--seek {
-      margin-left: 12px;
-      margin-right: 12px;
-    }
-
-    &--sound {
-      width: 100px;
-    }
-
-    .MuiSlider-track {
-      border: none;
-    }
-
-    .MuiSlider-thumb {
-      background-color: #fff;
-
-      &:before: {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-      }
-
-      &:hover,
-      &.Mui-focusVisible,
-      &.Mui-active {
-        box-shadow: none;
-      }
-    }
-  }
-`;
+import { FaVolumeUp } from 'react-icons/fa';
 
 const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
-  const { state, dispatch, playerRef } = props;
-
-  const wrapperRef = React.useRef<HTMLDivElement>(null);
-
-  const handleSound = (_event: Event, newValue: number | number[]) => {
-    dispatch({ type: 'VOLUME', payload: newValue });
-  };
-
-  const handleFullscreen = () => {
-    if (screenfull.isEnabled && wrapperRef.current) {
-      screenfull.request(wrapperRef.current);
-    }
-  };
+  const { state, dispatch, playerRef, handleFullscreen,handleVolumeChange,volume } = props;
 
   const handleSeek = (_event: Event, newValue: number | number[]) => {
     playerRef.current.seekTo(newValue as number);
@@ -78,12 +18,12 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
     return (
       <Slider
         aria-label="Time"
-        className={'video-player__slider video-player__slider--seek'}
         min={0}
         max={state.duration}
         step={0.01}
         value={state.progress.playedSeconds}
         onChange={handleSeek}
+        color='error'
       />
     );
   };
@@ -102,18 +42,18 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
 
   const renderSoundSlider = () => {
     return (
-      <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
-        <VolumeDownRounded sx={{ fontSize: '1.5rem', color: 'white' }} />
-        <Slider
-          aria-label="Volume"
-          className={'video-player__slider video-player__slider--sound'}
+      <div className="volume-control flex items-center">
+        <FaVolumeUp className="text-white mr-2"/>
+        <input
+          type="range"
+          min={0}
           max={1}
-          step={0.01}
-          value={state.volume}
-          onChange={handleSound}
+          step="any"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="w-20 rounded-lg"
         />
-        <VolumeUpRounded sx={{ fontSize: '1.5rem', color: 'white' }} />
-      </Stack>
+      </div>
     );
   };
 
@@ -138,7 +78,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
   };
 
   return (
-    <StyledPlayerControls ref={wrapperRef} className={'video-player__controls'}>
+    <div className='z-50 absolute w-full bottom-0 transition-opacity duration-300 ease-in-out'>
       <Stack direction="row" alignItems="center">
         {renderSeekSlider()}
       </Stack>
@@ -150,7 +90,7 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
           {renderFullscreenButton()}
         </Stack>
       </Stack>
-    </StyledPlayerControls>
+    </div>
   );
 };
 
