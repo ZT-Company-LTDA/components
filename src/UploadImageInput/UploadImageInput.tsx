@@ -18,6 +18,7 @@ export const UploadImageInput = ({
   useEffect(() => {
     if (imageUrl) {
       setImage(imageUrl);
+      setSelectedFile(imageUrl);
     }
   }, [imageUrl, setImage]);
 
@@ -33,10 +34,11 @@ export const UploadImageInput = ({
         {/* Input para escolher o arquivo */}
         <input
           type="file"
+          title="Clique para escolher um arquivo"
           accept="image/*"
           onChange={handleFileChange}
           disabled={isView}
-          className="absolute inset-0 opacity-0 cursor-pointer"
+          className="absolute inset-0 opacity-0 cursor-pointer z-40"
         />
         {/* Exibição da imagem selecionada */}
         {selectedFile ? (
