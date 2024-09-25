@@ -13,6 +13,7 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [volume, setVolume] = React.useState(0.5);
   const [controlsVisible, setControlsVisible] = React.useState(true);
+  let hideTimeout: NodeJS.Timeout;
 
   const handleFullscreen = () => {
     if (screenfull.isEnabled && containerRef.current) {
@@ -20,12 +21,23 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
     }
   };
 
+
   const handlePlayerClick = () => {
     setControlsVisible(true);
+    clearTimeout(hideTimeout); // Limpa timeout anterior, se houver
+  };
+  
+  // Função para mostrar os controles quando o mouse entra na área do player
+  const handleMouseEnter = () => {
+    setControlsVisible(true);
+    clearTimeout(hideTimeout); // Limpa timeout anterior, se houver
+  };
 
-    setTimeout(() => {
+  // Função para ocultar os controles quando o mouse sai da área do player
+  const handleMouseLeave = () => {
+    hideTimeout = setTimeout(() => {
       setControlsVisible(false);
-    }, 3000);
+    }, 3000); // Oculta os controles 3 segundos após o mouse sair
   };
 
   const handlePreview = () => {
@@ -62,8 +74,10 @@ export const VideoPlayer = (props:ReactPlayerProps) => {
   return (
     <div
       ref={containerRef}
-      className="relative max-w-full mx-auto bg-black h-[50%]"
+      className="relative max-w-full mx-auto bg-black h-full"
       style={{ aspectRatio: "16/9" }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onClick={handlePlayerClick}
     >
       <ReactPlayer
