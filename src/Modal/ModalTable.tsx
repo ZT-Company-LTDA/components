@@ -578,10 +578,8 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
             ))
           ) : (
             (inputValues?.name ? (
-              <div className="w-full h-[60vh] flex items-center justify-center rounded-lg">
-                <h1>Deseja</h1>
-                <p className="font-bold text-red-700">&nbsp;deletar&nbsp;</p>
-                <h1>o {elementName} {inputValues.name}?</h1>
+              <div className="w-full h-[60vh] flex items-center md:justify-start justify-center rounded-lg">
+                <h1>Deseja <span className="font-bold text-red-700">deletar</span> o {elementName} {inputValues.name}?</h1>
               </div>
             ) : (
               <Skeleton className="h-3 w-full rounded-lg" />

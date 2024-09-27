@@ -139,7 +139,7 @@ export const NavBar = ({
             </NavbarMenu>
           </NavBarUI>
         )}
-        <main className="flex md:w-full items-end justify-end p-3 md:p-0 max-md:w-screen">
+        <main className="flex md:h-full md:w-full items-end justify-end p-3 md:p-0 max-md:w-screen">
           {children}
         </main>
       </div>
