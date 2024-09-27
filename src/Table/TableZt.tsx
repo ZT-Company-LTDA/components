@@ -275,7 +275,7 @@ const Table: React.FC<TableProps> = ({
             </button>
           </div>
 
-          <div className="overflow-y-auto max-h-[70vh] overflow-x-auto rounded-lg border border-gray-200 relative p-4">
+          <div className="overflow-y-auto max-h-[70vh] overflow-x-auto rounded-lg border border-gray-200 relative pt-2 p-4">
             <table className="table-auto w-full">
               <thead className="sticky top-0 bg-gray-300 bg-opacity-50 backdrop-blur text-white rounded-3xl shadow-large">
                 <tr>
