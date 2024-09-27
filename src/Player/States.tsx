@@ -9,6 +9,7 @@ const INITIAL_STATE: ReactPlayerProps = {
     playedSeconds: 0,
   },
   duration: 0,
+  playbackRate:1,
 };
 
 const reducer = (state: ReactPlayerProps, action: ReactPlayerProps) => {

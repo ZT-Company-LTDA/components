@@ -1,146 +1,99 @@
-"use client";
 import React, { useEffect, useRef, useState } from "react";
-import ReactPlayer,{ReactPlayerProps} from "react-player";
+import ReactPlayer, { ReactPlayerProps } from "react-player";
 import PlayerControls from "./PlayerControls";
 import { INITIAL_STATE, reducer } from './States';
-import {FaPlay} from 'react-icons/fa'
-import screenfull from 'screenfull';
+import { FaPlay } from 'react-icons/fa';
 
-export const VideoPlayer = (props:ReactPlayerProps) => {
-  const { url, light,labelOverlay } = props;
+export const VideoPlayer = (props: ReactPlayerProps) => {
+  const { url } = props;
   const [state, dispatch] = React.useReducer(reducer, INITIAL_STATE);
   const playerRef = React.useRef<ReactPlayer>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [controlsVisible, setControlsVisible] = React.useState(true);
-  let hideTimeout: NodeJS.Timeout;
-  let mouseMoveTimeout: NodeJS.Timeout;
+  const timeoutRef = useRef<number | null>(null);
 
-  const handleFullscreen = () => {
-    if (screenfull.isEnabled && containerRef.current) {
-      screenfull.toggle(containerRef.current);
-    }
-  };
-
-  const handlePlayerClick = () => {
+  // Função para mostrar os controles
+  const showControls = () => {
     setControlsVisible(true);
-    resetHideTimeout();
-  };
-  
-  const handleMouseEnter = () => {
-    setControlsVisible(true);
-    resetHideTimeout();
+    resetTimeout();
   };
 
-  const handleMouseLeave = () => {
-    hideTimeout = setTimeout(() => {
-      setControlsVisible(false);
-    }, 3000);
+  // Função para esconder os controles
+  const hideControls = () => {
+    setControlsVisible(false);
   };
 
-  const handleMouseMove = () => {
-    setControlsVisible(true);
-
-    clearTimeout(mouseMoveTimeout);
-    mouseMoveTimeout = setTimeout(() => {
-      setControlsVisible(false);
-    }, 3000);
-  };
-
-   const resetHideTimeout = () => {
-    clearTimeout(hideTimeout);
-    hideTimeout = setTimeout(() => {
-      setControlsVisible(false);
-    }, 3000);
+  // Reseta o timeout para esconder os controles
+  const resetTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = window.setTimeout(() => {
+      hideControls();
+    }, 3000); // Esconde após 3 segundos de inatividade
   };
 
   useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.addEventListener("mousemove", handleMouseMove);
+    // Mostra os controles ao passar o mouse e redefine o timeout
+    const handleMouseMove = () => {
+      showControls();
+    };
+
+    // Adiciona os listeners de movimento do mouse
+    const playerContainer = containerRef.current;
+    if (playerContainer) {
+      playerContainer.addEventListener("mousemove", handleMouseMove);
     }
+
+    // Limpa o timeout e listeners ao desmontar o componente
     return () => {
-      if (containerRef.current) {
-        containerRef.current.removeEventListener("mousemove", handleMouseMove);
+      if (playerContainer) {
+        playerContainer.removeEventListener("mousemove", handleMouseMove);
       }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
-
-  const handlePreview = () => {
-    dispatch({ type: 'PLAY' });
-    dispatch({ type: 'CUSTOM_CONTROLS', payload: true });
-    dispatch({ type: 'LIGHT', payload: false });
-  };
-
-  const handlePause = () => {
-    dispatch({ type: 'PAUSE' });
-  };
-
-  const handlePlay = () => {
-    dispatch({ type: 'PLAY' });
-  };
-
-  const handleEnded = () => {
-    dispatch({ type: 'LIGHT', payload: true });
-    playerRef.current?.showPreview();
-  };
-
-  const handleProgress = (progress: { playedSeconds: number }) => {
-    dispatch({ type: 'SEEK', payload: progress.playedSeconds });
-  };
-
-  const handleDuration = (duration: number) => {
-    dispatch({ type: 'DURATION', payload: duration });
-  };
 
   return (
     <div
       ref={containerRef}
       className="relative max-w-full mx-auto bg-black h-full"
       style={{ aspectRatio: "16/9" }}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handlePlayerClick}
     >
-      <div
-        className="w-full h-full"
-        onDoubleClick={handleFullscreen}
-        onClick={state.playing ? handlePause : handlePlay}
-      >
-        <ReactPlayer
-          ref={playerRef}
-          url={url}
-          width="100%"
-          height="100%"
-          playIcon={
-            <div
-            className="bg-white text-black rounded-xl flex justify-center items-center h-14 w-14"
-            >
-              <FaPlay
-                fontSize="2rem"
-                />
-            </div>
-          }
-          controls={state.controls}
-          loop={state.loop}
-          muted={state.muted}
-          playing={state.playing}
-          playbackRate={state.playbackRate}
-          volume={state.volume}
-          onPlay={handlePlay}
-          onEnded={handleEnded}
-          onPause={handlePause}
-          onDuration={handleDuration}
-          onProgress={handleProgress}
-          onClickPreview={handlePreview}
-          />
-      </div>
-      { controlsVisible && 
-        <PlayerControls 
-          state={state} 
-          dispatch={dispatch} 
+      <ReactPlayer
+        ref={playerRef}
+        url={url}
+        width="100%"
+        height="100%"
+        playIcon={
+          <div className="bg-white text-black rounded-xl flex justify-center items-center h-14 w-14">
+            <FaPlay fontSize="2rem" />
+          </div>
+        }
+        controls={false} // Desabilita os controles nativos
+        loop={state.loop}
+        muted={state.muted}
+        playing={state.playing}
+        playbackRate={state.playbackRate}
+        volume={state.volume}
+        onPlay={() => dispatch({ type: 'PLAY' })}
+        onPause={() => dispatch({ type: 'PAUSE' })}
+        onEnded={() => {
+          dispatch({ type: 'LIGHT', payload: true });
+          playerRef.current?.showPreview();
+        }}
+        onDuration={(duration) => dispatch({ type: 'DURATION', payload: duration })}
+        onProgress={(progress) => dispatch({ type: 'SEEK', payload: progress.playedSeconds })}
+        onClickPreview={() => dispatch({ type: 'PLAY' })}
+      />
+
+      {/* Exibe os controles quando visíveis */}
+      {controlsVisible && (
+        <PlayerControls
+          state={state}
+          dispatch={dispatch}
           playerRef={playerRef}
-          handleFullscreen={handleFullscreen}
+          containerRef={containerRef}
         />
-      }
+      )}
     </div>
   );
 };

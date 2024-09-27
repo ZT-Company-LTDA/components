@@ -2,18 +2,67 @@ import * as React from 'react';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
 import { IconButton, Slider, Stack, styled, Typography } from '@mui/material';
-import { ReactPlayerProps } from 'react-player';
+import ReactPlayer, { ReactPlayerProps } from 'react-player';
 import { format } from 'date-fns';
-import { FullscreenRounded, VolumeDownRounded, VolumeUpRounded } from '@mui/icons-material';
+import { FullscreenRounded, VolumeDownRounded, VolumeUpRounded, PictureInPicture } from '@mui/icons-material';
 import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import screenfull from 'screenfull';
+import { INITIAL_STATE} from './States';
+import { TbPictureInPictureOn } from "react-icons/tb";
+import { useMediaQuery } from '../hooks/useMediaQuery';
+import { motion } from 'framer-motion';
 
-const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
-  const { state, dispatch, playerRef, handleFullscreen } = props;
+interface ControlProps extends ReactPlayerProps {
+  containerRef:React.MutableRefObject<HTMLDivElement | null>
+  playerRef: React.RefObject<ReactPlayer>
+  state: typeof INITIAL_STATE
+  dispatch:React.Dispatch<ReactPlayerProps>
+}
 
-  const handleSeek = (_event: Event, newValue: number | number[]) => {
-    playerRef.current.seekTo(newValue as number);
+const PlayerControls = (props:ControlProps) => {
+  const { state, dispatch, playerRef, containerRef } = props;
+  const [showSlider, setShowSlider] = React.useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)')
+  const [isSliding, setIsSliding] = React.useState(false);
+
+  const handleMouseDown = () => {
+    setIsSliding(true);
   };
 
+  const handleMouseUp = () => {
+    setIsSliding(false);
+  };
+
+  const handleSeek = (_event: Event, newValue: number | number[]) => {
+    playerRef.current?.seekTo(newValue as number);
+  };
+  
+  const handleFullscreen = () => {
+    if (screenfull.isEnabled && containerRef.current) {
+      screenfull.toggle(containerRef.current);
+    }
+  };
+  
+  const renderDurationText = () => {
+    return (
+      <Typography
+        variant="body2"
+        color="white"
+        sx={{
+          fontSize: '.8rem',
+          position: 'absolute',
+          top: '-20px',
+          left: 0, 
+          px: 1
+        }}
+      >
+        {format(new Date(state.progress.playedSeconds * 1000), 'mm:ss')}
+        {' / '}
+        {format(new Date(state.duration * 1000), 'mm:ss')}
+      </Typography>
+    );
+  };
+  
   const renderSeekSlider = () => {
     return (
       <Slider
@@ -40,41 +89,64 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
     );
   };
 
-  const renderSoundSlider = () => {
+  const renderSoundSlider = () => {  
     return (
-      <div className="volume-control flex items-center">
+      <div 
+        className="flex items-center relative"
+        onMouseEnter={() => setShowSlider(true)}
+        onMouseLeave={() => {
+          if (!isSliding) setShowSlider(false);
+        }}
+      >
         {
-          !!state.volume ?
-          <FaVolumeUp className="text-white mr-2 cursor-pointer" onClick={()=>dispatch({ type: 'VOLUME', payload:0})}/>
-          :
-          <FaVolumeMute className="text-white mr-2 cursor-pointer" onClick={()=>dispatch({ type: 'VOLUME', payload: 1 })}/>
+          !!state.volume ? (
+            <FaVolumeUp
+              className="text-white mr-2 cursor-pointer"
+              onClick={() => dispatch({ type: 'VOLUME', payload: 0 })}
+              size={'1.5rem'}
+            />
+          ) : (
+            <FaVolumeMute
+              className="text-white mr-2 cursor-pointer"
+              size={'1.5rem'}
+              onClick={() => dispatch({ type: 'VOLUME', payload: 1 })}
+            />
+          )
         }
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step="any"
-          value={state.volume}
-          onChange={(e) => dispatch({ type: 'VOLUME', payload: e.target.value })}
-          className="w-20 rounded-lg"
-        />
+        {(showSlider || isSliding) && !isMobile && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ overflow: 'hidden' }}
+            className='flex text-center'
+          >
+            <Slider
+              aria-label="Volume"
+              min={0}
+              max={1}
+              step={0.01}
+              value={state.volume}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleMouseUp}
+              onChange={(e, newValue) => dispatch({ type: 'VOLUME', payload: newValue })}
+              color="error"
+              sx={{ width: 100, marginRight: '1rem' }} // Ajuste o tamanho do slider conforme necessário
+            />
+          </motion.div>
+        )}
       </div>
     );
   };
 
-  const renderDurationText = () => {
+  const renderFullscreenButton = () => {
     return (
-      <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
-        <Typography variant="body2" color="white">
-          {format(new Date(state.progress.playedSeconds * 1000), 'mm:ss')}
-          {' / '}
-          {format(new Date(state.duration * 1000), 'mm:ss')}
-        </Typography>
-      </Stack>
+      <FullscreenRounded sx={{ fontSize: '2rem', color: 'white', cursor:'pointer' }} onClick={handleFullscreen}/>
     );
   };
 
-  const renderFullscreenButton = () => {
+  const renderConfig = () => {
     return (
       <IconButton onClick={handleFullscreen}>
         <FullscreenRounded sx={{ fontSize: '2rem', color: 'white' }} />
@@ -82,20 +154,21 @@ const PlayerControls: React.FC<ReactPlayerProps> = (props) => {
     );
   };
 
+  const renderPiP = () => {
+    return (
+      <PictureInPicture sx={{ fontSize: '2rem', color: 'white' }} onClick={()=>playerRef.current?.getInternalPlayer().requestPictureInPicture()}/>
+    );
+  };
+
   return (
-    <div className='z-50 absolute w-full bottom-0 transition-opacity duration-300 ease-in-out' style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
-      <Stack direction="row" alignItems="center">
-        {renderSeekSlider()}
-      </Stack>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Stack direction="row" alignItems="center" spacing={2}>
-          {renderPlayButton()} {renderSoundSlider()} {renderDurationText()}
-        </Stack>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          {renderFullscreenButton()}
-        </Stack>
-      </Stack>
+    <div className='z-50 flex flex-row items-center absolute w-full bottom-0 transition-opacity duration-300 ease-in-out max-h-full gap-2' style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}>
+      {renderDurationText()}
+      {renderPlayButton()} 
+      {renderSoundSlider()} 
+      {renderSeekSlider()}
+      {renderFullscreenButton()}
     </div>
+      // {renderPiP()}
   );
 };
 
