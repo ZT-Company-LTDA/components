@@ -50,7 +50,7 @@ export const NavBar = ({
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen max-h-screen overflow-y-auto overflow-x-hidden bg-background">
       {aside && (
         <aside
           className={`hidden md:flex md:flex-col ${navBarType == 'icon-bar' ? 'md:w-[8%]' : 'md:w-[15%]'} ${
@@ -139,7 +139,7 @@ export const NavBar = ({
             </NavbarMenu>
           </NavBarUI>
         )}
-        <main className="flex h-full md:w-full items-end justify-end p-3 md:p-0 max-md:h-screen max-md:w-screen">
+        <main className="flex md:w-full items-end justify-end p-3 md:p-0 max-md:w-screen">
           {children}
         </main>
       </div>

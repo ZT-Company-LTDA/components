@@ -70,7 +70,7 @@ export const Select: React.FC<SelectProps> = ({
     };
 
     fetchElements();
-  }, [debouncedQuery, url, session?.user?.token]);
+  }, [debouncedQuery]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -127,7 +127,7 @@ export const Select: React.FC<SelectProps> = ({
           inputRef.current.focus(); 
         }
       }}
-      className="relative max-w-96"
+      className="relative max-w-full"
     >
       <Input
         type="text"
@@ -149,13 +149,13 @@ export const Select: React.FC<SelectProps> = ({
         onChange={handleInputChange}
         isReadOnly={isReadOnly}
         placeholder={`Digite o nome do ${elementName}`}
-        className="max-w-96"
+        className="max-w-full"
         label={label}
       />
       {showDropdown ? (
-        <IoIosArrowUp className="absolute top-2 left-[22rem]" />
+        <IoIosArrowUp className="absolute top-2" />
       ) : (
-        <IoIosArrowDown className="absolute top-2 left-[22rem]" />
+        <IoIosArrowDown className="absolute top-2" />
       )}
       {showDropdown && (
         <ul ref={dropdownRef} className="absolute z-50 max-w-96 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
