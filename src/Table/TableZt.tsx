@@ -12,7 +12,7 @@ import useSWR from "swr";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { ModalContent, ModalZtTable } from "../Modal/ModalTable";
-import { FaPlus } from "react-icons/fa6";
+import { FaCirclePlus, FaPlus } from "react-icons/fa6";
 import Avatar from "../Avatar/Avatar";
 import Chip from "../Chip/Chip";
 
@@ -271,7 +271,7 @@ const Table: React.FC<TableProps> = ({
             </div>
             <button onClick={openAdd} className="bg-blue-600 text-white px-4 py-2 rounded-xl border border-solid border-gray-200 shadow-2xl hover:bg-blue-400 duration-500 flex items-center gap-2">
               <p>Adicionar</p>
-              <FaPlus />
+              <FaCirclePlus />
             </button>
           </div>
 

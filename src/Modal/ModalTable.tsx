@@ -683,12 +683,14 @@ export const ModalZtTable = ({
     }
   };
 
+  const titleModal = isAdd ? `Adicionando ` + title : (isEdit ? "Editando " : (isDelete ? "Deletando " : "Visualizando ")) + title;
+
   return (
     <div className="fixed inset-0 flex items-end md:items-center md:justify-center bg-black bg-opacity-50 z-50">
       <div className={`bg-white rounded-lg shadow-lg relative w-full h-[90%] md:w-1/3 ${isDelete? "md:max-h-[30vh]" : "md:max-h-[60vh]"} z-50 flex flex-col`}>
         {/* Header fixo */}
         <div className="flex justify-between items-center p-4 md:border-b border-gray-200 z-30 bg-slate-100 md:rounded-t-xl">
-          <h1 className="text-lg font-bold">{title}</h1>
+          <h1 className="text-lg font-bold">{titleModal}</h1>
           <button
             className="text-gray-500 hover:text-gray-800"
             onClick={onClose}
