@@ -638,6 +638,8 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
   }
 );
 
+ModalContent.displayName = "ModalContent";
+
 export const ModalZtTable = ({
   isOpen,
   onClose,
@@ -651,18 +653,19 @@ export const ModalZtTable = ({
   title: string;
   isAddModal: boolean;
 }) => {
-  if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
-
+  
   const modalContentRef = useRef<{
     triggerChildFunctionSendRequest?: () => void;
     triggerChildFunctionEdit: () => void;
     triggerChildFunctionDelete: () => void;
   }>(null);
-
+  
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [isAdd, setIsAdd] = useState(isAddModal);
-
+  
+  if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
+  
   const handleSendRequest = () => {
     if (modalContentRef.current?.triggerChildFunctionSendRequest) {
       modalContentRef.current.triggerChildFunctionSendRequest();
