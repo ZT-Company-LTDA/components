@@ -59,7 +59,7 @@ interface CustomModalProps {
   urlModalGetElement?: string;
   addModalUrl?: string;
   updateModalUrl?: string;
-  searchTable?: () => void;
+  searchTable: () => void;
   closeModalDropDown?: () => void;
 }
 
@@ -323,9 +323,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
 
         setProgress(100);
         setShowSuccessIcon(true);
-        if (searchTable) {
-          searchTable();
-        }
+        searchTable();
         setTimeout(() => {
           setShowSuccessIcon(false);
         }, 2500);

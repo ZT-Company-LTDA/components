@@ -15,6 +15,7 @@ import { ModalContent, ModalZtTable } from "../Modal/ModalTable";
 import { FaCirclePlus, FaPlus } from "react-icons/fa6";
 import Avatar from "../Avatar/Avatar";
 import Chip from "../Chip/Chip";
+import { FaSearch } from "react-icons/fa";
 
 interface RequestElementsProps {
   count: number;
@@ -69,6 +70,7 @@ const Table: React.FC<TableProps> = ({
   const [selectedElement, setSelectedElement] = useState<number>();
   const [isOpen, setIsOpen] = useState(false);
   const [isAddModal, setIsAddModal] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const openModal = () => setIsOpen(true);
@@ -99,10 +101,6 @@ const Table: React.FC<TableProps> = ({
     }
   );
 
-  useEffect(() => {
-    console.log(isAddModal); // Isso será chamado sempre que isAddModal mudar
-  }, [isAddModal]);
-
   // Usar os dados do SWR ou dataInitial
   const users = data ? data.results : dataInitial.results;
   const totalPages = data
@@ -125,8 +123,10 @@ const Table: React.FC<TableProps> = ({
     mutate(); // Atualiza os dados ao mudar o número de linhas por página
   };
 
-  const searchTable = useCallback(() => {
-    mutate(); // Atualiza os dados após a pesquisa
+  const searchTable = useCallback(async() => {
+    setIsSearching(true); // Inicia o estado de carregamento
+    await mutate(); // Atualiza os dados
+    setIsSearching(false); // Finaliza o carregamento
   }, [mutate]);
 
   const openAdd  = () => {
@@ -251,7 +251,9 @@ const Table: React.FC<TableProps> = ({
             isViewModal={!isAddModal}
             inputs={modalInputs}
             trigger={<IoEyeOutline />}
+            addModalUrl={addModalUrl}
             updateModalUrl={updateModalUrl}
+            searchTable={searchTable}
             title="Detalhes"
             urlModalGetElement={urlModalGetElement}
           />
@@ -278,6 +280,10 @@ const Table: React.FC<TableProps> = ({
               <p>Adicionar</p>
               <FaCirclePlus />
             </button>
+            <button onClick={searchTable} className="bg-gray-800 text-white px-4 py-2 rounded-xl border border-solid border-gray-200 shadow-2xl hover:bg-gray-500 duration-500 flex items-center gap-2">
+              <p>Pesquisar</p>
+              <FaSearch />
+            </button>
           </div>
 
           <div className="overflow-y-auto max-h-[70vh] overflow-x-auto rounded-lg border border-gray-200 relative pt-2 p-4">
@@ -297,7 +303,7 @@ const Table: React.FC<TableProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {isLoading ? (
+                {isLoading || isSearching ? (
                   <tr>
                     <td
                       colSpan={columns.length}
@@ -376,6 +382,8 @@ const Table: React.FC<TableProps> = ({
             isAddModal={isAddModal}
             isViewModal={!isAddModal}
             title="Detalhes"
+            searchTable={searchTable}
+            addModalUrl={addModalUrl}
             updateModalUrl={updateModalUrl}
             urlModalGetElement={urlModalGetElement}
           />
