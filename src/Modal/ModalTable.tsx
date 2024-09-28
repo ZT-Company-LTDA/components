@@ -645,7 +645,7 @@ export const ModalZtTable = ({
   onClose,
   children,
   title,
-  isAddModal,
+  isAddModal = true,
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -662,7 +662,6 @@ export const ModalZtTable = ({
   
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  const [isAdd, setIsAdd] = useState(isAddModal);
   
   if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
   
@@ -686,7 +685,7 @@ export const ModalZtTable = ({
     }
   };
 
-  const titleModal = isAdd ? `Adicionando ` + title : (isEdit ? "Editando " : (isDelete ? "Deletando " : "Visualizando ")) + title;
+  const titleModal = isAddModal ? `Adicionando ` + title : (isEdit ? "Editando " : (isDelete ? "Deletando " : "Visualizando ")) + title;
 
   return (
     <div className="fixed inset-0 flex items-end md:items-center md:justify-center bg-black bg-opacity-50 z-50">
@@ -713,12 +712,12 @@ export const ModalZtTable = ({
         {/* Footer fixo */}
         <div className="p-4 border-t flex gap-4 border-gray-200">
           <button
-            onClick={onClose}
+            onClick={() => {setIsEdit(false); onClose(); setIsDelete(false);}}
             className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-400 duration-500 flex items-center gap-1"
           >
             <p>Fechar</p> <FaTimes />
           </button>
-          {isEdit || isDelete || isAdd ? (
+          {isEdit || isDelete || isAddModal ? (
             <button
               onClick={handleSendRequest}
               className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-400 duration-500 flex items-center gap-2"
@@ -726,7 +725,7 @@ export const ModalZtTable = ({
               <p>{isDelete ? "Confirmar" : "Salvar"}</p>
               <FaCheck />
             </button>
-          ) : (
+          ) : (isAddModal == false && (
             <>
               <button
                 onClick={handleEditView}
@@ -735,7 +734,7 @@ export const ModalZtTable = ({
                 <p>Editar</p>
                 <FaEdit />
               </button>
-              { !isAdd &&
+              { !isAddModal &&
               <button
                 onClick={handleDelete}
                 className="bg-white font-semibold text-red-600 px-4 py-2 rounded-xl border border-solid border-red-600 hover:border-white hover:bg-red-400 hover:text-white duration-500 flex items-center gap-2"
@@ -745,7 +744,7 @@ export const ModalZtTable = ({
               </button>
               }
             </>
-          )}
+          ))}
         </div>
       </div>
     </div>

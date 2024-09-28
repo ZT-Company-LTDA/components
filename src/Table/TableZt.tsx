@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
@@ -68,11 +68,11 @@ const Table: React.FC<TableProps> = ({
   const { arrayFilters } = useTableCrudContext();
   const [selectedElement, setSelectedElement] = useState<number>();
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdd, setIsAdd] = useState(false);
+  const [isAddModal, setIsAddModal] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const openModal = () => setIsOpen(true);
-  const closeModal = () => {setIsOpen(false); setIsAdd(false)};
+  const closeModal = () => {setIsOpen(false); setIsAddModal(false)};
 
   const fetcher = async (url: string) => {
     return await axios(url, {
@@ -98,6 +98,10 @@ const Table: React.FC<TableProps> = ({
       revalidateOnFocus: false,
     }
   );
+
+  useEffect(() => {
+    console.log(isAddModal); // Isso será chamado sempre que isAddModal mudar
+  }, [isAddModal]);
 
   // Usar os dados do SWR ou dataInitial
   const users = data ? data.results : dataInitial.results;
@@ -126,7 +130,8 @@ const Table: React.FC<TableProps> = ({
   }, [mutate]);
 
   const openAdd  = () => {
-    setIsAdd(true);
+    setIsAddModal(true);
+    console.log(isAddModal);
     openModal();
   }
 
@@ -242,8 +247,8 @@ const Table: React.FC<TableProps> = ({
             closeModal={closeModal}
             id={selectedElement}
             elementName={elementName}
-            isAddModal={isAdd}
-            isViewModal={!isAdd}
+            isAddModal={isAddModal}
+            isViewModal={!isAddModal}
             inputs={modalInputs}
             trigger={<IoEyeOutline />}
             updateModalUrl={updateModalUrl}
@@ -360,7 +365,7 @@ const Table: React.FC<TableProps> = ({
       )}
 
       {!isMobile && (
-        <ModalZtTable title="Paciente" isOpen={isOpen} onClose={closeModal} isAddModal={isAdd}>
+        <ModalZtTable title="Paciente" isOpen={isOpen} onClose={closeModal} isAddModal={isAddModal}>
           <ModalContent
             isOpen={isOpen}
             closeModal={closeModal}
@@ -368,8 +373,8 @@ const Table: React.FC<TableProps> = ({
             elementName={elementName}
             inputs={modalInputs}
             trigger={<IoEyeOutline />}
-            isAddModal={isAdd}
-            isViewModal={!isAdd}
+            isAddModal={isAddModal}
+            isViewModal={!isAddModal}
             title="Detalhes"
             updateModalUrl={updateModalUrl}
             urlModalGetElement={urlModalGetElement}

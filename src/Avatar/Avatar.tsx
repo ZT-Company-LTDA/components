@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React from 'react';
 
 interface AvatarProps {
@@ -18,9 +19,11 @@ const Avatar: React.FC<AvatarProps> = ({ src, alt = 'Avatar', size = 50, borderW
         borderStyle: 'solid',
       }}
     >
-      <img
+      <Image
         src={src}
         alt={alt}
+        width={size}
+        height={size}
         className="rounded-2xl object-cover"
         style={{ width: `${size}px`, height: `${size}px` }}
       />
