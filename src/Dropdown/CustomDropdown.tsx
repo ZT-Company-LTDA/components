@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { AiOutlineMore, AiOutlineUserDelete } from "react-icons/ai";
 import { IoEyeOutline } from "react-icons/io5";
-import Modal from "../Modal/Modal";
+// import Modal from "../Modal/Modal";
 import { FaUserEdit } from "react-icons/fa";
 import { useScreenContext } from "../contexts/ContextScreen";
 
@@ -104,7 +104,7 @@ export const CustomDropdown = ({
                 role="menuitem"
               >
                 <IoEyeOutline className="mr-3" />
-                <Modal
+                {/* <Modal
                   id={element.id}
                   elementName={elementName}
                   inputs={modalInputs}
@@ -114,7 +114,7 @@ export const CustomDropdown = ({
                   title={`Detalhes ${elementName}`}
                   urlModalGetElement={urlModalGetElement}
                   closeModalDropDown={closeModal}
-                />
+                /> */}
               </div>
             )}
             {actions.find((action) => action.id == 3) && (
@@ -124,7 +124,7 @@ export const CustomDropdown = ({
                 role="menuitem"
               >
                 <FaUserEdit className="mr-3" />
-                <Modal
+                {/* <Modal
                   id={element.id}
                   elementName={elementName}
                   inputs={modalInputs}
@@ -136,7 +136,7 @@ export const CustomDropdown = ({
                   title={`Editar ${elementName}`}
                   urlModalGetElement={urlModalGetElement}
                   closeModalDropDown={closeModal}
-                />
+                /> */}
               </div>
             )}
             {actions.find((action) => action.id == 4) && (
@@ -146,7 +146,7 @@ export const CustomDropdown = ({
                 role="menuitem"
               >
                 <AiOutlineUserDelete className="mr-3" />
-                <Modal
+                {/* <Modal
                   id={element.id}
                   elementName={elementName}
                   trigger={<></>}
@@ -156,7 +156,7 @@ export const CustomDropdown = ({
                   title={`Deletar ${elementName}`}
                   urlModalGetElement={urlModalGetElement}
                   closeModalDropDown={closeModal}
-                />
+                /> */}
               </div>
             )}
           </div>

@@ -1,54 +1,22 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
 } from "react-icons/io";
-import { ChipProps, Spinner } from "@nextui-org/react";
+import { Spinner } from "@nextui-org/react";
 import { useScreenContext } from "../contexts/ContextScreen";
 import { IoEyeOutline } from "react-icons/io5";
 import axios from "../utils/AxiosInstance";
 import useSWR from "swr";
 import { useTableCrudContext } from "../contexts/ContextTableCrud";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { ModalContent, ModalZtTable } from "../Modal/ModalTable";
-import { FaCirclePlus, FaPlus } from "react-icons/fa6";
+import { ModalZtTable } from "../Modal/ModalTable";
+import { FaCirclePlus } from "react-icons/fa6";
 import Avatar from "../Avatar/Avatar";
 import Chip from "../Chip/Chip";
 import { FaSearch } from "react-icons/fa";
-
-interface RequestElementsProps {
-  count: number;
-  results: any[];
-}
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  Ativo: "success",
-  Inativo: "danger",
-};
-
-interface TableProps {
-  dataInitial: { count: number; results: { [key: string]: string | number }[] };
-  columns: Column[];
-  urlFetcher: string;
-  token: string | undefined;
-  elementName: string;
-  size: string;
-  modalInputs: Array<{
-    label: string;
-    value: string;
-    name: string;
-    trigger?: () => boolean;
-    type: string;
-    placeholder: string;
-    autocompleteUrl?: string;
-    hiddenValue?: string;
-  }>;
-  add?: boolean;
-  urlModalGetElement?: string;
-  addModalUrl?: string;
-  updateModalUrl?: string;
-}
+import { ModalContent } from "../Modal/ModalContent";
 
 const Table: React.FC<TableProps> = ({
   dataInitial,
@@ -57,8 +25,6 @@ const Table: React.FC<TableProps> = ({
   urlFetcher,
   elementName,
   modalInputs,
-  size,
-  add,
   addModalUrl,
   updateModalUrl,
   urlModalGetElement,
@@ -171,61 +137,6 @@ const Table: React.FC<TableProps> = ({
           return (
             <Chip text={cellValue} color="bg-green-200"/>
           );
-        // case "actions":
-        //   return (
-        //     <div className="relative flex items-center justify-center gap-4">
-        //       {actions.find((action) => action.id === 1) && (
-        //         <Tooltip content="Detalhes">
-        //           <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-        //             <Modal
-        //               id={element.id}
-        //               elementName={elementName}
-        //               inputs={modalInputs}
-        //               trigger={<IoEyeOutline />}
-        //               isIcon
-        //               isView
-        //               title="Detalhes"
-        //               urlModalGetElement={urlModalGetElement}
-        //             />
-        //           </span>
-        //         </Tooltip>
-        //       )}
-        //       {actions.find((action) => action.id === 3) && (
-        //         <Tooltip content={`Editar ${elementName}`}>
-        //           <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-        //             <Modal
-        //               id={element.id}
-        //               elementName={elementName}
-        //               inputs={modalInputs}
-        //               trigger={<FaUserEdit />}
-        //               isIcon
-        //               isUpdate
-        //               updateModalUrl={updateModalUrl}
-        //               searchTable={searchTable}
-        //               title={`Editar ${elementName}`}
-        //               urlModalGetElement={urlModalGetElement}
-        //             />
-        //           </span>
-        //         </Tooltip>
-        //       )}
-        //       {actions.find((action) => action.id === 4) && (
-        //         <Tooltip color="danger" content={`Excluir ${elementName}`}>
-        //           <span className="text-lg text-danger cursor-pointer active:opacity-50">
-        //             <Modal
-        //               id={element.id}
-        //               elementName={elementName}
-        //               trigger={<AiOutlineUserDelete />}
-        //               isIcon
-        //               isDelete
-        //               searchTable={searchTable}
-        //               title={`Deletar ${elementName}`}
-        //               urlModalGetElement={urlModalGetElement}
-        //             />
-        //           </span>
-        //         </Tooltip>
-        //       )}
-        //     </div>
-        //   );
         default:
           return cellValue;
       }
@@ -323,9 +234,6 @@ const Table: React.FC<TableProps> = ({
                         openModal();
                         setSelectedElement(element.id);
                       }}
-                      // className={`hover:bg-gray-200 hover:text-gray-700 duration-500 cursor-pointer ${
-                      //   index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                      // }`}
                       className={`hover:bg-gray-100 hover:text-gray-700 duration-500 cursor-pointer bg-white`}
                     >
                       {columns.map((column) => (

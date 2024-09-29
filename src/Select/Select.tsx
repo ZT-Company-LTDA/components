@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "../utils/AxiosInstance";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Input, Spinner } from "@nextui-org/react";
 import { useDebounce } from "use-debounce";
-import { setNestedValue } from "../Modal/Modal";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { setNestedValue } from "../utils/functions/modalValues";
 
 interface ResultElement {
   id: number;
