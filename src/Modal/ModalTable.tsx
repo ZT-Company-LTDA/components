@@ -158,7 +158,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
     const [progress, setProgress] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessIcon, setShowSuccessIcon] = useState(false);
-    const [showErrorIcon, setShowErrorIcon] = useState(true);
+    const [showErrorIcon, setShowErrorIcon] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [arrayErrors, setArrayErrors] = useState<
       Array<{ isValid: boolean; error: string; inputName: string }>
@@ -187,6 +187,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
               console.log(inputValues);
             } catch (error) {
               console.error("Erro ao buscar os dados:", error);
+              setShowErrorIcon(true);
             } finally {
               setIsLoading(false);
             }
