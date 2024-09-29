@@ -85,7 +85,10 @@ const Table: React.FC<TableProps> = ({
         "Content-Type": "application/json",
       },
     })
-      .then((res) => res.data)
+      .then((res) => {
+        console.log(res.data)
+        return res.data
+      })
       .catch((error) => {
         console.error("error fetcher table", error);
       });
