@@ -34,11 +34,13 @@ export const Select: React.FC<SelectProps> = ({
   value,
   fill,
   isAdd,
-  isView
+  isView,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>(value || "");
   const [elements, setElements] = useState<ResultElement[]>([]);
-  const [selectedElement, setSelectedElement] = useState<ResultElement | null>(null);
+  const [selectedElement, setSelectedElement] = useState<ResultElement | null>(
+    null
+  );
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [debouncedQuery] = useDebounce(searchTerm, 1000);
   const [clicked, setClicked] = useState(false);
@@ -70,7 +72,7 @@ export const Select: React.FC<SelectProps> = ({
     };
 
     fetchElements();
-  }, [debouncedQuery, url, session?.user?.token]);
+  }, [debouncedQuery]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -78,7 +80,10 @@ export const Select: React.FC<SelectProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
       }
     };
@@ -89,7 +94,10 @@ export const Select: React.FC<SelectProps> = ({
     };
   }, []);
 
-  const handleOptionMouseDown = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, element: ResultElement) => {
+  const handleOptionMouseDown = (
+    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    element: ResultElement
+  ) => {
     e.preventDefault(); // Evita o fechamento do dropdown
     handleOptionClick(element); // Processa a seleção do item
   };
@@ -105,7 +113,10 @@ export const Select: React.FC<SelectProps> = ({
     setValue((prevValues) => {
       const updatedValues = { ...prevValues };
       const path = name.split(".");
-      setNestedValue(updatedValues, path, {id:element.id, value:element.value});
+      setNestedValue(updatedValues, path, {
+        id: element.id,
+        value: element.value,
+      });
       return updatedValues;
     });
     setShowDropdown(false);
@@ -113,52 +124,59 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   useEffect(() => {
-    if (fill && value) {
+    if (fill && value && !clicked) {
       const selected = elements.find((el) => el.value === value) || null;
       setSelectedElement(selected);
       setSearchTerm(value);
     }
-  }, [fill, value, elements]);
+  }, [fill, value, elements, clicked]);
 
   return (
     <div
       onClick={() => {
         if (inputRef.current) {
-          inputRef.current.focus(); 
+          inputRef.current.focus();
         }
       }}
-      className="relative max-w-96"
+      className="relative max-w-full"
     >
-      <Input
-        type="text"
-        onFocus={() => {
-          if(!isView){
-            setClicked(true);
-            setShowDropdown(true);
-          }
-        }}
-        onBlur={() => {
-          if(!isView){
-            setClicked(false);
-            setShowDropdown(false);
-          }
-        }}
-        disabled={isView}
-        isRequired={isAdd ? true : false}
-        value={searchTerm}
-        onChange={handleInputChange}
-        isReadOnly={isReadOnly}
-        placeholder={`Digite o nome do ${elementName}`}
-        className="max-w-96"
-        label={label}
-      />
-      {showDropdown ? (
-        <IoIosArrowUp className="absolute top-2 left-[22rem]" />
-      ) : (
-        <IoIosArrowDown className="absolute top-2 left-[22rem]" />
-      )}
+      <div className="relative">
+        <Input
+          type="text"
+          onFocus={() => {
+            if (!isView) {
+              setClicked(true);
+              setShowDropdown(true);
+            }
+          }}
+          onBlur={() => {
+            if (!isView) {
+              setClicked(false);
+              setShowDropdown(false);
+            }
+          }}
+          disabled={isView}
+          isRequired={isAdd ? true : false}
+          value={searchTerm}
+          onChange={handleInputChange}
+          isReadOnly={isReadOnly}
+          placeholder={`Digite o nome do ${elementName}`}
+          className="max-w-full"
+          label={label}
+        />
+        <div className="absolute right-3 top-3 flex items-center">
+          {showDropdown ? (
+            <IoIosArrowUp className="text-gray-500" />
+          ) : (
+            <IoIosArrowDown className="text-gray-500" />
+          )}
+        </div>
+      </div>
       {showDropdown && (
-        <ul ref={dropdownRef} className="absolute z-50 max-w-96 w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto ">
+        <ul
+          ref={dropdownRef}
+          className="absolute z-50 max-w-full w-full bg-white border rounded shadow-lg mt-1 max-h-60 overflow-auto "
+        >
           {searchTerm !== "" ? (
             elements.length > 0 ? (
               elements.map((element) => (
