@@ -158,7 +158,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
     const [progress, setProgress] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccessIcon, setShowSuccessIcon] = useState(false);
-    const [showErrorIcon, setShowErrorIcon] = useState(false);
+    const [showErrorIcon, setShowErrorIcon] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [arrayErrors, setArrayErrors] = useState<
       Array<{ isValid: boolean; error: string; inputName: string }>
@@ -389,7 +389,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
 
     return (
       <>
-        <div className={`flex flex-col items-center justify-center w-full gap-4 overflow-y-auto ${isDelete && "h-full"} ${isSubmitting && "h-full"}`}>
+        <div className={`flex flex-col items-center justify-center w-full gap-4 overflow-y-auto ${isDelete || showSuccessIcon || showErrorIcon && "h-full"} ${isSubmitting && "h-full"}`}>
           {/* {isDelete &&
             (inputValues?.name ? (
               <h1>
@@ -411,7 +411,7 @@ export const ModalContent = forwardRef<ModalContentRef, CustomModalProps>(
           ) : showErrorIcon ? (
             <div className="flex flex-col justify-center items-center h-20">
               <MdError className="text-red-500 h-24 w-24" />
-              <p className="text-red-500 mt-2">{errorMessage}</p>
+              <p className="text-red-500 mt-2">{errorMessage || `Erro ao ${isAdd ? "Adicionar" : (isUpdate ? "Editar" : (isDelete ? "Deletar": (isView && "Visualizar")))} ${elementName}`}</p>
             </div>
           ) : isSubmitting ? (
             <div className="w-full h-full flex flex-col justify-center md:px-10">
