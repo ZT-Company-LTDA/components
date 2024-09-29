@@ -24,8 +24,7 @@ const Avatar: React.FC<AvatarProps> = ({ src, alt = 'Avatar', size = 50, borderW
         alt={alt}
         width={size}
         height={size}
-        className="rounded-2xl object-cover"
-        style={{ width: `${size}px`, height: `${size}px` }}
+        className="rounded-2xl object-cover w-full h-full"
       />
     </div>
   );
