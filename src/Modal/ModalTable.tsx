@@ -662,30 +662,31 @@ export const ModalZtTable = ({
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   
-  if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
   
   const handleSendRequest = () => {
     if (modalContentRef.current?.triggerChildFunctionSendRequest) {
       modalContentRef.current.triggerChildFunctionSendRequest();
     }
   };
-
+  
   const handleEditView = () => {
     setIsEdit(!isEdit);
     if (modalContentRef.current?.triggerChildFunctionEdit) {
       modalContentRef.current.triggerChildFunctionEdit();
     }
   };
-
+  
   const handleDelete = () => {
     setIsDelete(!isDelete);
     if (modalContentRef.current?.triggerChildFunctionDelete) {
       modalContentRef.current.triggerChildFunctionDelete();
     }
   };
-
+  
   const titleModal = isAddModal ? `Adicionando ` + title : (isEdit ? "Editando " : (isDelete ? "Deletando " : "Visualizando ")) + title;
-
+  
+  if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
+  
   return (
     <div className="fixed inset-0 flex items-end md:items-center md:justify-center bg-black bg-opacity-50 z-50">
       <div className={`bg-white rounded-lg shadow-lg relative w-full h-[90%] md:w-1/3 ${isDelete? "md:max-h-[30vh]" : "md:max-h-[60vh]"} z-50 flex flex-col`}>
