@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   IoIosArrowDropleftCircle,
   IoIosArrowDroprightCircle,
@@ -70,29 +70,27 @@ const Table: React.FC<TableProps> = ({
     }
   );
 
-  // Usar os dados do SWR ou dataInitial
-  const users = data ? data.results : dataInitial.results;
-  const totalPages = data
-    ? Math.ceil(data.count / rowsPerPage)
-    : Math.ceil(dataInitial.count / rowsPerPage);
+  const elements = useMemo(() => (data ? data.results : dataInitial.results), [data, dataInitial]);
+  const totalPages = useMemo(
+    () => (data ? Math.ceil(data.count / rowsPerPage) : Math.ceil(dataInitial.count / rowsPerPage)),
+    [data, dataInitial, rowsPerPage]
+  );
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     if (page > 0 && page <= totalPages) {
       setCurrentPage(page);
       mutate(); // Atualiza os dados ao mudar de página
     }
-  };
+  }, [totalPages, mutate]);
 
-  const handleRowsPerPageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleRowsPerPageChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
     const newRowsPerPage = Number(event.target.value);
     setRowsPerPage(newRowsPerPage);
     setCurrentPage(1);
     mutate(); // Atualiza os dados ao mudar o número de linhas por página
-  };
+  }, [mutate]);
 
-  const searchTable = useCallback(async() => {
+  const searchTable = useCallback(async () => {
     setIsSearching(true); // Inicia o estado de carregamento
     await mutate(); // Atualiza os dados
     setIsSearching(false); // Finaliza o carregamento
@@ -227,12 +225,12 @@ const Table: React.FC<TableProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  users?.map((element, index) => (
+                  elements?.map((element, index) => (
                     <tr
                       key={index}
                       onClick={() => {
                         openModal();
-                        setSelectedElement(element.id);
+                        setSelectedElement(Number(element.id));
                       }}
                       className={`hover:bg-gray-100 hover:text-gray-700 duration-500 cursor-pointer bg-white`}
                     >
