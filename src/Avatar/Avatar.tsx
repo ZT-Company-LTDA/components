@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface AvatarProps {
   src: string;
@@ -9,6 +9,12 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, alt = 'Avatar', size = 50, borderWidth = 2 }) => {
+  const [isLoading, setIsLoading] = useState(true); // Estado para controlar o carregamento da imagem
+
+  const handleLoad = () => {
+    setIsLoading(false); // Define o estado para falso quando a imagem é carregada
+  };
+
   return (
     <div
       className="flex items-center justify-center rounded-2xl border border-solid border-gray-300"
@@ -19,12 +25,20 @@ const Avatar: React.FC<AvatarProps> = ({ src, alt = 'Avatar', size = 50, borderW
         borderStyle: 'solid',
       }}
     >
+      {isLoading && (
+        <div className="animate-pulse rounded-2xl bg-gray-300" style={{
+          width: `${size}px`,
+          height: `${size}px`,
+        }} />
+      )}
       <Image
         src={src}
         alt={alt}
         width={size}
         height={size}
-        className="rounded-2xl object-cover w-full h-full"
+        loading="eager"
+        className={`rounded-2xl object-cover w-full h-full ${isLoading ? 'hidden' : ''}`} // Esconde a imagem enquanto está carregando
+        onLoad={handleLoad} // Manipulador que define o estado quando a imagem é carregada
       />
     </div>
   );
