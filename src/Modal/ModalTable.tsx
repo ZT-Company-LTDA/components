@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaCheck, FaEdit, FaTimes } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { useScreenContext } from "../contexts/ContextScreen";
 
 export const ModalZtTable = ({
   isOpen,
@@ -23,6 +24,8 @@ export const ModalZtTable = ({
     triggerChildFunctionEdit: () => void;
     triggerChildFunctionDelete: () => void;
   }>(null);
+
+  const { actions } = useScreenContext();
 
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
@@ -115,7 +118,7 @@ export const ModalZtTable = ({
                     <p>Editar</p>
                     <FaEdit />
                   </button>
-                  {!isAddModal && (
+                  {!isAddModal && actions.find((action) => action.id === 4) && (
                     <button
                       onClick={handleDelete}
                       className="bg-white font-semibold text-red-600 px-4 py-2 rounded-xl border border-solid border-red-600 hover:border-white hover:bg-red-400 hover:text-white duration-500 flex items-center gap-2"
