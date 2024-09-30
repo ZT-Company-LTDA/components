@@ -97,7 +97,7 @@ export default function EditorComponent({
         class:  'prose prose-h1:text-4xl prose-h1:font-bold prose-h2:text-2xl prose-h2:font-semibold prose-h3:text-xl prose-h3:font-medium text-sm' +
                 'prose prose-li:marker:text-black prose-li:marker:text-sm prose-li:my-1 prose-p:my-1' +
                 'prose prose-code:rounded-md prose-code:px-1 prose-code:py-1 prose-code:bg-gray-300' +
-                'prose prose-sm sm:prose-sm lg:prose-sm xl:prose-sm m-5 h-[100%] w-[100%] min-w-[100%] break-words overflow-y-auto focus:outline-none outline-none'+
+                'prose prose-sm sm:prose-sm lg:prose-sm xl:prose-sm m-5 h-[100%] max-h-full w-[100%] min-w-[100%] break-words overflow-y-auto focus:outline-none outline-none'+
                 'prose prose-a:cursor-pointer prose-a:text-blue-600' //links
 
       }
@@ -116,12 +116,12 @@ export default function EditorComponent({
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full max-h-full">
+    <div className="flex flex-col items-center justify-center w-full h-[80%] max-h-[80%]">
       {editor && <ProjectCreateContentToolbar editor={editor} isEditable={isEditable}/>}
-      <EditorContent editor={editor} className="w-full h-[80%] flex items-center justify-center bg-white text-black border-1 border-gray-300 rounded-sm p-1 max-h-[90%] mb-2"/>
+      <EditorContent editor={editor} className="w-full h-[70%] flex items-center justify-center bg-white text-black border-1 border-gray-300 rounded-sm p-1 max-h-[70%] mb-2"/>
       {
         !!onSave && 
-        <Button onPress={handleEdit} className="w-1/3">
+        <Button onPress={handleEdit} className="w-1/3 mt-2 h-16">
         {!isEditable ? 'Editar' : 'Salvar'}
         </Button>
       }
