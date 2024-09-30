@@ -24,6 +24,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { getNestedValue, setNestedValue } from "../utils/functions/modalValues";
 import { toZonedDateTime } from "../utils/functions/zoneDateTime";
+import { useScreenContext } from "../contexts/ContextScreen";
 
 export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
   (props, ref) => {
@@ -55,6 +56,7 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
     const [imageUrl, setImageUrl] = useState<string>("");
     const { data: session } = useSession();
     const isMobile = useMediaQuery("(max-width: 768px)");
+    const { actions } = useScreenContext();
 
     const [isUpdate, setIsUpdate] = useState(false);
     const [isView, setIsView] = useState(isViewModal);
@@ -477,7 +479,7 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
                 <FaCheck className="w-6 h-6" />
               </button>
             )}
-            {!isAdd && !isDelete &&
+            {!isAdd && !isDelete && actions.find((action) => action.id === 4) &&
             <button
               className="bg-white border-3 border-solid border-gray-200 text-red-500 p-4 rounded-full shadow-2xl"
               onClick={handleDelete} // Função para fechar o modal
