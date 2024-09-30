@@ -1,7 +1,4 @@
-import React, {
-  useRef,
-  useState,
-} from "react";
+import React, { useRef, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { FaCheck, FaEdit, FaTimes } from "react-icons/fa";
 import { FaRegTrashCan } from "react-icons/fa6";
@@ -12,51 +9,58 @@ export const ModalZtTable = ({
   children,
   title,
   isAddModal = true,
+  showButtonFooter = false,
 }: {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
   title: string;
-  isAddModal: boolean;
+  isAddModal?: boolean;
+  showButtonFooter?: boolean;
 }) => {
-  
   const modalContentRef = useRef<{
     triggerChildFunctionSendRequest?: () => void;
     triggerChildFunctionEdit: () => void;
     triggerChildFunctionDelete: () => void;
   }>(null);
-  
+
   const [isEdit, setIsEdit] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
-  
-  
+
   const handleSendRequest = () => {
     if (modalContentRef.current?.triggerChildFunctionSendRequest) {
       modalContentRef.current.triggerChildFunctionSendRequest();
     }
   };
-  
+
   const handleEditView = () => {
     setIsEdit(!isEdit);
     if (modalContentRef.current?.triggerChildFunctionEdit) {
       modalContentRef.current.triggerChildFunctionEdit();
     }
   };
-  
+
   const handleDelete = () => {
     setIsDelete(!isDelete);
     if (modalContentRef.current?.triggerChildFunctionDelete) {
       modalContentRef.current.triggerChildFunctionDelete();
     }
   };
-  
-  const titleModal = isAddModal ? `Adicionando ` + title : (isEdit ? "Editando " : (isDelete ? "Deletando " : "Visualizando ")) + title;
-  
+
+  const titleModal = showButtonFooter  ? (isAddModal
+    ? `Adicionando ` + title
+    : (isEdit ? "Editando " : isDelete ? "Deletando " : "Visualizando ") +
+      title) : title;
+
   if (!isOpen) return null; // Não renderiza a modal se ela estiver fechada
-  
+
   return (
     <div className="fixed inset-0 flex items-end md:items-center md:justify-center bg-black bg-opacity-50 z-50">
-      <div className={`bg-white rounded-lg shadow-lg relative w-full h-[90%] md:w-1/3 ${isDelete? "md:max-h-[30vh]" : "md:max-h-[60vh]"} z-50 flex flex-col`}>
+      <div
+        className={`bg-white rounded-lg shadow-lg relative w-full h-[90%] md:w-1/3 ${
+          isDelete ? "md:max-h-[30vh]" : "md:max-h-[60vh]"
+        } z-50 flex flex-col`}
+      >
         {/* Header fixo */}
         <div className="flex justify-between items-center p-4 md:border-b border-gray-200 z-30 bg-slate-100 md:rounded-t-xl">
           <h1 className="text-lg font-bold">{titleModal}</h1>
@@ -68,7 +72,11 @@ export const ModalZtTable = ({
           </button>
         </div>
         {/* Área rolável do conteúdo */}
-        <div className={`overflow-y-auto p-4 flex-grow relative ${isDelete && "flex items-center justify-center"}`}>
+        <div
+          className={`overflow-y-auto p-4 flex-grow relative ${
+            isDelete && "flex items-center justify-center"
+          }`}
+        >
           {React.cloneElement(children as React.ReactElement, {
             ref: modalContentRef,
           })}
@@ -77,42 +85,50 @@ export const ModalZtTable = ({
         {/* <span className="w-10 h-16 bg-gray-600 p-2 rounded-br-xl absolute top-9 left-0 text-white z-40 flex items-end justify-center"><FaEdit className="w-5 h-5" /></span> */}
 
         {/* Footer fixo */}
-        <div className="p-4 border-t flex gap-4 border-gray-200">
-          <button
-            onClick={() => {setIsEdit(false); onClose(); setIsDelete(false);}}
-            className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-400 duration-500 flex items-center gap-1"
-          >
-            <p>Fechar</p> <FaTimes />
-          </button>
-          {isEdit || isDelete || isAddModal ? (
+        {showButtonFooter && (
+          <div className="p-4 border-t flex gap-4 border-gray-200">
             <button
-              onClick={handleSendRequest}
-              className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-400 duration-500 flex items-center gap-2"
+              onClick={() => {
+                setIsEdit(false);
+                onClose();
+                setIsDelete(false);
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded-xl hover:bg-red-400 duration-500 flex items-center gap-1"
             >
-              <p>{isDelete ? "Confirmar" : "Salvar"}</p>
-              <FaCheck />
+              <p>Fechar</p> <FaTimes />
             </button>
-          ) : (isAddModal == false && (
-            <>
+            {isEdit || isDelete || isAddModal ? (
               <button
-                onClick={handleEditView}
-                className="bg-gray-600 text-white px-4 py-2 rounded-xl hover:bg-gray-400 duration-500 flex items-center gap-2"
+                onClick={handleSendRequest}
+                className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-400 duration-500 flex items-center gap-2"
               >
-                <p>Editar</p>
-                <FaEdit />
+                <p>{isDelete ? "Confirmar" : "Salvar"}</p>
+                <FaCheck />
               </button>
-              { !isAddModal &&
-              <button
-                onClick={handleDelete}
-                className="bg-white font-semibold text-red-600 px-4 py-2 rounded-xl border border-solid border-red-600 hover:border-white hover:bg-red-400 hover:text-white duration-500 flex items-center gap-2"
-              >
-                <p>Deletar</p>
-                <FaRegTrashCan />
-              </button>
-              }
-            </>
-          ))}
-        </div>
+            ) : (
+              isAddModal == false && (
+                <>
+                  <button
+                    onClick={handleEditView}
+                    className="bg-gray-600 text-white px-4 py-2 rounded-xl hover:bg-gray-400 duration-500 flex items-center gap-2"
+                  >
+                    <p>Editar</p>
+                    <FaEdit />
+                  </button>
+                  {!isAddModal && (
+                    <button
+                      onClick={handleDelete}
+                      className="bg-white font-semibold text-red-600 px-4 py-2 rounded-xl border border-solid border-red-600 hover:border-white hover:bg-red-400 hover:text-white duration-500 flex items-center gap-2"
+                    >
+                      <p>Deletar</p>
+                      <FaRegTrashCan />
+                    </button>
+                  )}
+                </>
+              )
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
