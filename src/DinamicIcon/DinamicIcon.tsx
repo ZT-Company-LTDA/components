@@ -61,5 +61,6 @@ export const DynamicIcon: React.FC<DynamicIconProps> = ({
   if (!IconComponent) {
     return <span>Icon not found</span>;
   }
+  
   return <IconComponent size={size} color={color} className={className} />;
 };
