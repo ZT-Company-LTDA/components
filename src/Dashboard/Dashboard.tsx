@@ -34,7 +34,6 @@ export const Dashboard = ({
   useEffect(() => {
     setidScreen(initialScreenId);
     setActions(actions);
-    console.log(actions);
   },[setidScreen, initialScreenId]);
   
   return (

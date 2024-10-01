@@ -98,7 +98,7 @@ export const NavBar = ({
                   <DropdownTrigger>
                     <Avatar
                       showFallback
-                      src="https://images.unsplash.com/broken"
+                      src={session?.user?.image}
                       name={session?.user?.name as string}
                       size="md"
                       alt="Avatar"
@@ -106,8 +106,8 @@ export const NavBar = ({
                     />
                   </DropdownTrigger>
                   <DropdownMenu>
-                    <DropdownItem>Perfil</DropdownItem>
-                    <DropdownItem showDivider>Pagamentos</DropdownItem>
+                    {/* <DropdownItem>Perfil</DropdownItem>
+                    <DropdownItem showDivider>Pagamentos</DropdownItem> */}
                     <DropdownItem
                       className="text-red-500"
                       onPress={() => signOut()}
