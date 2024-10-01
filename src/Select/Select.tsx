@@ -160,6 +160,7 @@ export const Select: React.FC<SelectProps> = ({
           value={searchTerm}
           onChange={handleInputChange}
           isReadOnly={isReadOnly}
+          autoComplete="off"
           placeholder={`Digite o nome do ${elementName}`}
           className="max-w-full"
           label={label}
