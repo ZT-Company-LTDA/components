@@ -64,17 +64,14 @@ export const CustomDropdown = ({
 
   const handleAction = (key: string) => {
     if (key === "info") {
-      console.log("keyinfo :>> ", key);
       openModal("info");
       setIsModalOpen(true);
     }
     if (key === "edit") {
-      console.log("keyedit :>> ", key);
       openModal("edit");
       setIsModalOpen(true);
     }
     if (key === "delete") {
-      console.log("keydelete :>> ", key);
       openModal("delete");
       setIsModalOpen(true);
     }

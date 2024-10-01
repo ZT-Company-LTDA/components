@@ -52,7 +52,6 @@ const Table: React.FC<TableProps> = ({
       },
     })
       .then((res) => {
-        console.log(res.data)
         return res.data
       })
       .catch((error) => {
@@ -98,7 +97,6 @@ const Table: React.FC<TableProps> = ({
 
   const openAdd  = () => {
     setIsAddModal(true);
-    console.log(isAddModal);
     openModal();
   }
 

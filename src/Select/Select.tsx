@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "../utils/AxiosInstance";
-import { useSession } from "next-auth/react";
 import { Input, Spinner } from "@nextui-org/react";
 import { useDebounce } from "use-debounce";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { setNestedValue } from "../utils/functions/modalValues";
+import { parseCookies } from "nookies";
 
 interface ResultElement {
   id: number;
@@ -46,8 +46,6 @@ export const Select: React.FC<SelectProps> = ({
   const [clicked, setClicked] = useState(false);
   const [search, setSearch] = useState(false);
 
-  const { data: session } = useSession();
-
   useEffect(() => {
     const fetchElements = async () => {
       if (debouncedQuery.length > 0) {
@@ -56,10 +54,9 @@ export const Select: React.FC<SelectProps> = ({
             method: "POST",
             data: { search: debouncedQuery },
             headers: {
-              Authorization: `Bearer ${session?.user?.token as string}`,
+              Authorization: `Bearer ${parseCookies().token as string}`,
             },
           });
-          console.log("API response:", response.data); // Verifique a estrutura aqui
           setElements(response.data.results || []);
         } catch (error) {
           console.error("Error fetching select:", error);

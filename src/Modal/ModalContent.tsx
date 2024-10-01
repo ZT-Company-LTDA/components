@@ -11,7 +11,6 @@ import {
   Skeleton,
 } from "@nextui-org/react";
 import { CalendarDate } from "@internationalized/date";
-import { useSession } from "next-auth/react";
 import { Select } from "../Select/Select";
 import axios from "../utils/AxiosInstance";
 import { MdError } from "react-icons/md";
@@ -25,6 +24,7 @@ import { useMediaQuery } from "../hooks/useMediaQuery";
 import { getNestedValue, setNestedValue } from "../utils/functions/modalValues";
 import { toZonedDateTime } from "../utils/functions/zoneDateTime";
 import { useScreenContext } from "../contexts/ContextScreen";
+import { parseCookies } from "nookies";
 
 export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
   (props, ref) => {
@@ -54,7 +54,6 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
     const { createFormData } = useFormData();
     const [image, setImage] = useState<File | string>();
     const [imageUrl, setImageUrl] = useState<string>("");
-    const { data: session } = useSession();
     const isMobile = useMediaQuery("(max-width: 768px)");
     const { actions } = useScreenContext();
 
@@ -73,7 +72,6 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
               const data = response.data;
               setInputValues(data);
               setImageUrl(data.image);
-              console.log(inputValues);
             } catch (error) {
               console.error("Erro ao buscar os dados:", error);
               setShowErrorIcon(true);
@@ -156,7 +154,6 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
       setShowSuccessIcon(false);
       setShowErrorIcon(false); // Garante que o ícone de erro não apareça antes do tempo
       setErrorMessage(""); // Reseta a mensagem de erro
-      console.log(inputValues);
       try {
         const transformInputValues = (values: any) => {
           const transformedValues = { ...values };
@@ -199,7 +196,7 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
             data: formData,
             headers: {
               "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${session?.user.token}`,
+              Authorization: `Bearer ${parseCookies().token}`,
             },
             onUploadProgress: (progressEvent) => {
               const total = progressEvent.total || 1;
