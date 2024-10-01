@@ -225,6 +225,15 @@ const Table: React.FC<TableProps> = ({
                     </td>
                   </tr>
                 ) : (
+                  elements?.length === 0 ? 
+                    <tr>
+                      <td colSpan={columns.length} className="text-center py-4 h-96">
+                        <div className="flex items-center justify-center h-full">
+                          <p>Nenhum Registro Encontrado</p>
+                        </div>
+                      </td>
+                    </tr>
+                    :
                   elements?.map((element, index) => (
                     <tr
                       key={index}

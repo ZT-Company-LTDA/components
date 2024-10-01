@@ -1,5 +1,6 @@
 import React from 'react';
 import * as FaIcons from 'react-icons/fa';
+import * as FaIcons6 from 'react-icons/fa6';
 import * as MdIcons from 'react-icons/md';
 import * as IoIcons from 'react-icons/io';
 import * as FiIcons from 'react-icons/fi';
@@ -17,6 +18,7 @@ type IconLibraries = {
 
 const iconLibraries: IconLibraries = {
   fa: FaIcons,
+  fa6: FaIcons6,
   md: MdIcons,
   io: IoIcons,
 	fi: FiIcons,
