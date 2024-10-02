@@ -6,8 +6,11 @@ import useSWR from 'swr';
 import DOMPurify from 'dompurify';
 import EditorComponent from '../TipTap/Editor';
 import { CardMedia } from '@mui/material';
+import toast from 'react-hot-toast';
+import useFormData from '../hooks/useCreateFormDataDocument';
 
 export type SelectedOption = "PHOTO" | "VIDEOS" | "EVOLUTION" | "REPORTS";
+
 type MultiDocViewerProps = {
   uuid: string;
   url?:string;
@@ -15,43 +18,98 @@ type MultiDocViewerProps = {
   folder:SelectedOption;
   fileType: AcceptedFileTypeKey | undefined
   onCloseModal?: () => void;
+  typeDocument:SelectedOption
+  title:string
 }
 
-export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseModal }:MultiDocViewerProps) => {
+const dataDoc = async (uuidAws: string, token: string, folder:SelectedOption) => {
+  try {
+    const response = await axios.get(`/documents/getData/${uuidAws}`, {
+      params: {
+        folder,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data.content;
+  } catch (error) {
+    console.error('Error fetching document data:', error);
+    return null;
+  }
+};
 
-  const dataDoc = async (uuidAws: string, token: string) => {
-    try {
-      const response = await axios.get(`/documents/getData/${uuidAws}`, {
-        params: {
-          folder: folder,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      return response.data.content;
-    } catch (error) {
-      console.error('Error fetching document data:', error);
-      return null;
-    }
+export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseModal, typeDocument, title }:MultiDocViewerProps) => {
+  const { createFormData } = useFormData(); 
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
+
+  const fetcher = async(formData:FormData) => {
+    await axios
+      .post(
+        `/documents/editarUpload/${
+          typeDocument === "REPORTS"
+            ? "reportsActivities"
+            : "evolucoesActivities"
+        }`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+  }
+
+  const handleSend = (newContent:string) => {
+
+    const blob = new Blob([new TextEncoder().encode(newContent)], { type: "text/plain;charset=utf-8" });
+    const file = new File([blob], title, { type: "text/plain;charset=utf-8" });
+    const fileArray: File[] = [file];
+    const uuidAws = uuid;
+    const formData = createFormData(
+      fileArray,
+      { uuidAws },
+      typeDocument === "REPORTS" ? "reports" : "evolucoes",
+      typeDocument === "REPORTS" ? "dataReports" : "dataEvolucoes"
+    );
+
+    toast.promise(fetcher(formData), {
+      loading: 'Enviando arquivo...',
+      success: <b>Arquivo enviado com sucesso.</b>,
+      error: <b>Ocorreu um erro ao enviar o arquivo.</b>
+    })
   };
 
-  const { data, isLoading, error } = useSWR(
-    uuid && fileType === 'text/plain' ? [uuid, token] : null,
-    async ([uuidAws, token]) => await dataDoc(uuidAws, token),
-    {
-      keepPreviousData: true,
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      if (uuid && fileType === 'text/plain') {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+          const result = await dataDoc(uuid, token,folder);
+          setData(result);
+        } catch (err) {
+          setError(err);
+          toast.error(error.message)
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [uuid, token, fileType]);
   
   if (fileType === 'application/pdf') {
     return (
       <iframe
         src={url}
-        title="PDF Viewer"
+        title={title}
         className='h-full w-full'
         style={{ border: 'none' }}
       >
@@ -65,7 +123,7 @@ export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseMo
         <EditorComponent
           content={data}
           onCloseModal={onCloseModal}
-          onSave={(newContent:string)=>console.log('Editou o arquivo, novo texto: ', newContent )}
+          onSave={handleSend}
         />
       }
       </div>
@@ -73,24 +131,20 @@ export const MultiDocumentViewer = ({ uuid, fileType, token,url,folder,onCloseMo
   } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
     return (
       <iframe
-        src={url}
-        title="Conteúdo do arquivo de texto"
-        className="bg-white"
+        src={`https://view.officeapps.live.com/op/embed.aspx?src=${url}`}
+        title={title}
+        className="bg-white h-full w-full outline-none border-1 border-black hover:border-none"
         style={{ border: "none" }}
-      >
-        Seu navegador não suporta a exibição deste conteúdo.
-      </iframe>
+      />
     );
   } else {
     return (
-      <iframe
-        src={url}
-        title="Conteúdo do arquivo de texto"
+      <div
         className="bg-white"
         style={{ border: "none" }}
       >
         Seu navegador não suporta a exibição deste conteúdo.
-      </iframe>
+      </div>
     );
   }
 };
