@@ -3,10 +3,13 @@ import { ContextScreen } from "../../contexts/ContextScreen";
 import React from "react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { DynamicIcon } from "../../DinamicIcon/DinamicIcon";
-import { MenuProps } from "../interfaces/iconBar.insterface";
+import { MenuProps } from "../interfaces/iconBar.interface";
+import { useRouter } from "next/navigation";
 
 export const IconBar = ({ linkItems }: MenuProps) => {
   const context = useContext(ContextScreen);
+
+  const router = useRouter();
 
   if (!context) {
     throw new Error("ContextScreen must be used within a ProviderScreen");
@@ -22,7 +25,7 @@ export const IconBar = ({ linkItems }: MenuProps) => {
           closeDelay={0}
         >
           <Button
-            onClick={() => context.setidScreen(linkItem.id)}
+            onClick={() => router.push(`/dashboard/${linkItem.route}`)}
             type="button"
             variant="light"
             isIconOnly
