@@ -287,7 +287,7 @@ const Table: React.FC<TableProps> = ({
       )}
 
       {!isMobile && (
-        <ModalZtTable title="Paciente" isOpen={isOpen} onClose={closeModal} isAddModal={isAddModal} showButtonFooter>
+        <ModalZtTable title={elementName} isOpen={isOpen} onClose={closeModal} isAddModal={isAddModal} showButtonFooter>
           <ModalContent
             isOpen={isOpen}
             closeModal={closeModal}

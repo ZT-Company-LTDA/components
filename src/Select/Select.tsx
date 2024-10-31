@@ -158,7 +158,7 @@ export const Select: React.FC<SelectProps> = ({
           onChange={handleInputChange}
           isReadOnly={isReadOnly}
           autoComplete="off"
-          placeholder={`Digite o nome do ${elementName}`}
+          placeholder={`Digite algo para pesquisar`}
           className="max-w-full"
           label={label}
         />
