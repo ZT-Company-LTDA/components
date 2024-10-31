@@ -206,14 +206,25 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
               setProgress(percentCompleted);
             },
           });
-        }
-
-        setProgress(100);
-        setShowSuccessIcon(true);
-        searchTable();
-        setTimeout(() => {
+          setProgress(100);
+          setShowSuccessIcon(true);
+          searchTable();
+          setTimeout(() => {
           setShowSuccessIcon(false);
-        }, 2500);
+          }, 2500);
+        } else {
+          setShowErrorIcon(true);
+          setTimeout(() => {
+            setShowErrorIcon(false);
+          }, 2500);
+          if(method === "post"){
+            setErrorMessage(`Preencha todos os campos e insira uma imagem para adicionar o ${elementName}`);
+          } else if (method === "patch"){
+            setErrorMessage(`Preencha todos os campos e insira uma imagem para atualizar o ${elementName}`);
+          } else {
+            setErrorMessage(`Erro ao deletar o ${elementName}`);
+          }
+        }
       } catch (error: unknown) {
         console.error("Error:", error);
 
