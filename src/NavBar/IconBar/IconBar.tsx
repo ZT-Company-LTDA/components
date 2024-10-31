@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { ContextScreen } from "../../contexts/ContextScreen";
 import React from "react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@nextui-org/react";
 import { DynamicIcon } from "../../DinamicIcon/DinamicIcon";
-import { MenuProps } from "../interfaces/iconBar.insterface";
+import { MenuProps } from "../interfaces/iconBar.interface";
+import Link from "next/link";
 
 export const IconBar = ({ linkItems }: MenuProps) => {
   const context = useContext(ContextScreen);
@@ -21,19 +22,17 @@ export const IconBar = ({ linkItems }: MenuProps) => {
           key={linkItem.id}
           closeDelay={0}
         >
-          <Button
-            onClick={() => context.setidScreen(linkItem.id)}
+          <Link
+            href={`/dashboard/${linkItem.route}`}
             type="button"
-            variant="light"
-            isIconOnly
-            className="flex h-10 w-10 items-center justify-center text-white rounded-lg transition-colors data-[hover=true]:bg-[#3248F2]"
+            className="flex h-10 w-10 items-center justify-center text-white rounded-lg transition-colors duration-400 hover:bg-[#3248F2]"
           >
             <DynamicIcon
               size={20}
               iconName={linkItem.icon}
               library={linkItem.library}
             />
-          </Button>
+          </Link>
         </Tooltip>
       ))}
     </>
