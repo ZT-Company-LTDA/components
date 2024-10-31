@@ -216,7 +216,7 @@ export const ModalContent = forwardRef<ModalContentRef, ModalProps>(
           setShowErrorIcon(true);
           setTimeout(() => {
             setShowErrorIcon(false);
-          }, 2500);
+          }, 4000);
           if(method === "post"){
             setErrorMessage(`Preencha todos os campos e insira uma imagem para adicionar o ${elementName}`);
           } else if (method === "patch"){
